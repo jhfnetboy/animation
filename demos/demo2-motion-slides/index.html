@@ -1,0 +1,3658 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Science Micro-Course Studio · Motion Canvas Timeline System</title>
+  <style>
+    :root {
+      --bg-deep: #070b14;
+      --bg-panel: #0d1424;
+      --bg-card: #131c31;
+      --bg-elevated: #19243e;
+      --border-subtle: rgba(148, 163, 184, 0.16);
+      --border-glow: rgba(56, 189, 248, 0.45);
+      --text-primary: #f8fafc;
+      --text-secondary: #94a3b8;
+      --text-muted: #64748b;
+      --accent-cyan: #38bdf8;
+      --accent-indigo: #818cf8;
+      --accent-gold: #fbbf24;
+      --accent-pink: #f472b6;
+      --accent-green: #34d399;
+      --accent-orange: #fb923c;
+      --font-sans: 'Inter', 'Noto Sans Thai', 'Sukhumvit Set', 'Thonburi', 'Leelawadee UI', 'Tahoma', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', system-ui, -apple-system, sans-serif;
+      --font-mono: 'JetBrains Mono', 'SF Mono', 'Fira Code', ui-monospace, monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background-color: var(--bg-deep);
+      color: var(--text-primary);
+      font-family: var(--font-sans);
+      user-select: none;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* 整体纵向应用壳层 */
+    .app-shell {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      height: 100%;
+      background:
+        radial-gradient(circle at 18% 12%, rgba(56, 189, 248, 0.08), transparent 40%),
+        radial-gradient(circle at 82% 88%, rgba(129, 140, 248, 0.08), transparent 42%),
+        var(--bg-deep);
+    }
+
+    /* 顶部导航栏 */
+    .topbar {
+      height: 58px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 18px;
+      background: rgba(13, 20, 36, 0.92);
+      border-bottom: 1px solid var(--border-subtle);
+      backdrop-filter: blur(12px);
+      gap: 12px;
+      z-index: 20;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+    }
+
+    .brand-logo {
+      width: 32px;
+      height: 32px;
+      border-radius: 9px;
+      background: linear-gradient(135deg, #0ea5e9, #6366f1);
+      display: grid;
+      place-items: center;
+      font-weight: 800;
+      font-size: 15px;
+      color: #fff;
+      box-shadow: 0 0 16px rgba(56, 189, 248, 0.35);
+      flex-shrink: 0;
+    }
+
+    .brand-title {
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 0.2px;
+      white-space: nowrap;
+    }
+
+    .brand-badge {
+      font-size: 11px;
+      color: var(--accent-green);
+      background: rgba(52, 211, 153, 0.12);
+      border: 1px solid rgba(52, 211, 153, 0.3);
+      padding: 2px 8px;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-family: var(--font-mono);
+      white-space: nowrap;
+    }
+
+    .brand-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--accent-green);
+      box-shadow: 0 0 8px var(--accent-green);
+      animation: pulseDot 1.8s infinite;
+    }
+
+    @keyframes pulseDot {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.45; transform: scale(0.8); }
+    }
+
+    /* 课程切换 Tab 组 */
+    .lesson-tabs {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(7, 11, 20, 0.7);
+      padding: 4px;
+      border-radius: 12px;
+      border: 1px solid var(--border-subtle);
+      overflow-x: auto;
+    }
+
+    .lesson-tab {
+      border: none;
+      background: transparent;
+      color: var(--text-secondary);
+      padding: 6px 13px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+      font-family: var(--font-sans);
+    }
+
+    .lesson-tab:hover {
+      color: var(--text-primary);
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .lesson-tab.active {
+      color: #fff;
+      background: linear-gradient(135deg, rgba(56, 189, 248, 0.25), rgba(99, 102, 241, 0.28));
+      border: 1px solid rgba(56, 189, 248, 0.45);
+      box-shadow: 0 2px 10px rgba(56, 189, 248, 0.16);
+    }
+
+    /* 右侧语言切换、模式开关与全屏按钮 */
+    .topbar-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
+    .lang-switch {
+      display: inline-flex;
+      align-items: center;
+      background: rgba(7, 11, 20, 0.85);
+      border: 1px solid rgba(56, 189, 248, 0.32);
+      border-radius: 10px;
+      padding: 3px;
+      gap: 2px;
+      box-shadow: 0 0 14px rgba(56, 189, 248, 0.12);
+    }
+
+    .lang-btn {
+      border: none;
+      background: transparent;
+      color: var(--text-secondary);
+      padding: 4px 9px;
+      border-radius: 7px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.18s ease;
+      font-family: var(--font-sans);
+      white-space: nowrap;
+      line-height: 1.3;
+    }
+
+    .lang-btn:hover {
+      color: var(--text-primary);
+      background: rgba(255, 255, 255, 0.07);
+    }
+
+    .lang-btn.active {
+      background: linear-gradient(135deg, #0ea5e9, #6366f1);
+      color: #ffffff;
+      box-shadow: 0 0 10px rgba(56, 189, 248, 0.4);
+    }
+
+    .lang-sep {
+      width: 1px;
+      height: 12px;
+      background: rgba(148, 163, 184, 0.25);
+      pointer-events: none;
+    }
+
+    .mode-switch {
+      display: inline-flex;
+      background: rgba(7, 11, 20, 0.78);
+      border: 1px solid var(--border-subtle);
+      border-radius: 10px;
+      padding: 3px;
+      gap: 3px;
+    }
+
+    .mode-btn {
+      border: none;
+      background: transparent;
+      color: var(--text-secondary);
+      padding: 5px 11px;
+      border-radius: 7px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-family: var(--font-sans);
+    }
+
+    .mode-btn.active {
+      background: var(--accent-cyan);
+      color: #04111d;
+      box-shadow: 0 0 12px rgba(56, 189, 248, 0.35);
+    }
+
+    .icon-btn {
+      border: 1px solid var(--border-subtle);
+      background: rgba(25, 36, 62, 0.75);
+      color: var(--text-primary);
+      height: 32px;
+      padding: 0 10px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      transition: all 0.18s ease;
+      font-family: var(--font-sans);
+    }
+
+    .icon-btn:hover {
+      border-color: var(--accent-cyan);
+      background: rgba(56, 189, 248, 0.15);
+    }
+
+    /* 中间舞台主容器 */
+    .stage-wrapper {
+      position: relative;
+      flex: 1;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    /* ==================== Slidev 风格 PPT 讲义模式 ==================== */
+    .ppt-view {
+      position: absolute;
+      inset: 0;
+      padding: 26px 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow-y: auto;
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(10px) scale(0.99);
+      transition: opacity 0.32s ease, transform 0.32s ease;
+      z-index: 5;
+    }
+
+    .ppt-view.active {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateY(0) scale(1);
+    }
+
+    .ppt-slide-card {
+      width: 100%;
+      max-width: 1120px;
+      min-height: 490px;
+      background: linear-gradient(155deg, rgba(19, 28, 49, 0.96), rgba(11, 17, 32, 0.98));
+      border: 1px solid rgba(148, 163, 184, 0.2);
+      border-radius: 22px;
+      padding: 34px 40px;
+      box-shadow:
+        0 24px 64px rgba(0, 0, 0, 0.55),
+        inset 0 1px 0 rgba(255, 255, 255, 0.06);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 24px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .ppt-slide-card::before {
+      content: '';
+      position: absolute;
+      top: -120px;
+      right: -120px;
+      width: 340px;
+      height: 340px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(56, 189, 248, 0.14), transparent 70%);
+      pointer-events: none;
+    }
+
+    .ppt-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .ppt-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.8px;
+      color: var(--accent-cyan);
+      background: rgba(56, 189, 248, 0.12);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      padding: 5px 12px;
+      border-radius: 999px;
+      margin-bottom: 12px;
+    }
+
+    .ppt-title {
+      font-size: 30px;
+      font-weight: 800;
+      line-height: 1.25;
+      color: var(--text-primary);
+    }
+
+    .ppt-subtitle {
+      margin-top: 8px;
+      font-size: 15px;
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+
+    .ppt-page-indicator {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--text-muted);
+      background: rgba(7, 11, 20, 0.65);
+      border: 1px solid var(--border-subtle);
+      padding: 5px 11px;
+      border-radius: 8px;
+      flex-shrink: 0;
+    }
+
+    .ppt-grid {
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 24px;
+      align-items: stretch;
+    }
+
+    .ppt-box {
+      background: rgba(7, 11, 20, 0.55);
+      border: 1px solid var(--border-subtle);
+      border-radius: 16px;
+      padding: 20px 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .ppt-box-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--accent-gold);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .ppt-points {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 11px;
+    }
+
+    .ppt-points li {
+      font-size: 14px;
+      line-height: 1.6;
+      color: #cbd5e1;
+      padding-left: 18px;
+      position: relative;
+    }
+
+    .ppt-points li::before {
+      content: '▸';
+      position: absolute;
+      left: 0;
+      color: var(--accent-cyan);
+      font-weight: 700;
+    }
+
+    .ppt-metaphor-box {
+      background: linear-gradient(145deg, rgba(30, 41, 59, 0.68), rgba(15, 23, 42, 0.9));
+      border: 1px solid rgba(129, 140, 248, 0.35);
+      border-radius: 16px;
+      padding: 20px 22px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 14px;
+    }
+
+    .metaphor-emoji {
+      font-size: 38px;
+      line-height: 1;
+    }
+
+    .metaphor-headline {
+      font-size: 17px;
+      font-weight: 700;
+      color: #e0e7ff;
+    }
+
+    .metaphor-desc {
+      font-size: 14px;
+      line-height: 1.65;
+      color: #cbd5e1;
+    }
+
+    .metaphor-formula {
+      background: rgba(7, 11, 20, 0.85);
+      border: 1px dashed rgba(56, 189, 248, 0.4);
+      border-radius: 10px;
+      padding: 10px 14px;
+      font-family: var(--font-mono);
+      font-size: 13px;
+      color: var(--accent-cyan);
+      text-align: center;
+    }
+
+    .ppt-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      padding-top: 6px;
+      border-top: 1px solid rgba(148, 163, 184, 0.12);
+    }
+
+    .ppt-slide-nav {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .cta-animate-btn {
+      border: none;
+      background: linear-gradient(135deg, #0ea5e9, #6366f1);
+      color: #fff;
+      padding: 11px 22px;
+      border-radius: 12px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 8px 24px rgba(56, 189, 248, 0.32);
+      transition: transform 0.18s ease, box-shadow 0.18s ease;
+      font-family: var(--font-sans);
+    }
+
+    .cta-animate-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 28px rgba(56, 189, 248, 0.45);
+    }
+
+    /* ==================== 程序化时间轴动画舞台 ==================== */
+    .canvas-view {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      opacity: 0;
+      pointer-events: none;
+      transform: scale(0.985);
+      transition: opacity 0.32s ease, transform 0.32s ease;
+      z-index: 4;
+    }
+
+    .canvas-view.active {
+      opacity: 1;
+      pointer-events: auto;
+      transform: scale(1);
+    }
+
+    /* 舞台顶部悬浮 Step 导航胶囊 */
+    .stage-hud {
+      position: absolute;
+      top: 12px;
+      left: 16px;
+      right: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      pointer-events: none;
+      z-index: 10;
+    }
+
+    .step-pills {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+      pointer-events: auto;
+      background: rgba(7, 11, 20, 0.72);
+      border: 1px solid var(--border-subtle);
+      backdrop-filter: blur(8px);
+      padding: 5px;
+      border-radius: 12px;
+    }
+
+    .step-pill {
+      border: none;
+      background: transparent;
+      color: var(--text-secondary);
+      padding: 5px 11px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.18s ease;
+      font-family: var(--font-sans);
+    }
+
+    .step-pill:hover {
+      color: var(--text-primary);
+      background: rgba(255, 255, 255, 0.06);
+    }
+
+    .step-pill.active {
+      background: rgba(56, 189, 248, 0.22);
+      color: var(--accent-cyan);
+      border: 1px solid rgba(56, 189, 248, 0.45);
+    }
+
+    .canvas-stage-container {
+      flex: 1;
+      width: 100%;
+      height: 100%;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    #animCanvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    /* ==================== 底部 Motion Canvas 风格控制台 ==================== */
+    .timeline-dock {
+      flex-shrink: 0;
+      background: rgba(13, 20, 36, 0.96);
+      border-top: 1px solid var(--border-subtle);
+      padding: 10px 18px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      z-index: 20;
+    }
+
+    .transport-group {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+
+    .ctrl-btn {
+      border: 1px solid var(--border-subtle);
+      background: var(--bg-card);
+      color: var(--text-primary);
+      height: 34px;
+      padding: 0 11px;
+      border-radius: 9px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      transition: all 0.16s ease;
+      font-family: var(--font-sans);
+    }
+
+    .ctrl-btn:hover {
+      border-color: var(--accent-cyan);
+      background: var(--bg-elevated);
+    }
+
+    .ctrl-btn.primary {
+      background: linear-gradient(135deg, #0ea5e9, #6366f1);
+      border-color: transparent;
+      color: #fff;
+      min-width: 82px;
+      box-shadow: 0 4px 14px rgba(56, 189, 248, 0.25);
+    }
+
+    /* 时间轴轨道 */
+    .scrubber-wrap {
+      flex: 1;
+      min-width: 180px;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .scrubber-track-area {
+      position: relative;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+    }
+
+    .scrubber-rail {
+      position: relative;
+      width: 100%;
+      height: 6px;
+      border-radius: 999px;
+      background: rgba(148, 163, 184, 0.2);
+      overflow: visible;
+    }
+
+    .scrubber-fill {
+      height: 100%;
+      width: 0%;
+      border-radius: 999px;
+      background: linear-gradient(90deg, var(--accent-cyan), var(--accent-indigo));
+      box-shadow: 0 0 10px rgba(56, 189, 248, 0.45);
+      pointer-events: none;
+    }
+
+    .scrubber-thumb {
+      position: absolute;
+      top: 50%;
+      left: 0%;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: #fff;
+      border: 3px solid var(--accent-cyan);
+      transform: translate(-50%, -50%);
+      box-shadow: 0 0 10px rgba(56, 189, 248, 0.7);
+      pointer-events: none;
+    }
+
+    .keyframe-diamond {
+      position: absolute;
+      top: 50%;
+      width: 9px;
+      height: 9px;
+      background: var(--accent-gold);
+      border: 1px solid #070b14;
+      transform: translate(-50%, -50%) rotate(45deg);
+      pointer-events: none;
+      opacity: 0.9;
+    }
+
+    .scrubber-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 11px;
+      color: var(--text-secondary);
+      font-family: var(--font-mono);
+    }
+
+    .speed-group {
+      display: inline-flex;
+      background: rgba(7, 11, 20, 0.7);
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      padding: 2px;
+      gap: 2px;
+      flex-shrink: 0;
+    }
+
+    .speed-btn {
+      border: none;
+      background: transparent;
+      color: var(--text-secondary);
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 700;
+      font-family: var(--font-mono);
+      cursor: pointer;
+    }
+
+    .speed-btn.active {
+      background: rgba(129, 140, 248, 0.25);
+      color: #e0e7ff;
+    }
+
+    /* ==================== 教师演讲提词器抽屉 ==================== */
+    .notes-drawer {
+      flex-shrink: 0;
+      background: #090e1a;
+      border-top: 1px solid var(--border-subtle);
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.28s ease;
+    }
+
+    .notes-drawer.open {
+      max-height: 156px;
+    }
+
+    .notes-inner {
+      padding: 12px 22px 14px;
+      display: grid;
+      grid-template-columns: 220px 1fr;
+      gap: 18px;
+      align-items: start;
+    }
+
+    .notes-badge-col {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .notes-heading {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--accent-gold);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .notes-step-tag {
+      font-size: 12px;
+      color: var(--accent-cyan);
+      background: rgba(56, 189, 248, 0.1);
+      border: 1px solid rgba(56, 189, 248, 0.28);
+      padding: 4px 9px;
+      border-radius: 7px;
+      width: fit-content;
+    }
+
+    .notes-content {
+      font-size: 13.5px;
+      line-height: 1.68;
+      color: #e2e8f0;
+      overflow-y: auto;
+      max-height: 120px;
+      padding-right: 8px;
+    }
+
+    .notes-tip {
+      margin-top: 6px;
+      font-size: 12px;
+      color: var(--accent-green);
+    }
+
+    @media (max-width: 1220px) {
+      .brand-badge { display: none; }
+      .lesson-tab { padding: 6px 10px; font-size: 12px; }
+    }
+
+    @media (max-width: 960px) {
+      .topbar { height: auto; flex-wrap: wrap; padding: 8px 14px; }
+      .ppt-grid { grid-template-columns: 1fr; }
+      .notes-inner { grid-template-columns: 1fr; gap: 8px; }
+      .timeline-dock { flex-wrap: wrap; gap: 10px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app-shell" id="appShell">
+    <!-- 顶部栏 -->
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-logo">MC</div>
+        <span class="brand-title" id="brandTitle">AI Micro-Course Studio</span>
+        <span class="brand-badge" id="brandBadge"><span class="brand-dot"></span><span id="brandBadgeText">60fps Engine</span></span>
+      </div>
+
+      <nav class="lesson-tabs" id="lessonTabs" aria-label="Lesson Navigation">
+        <button class="lesson-tab active" data-lesson="0">L1 · Tokenizer &amp; Vectors</button>
+        <button class="lesson-tab" data-lesson="1">L2 · Self-Attention</button>
+        <button class="lesson-tab" data-lesson="2">L3 · AI Agent</button>
+      </nav>
+
+      <div class="topbar-actions">
+        <div class="lang-switch" id="langSwitch" role="group" aria-label="Language Switch">
+          <button class="lang-btn active" data-lang="en">EN</button>
+          <span class="lang-sep" aria-hidden="true"></span>
+          <button class="lang-btn" data-lang="zh">中文</button>
+          <span class="lang-sep" aria-hidden="true"></span>
+          <button class="lang-btn" data-lang="th">ไทย</button>
+        </div>
+        <div class="mode-switch" id="modeSwitch" role="group" aria-label="Presentation Mode">
+          <button class="mode-btn active" id="btnModePpt" data-mode="ppt">Slides PPT</button>
+          <button class="mode-btn" id="btnModeAnim" data-mode="anim">Animation</button>
+        </div>
+        <button class="icon-btn" id="btnFullscreen" title="Fullscreen Presentation">⛶ Fullscreen</button>
+      </div>
+    </header>
+
+    <!-- 主舞台 -->
+    <main class="stage-wrapper">
+      <!-- Slidev 风格讲义模式 -->
+      <section class="ppt-view active" id="pptView">
+        <article class="ppt-slide-card">
+          <div class="ppt-header">
+            <div>
+              <div class="ppt-tag" id="pptTag">Lesson 1 · Slide 1 / 2</div>
+              <h1 class="ppt-title" id="pptTitle">Loading...</h1>
+              <p class="ppt-subtitle" id="pptSubtitle"></p>
+            </div>
+            <div class="ppt-page-indicator" id="pptPageIndicator">Slide 1 / 2</div>
+          </div>
+
+          <div class="ppt-grid">
+            <div class="ppt-box">
+              <div class="ppt-box-title" id="pptConceptHeading">📌 Core Concepts Breakdown</div>
+              <ul class="ppt-points" id="pptPoints"></ul>
+            </div>
+
+            <div class="ppt-metaphor-box">
+              <div>
+                <div class="metaphor-emoji" id="pptEmoji">🧱</div>
+                <div class="metaphor-headline" id="pptMetaphorTitle"></div>
+                <p class="metaphor-desc" id="pptMetaphorDesc"></p>
+              </div>
+              <div class="metaphor-formula" id="pptFormula"></div>
+            </div>
+          </div>
+
+          <div class="ppt-footer">
+            <div class="ppt-slide-nav">
+              <button class="ctrl-btn" id="btnPptPrev">◀ Prev Slide</button>
+              <button class="ctrl-btn" id="btnPptNext">Next Slide ▶</button>
+            </div>
+            <button class="cta-animate-btn" id="btnEnterAnim">
+              <span id="btnEnterAnimText">⚡ Launch Timeline Animation</span>
+            </button>
+          </div>
+        </article>
+      </section>
+
+      <!-- 60fps Canvas 程序化动画舞台 -->
+      <section class="canvas-view" id="canvasView">
+        <div class="stage-hud">
+          <div class="step-pills" id="stepPills"></div>
+          <button class="icon-btn" id="btnBackToPpt">📑 Back to Slides</button>
+        </div>
+        <div class="canvas-stage-container" id="canvasContainer">
+          <canvas id="animCanvas"></canvas>
+        </div>
+      </section>
+    </main>
+
+    <!-- 底部时间轴控制台 -->
+    <footer class="timeline-dock">
+      <div class="transport-group">
+        <button class="ctrl-btn" id="btnStepPrev" title="Previous Step (←)">⏮ Prev</button>
+        <button class="ctrl-btn primary" id="btnPlayPause" title="Play / Pause (Space)">▶ Play</button>
+        <button class="ctrl-btn" id="btnStepNext" title="Next Step (→)">⏭ Next</button>
+        <button class="ctrl-btn" id="btnReplay" title="Replay from Start">↺ Replay</button>
+      </div>
+
+      <div class="scrubber-wrap">
+        <div class="scrubber-track-area" id="scrubberTrack">
+          <div class="scrubber-rail" id="scrubberRail">
+            <div class="scrubber-fill" id="scrubberFill"></div>
+            <div id="keyframeMarkers"></div>
+            <div class="scrubber-thumb" id="scrubberThumb"></div>
+          </div>
+        </div>
+        <div class="scrubber-meta">
+          <span id="timeDisplay">00.0s / 15.0s</span>
+          <span id="stepStatusText">Stage: Ready</span>
+        </div>
+      </div>
+
+      <div class="speed-group" id="speedGroup" title="Playback Speed">
+        <button class="speed-btn" data-speed="0.5">0.5x</button>
+        <button class="speed-btn active" data-speed="1">1x</button>
+        <button class="speed-btn" data-speed="2">2x</button>
+      </div>
+
+      <button class="ctrl-btn" id="btnToggleNotes">🎙️ Speaker Notes</button>
+    </footer>
+
+    <!-- 教师演讲提词器 -->
+    <aside class="notes-drawer open" id="notesDrawer">
+      <div class="notes-inner">
+        <div class="notes-badge-col">
+          <div class="notes-heading" id="notesHeading">🎙️ Teacher Speaker Notes</div>
+          <div class="notes-step-tag" id="notesStepTag">Slides Mode</div>
+        </div>
+        <div class="notes-content">
+          <div id="notesBody"></div>
+          <div class="notes-tip" id="notesTip"></div>
+        </div>
+      </div>
+    </aside>
+  </div>
+
+  <script>
+    (function () {
+      'use strict';
+
+      // =========================================================================
+      // 1. 程序化补间、缓动与物理弹簧引擎 (致敬 Motion Canvas 数学核心)
+      // =========================================================================
+      const MathUtils = {
+        clamp01(v) {
+          return v < 0 ? 0 : v > 1 ? 1 : v;
+        },
+        lerp(a, b, t) {
+          return a + (b - a) * t;
+        },
+        /** 局部时间片段映射：[start, end] -> [0, 1] */
+        segment(time, start, end, easeFn) {
+          if (end <= start) return time >= end ? 1 : 0;
+          const raw = MathUtils.clamp01((time - start) / (end - start));
+          return easeFn ? easeFn(raw) : raw;
+        },
+        linear(t) {
+          return t;
+        },
+        easeInOutCubic(t) {
+          return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+        },
+        easeOutCubic(t) {
+          return 1 - Math.pow(1 - t, 3);
+        },
+        easeOutBack(t) {
+          const c1 = 1.70158;
+          const c3 = c1 + 1;
+          return 1 + c3 * Math.pow(t - 1, 3) + c1 * Math.pow(t - 1, 2);
+        },
+        /** 欠阻尼二阶弹簧物理模拟：在 0->1 内输出带真实弹跳的超调曲线 */
+        spring(t, stiffness = 210, damping = 16) {
+          const p = MathUtils.clamp01(t);
+          if (p === 0) return 0;
+          if (p === 1) return 1;
+          const omega = Math.sqrt(stiffness);
+          const zeta = damping / (2 * omega);
+          const timeScale = p * 1.4;
+          if (zeta < 1) {
+            const wd = omega * Math.sqrt(1 - zeta * zeta);
+            return (
+              1 -
+              Math.exp(-zeta * omega * timeScale) *
+                (Math.cos(wd * timeScale) +
+                  ((zeta * omega) / wd) * Math.sin(wd * timeScale))
+            );
+          }
+          return 1 - Math.exp(-omega * timeScale) * (1 + omega * timeScale);
+        },
+      };
+
+      // =========================================================================
+      // 2. Canvas 2D 高清矢量绘制工具集 (逻辑分辨率 1280 x 720)
+      // =========================================================================
+      const STAGE_W = 1280;
+      const STAGE_H = 720;
+      const FONT_SANS = "'Inter', 'Noto Sans Thai', 'Sukhumvit Set', 'Thonburi', 'Leelawadee UI', 'Tahoma', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif";
+      const FONT_MONO = "'JetBrains Mono', 'SF Mono', ui-monospace, monospace";
+
+      const Draw = {
+        measureWidth(ctx, text) {
+          if (!ctx.measureText) return String(text).length * 10;
+          const m = ctx.measureText(text);
+          return m && typeof m.width === 'number' && !Number.isNaN(m.width) ? m.width : 0;
+        },
+
+        fitFont(ctx, text, maxW, baseSize, minSize = 11, weight = '700', family = FONT_SANS) {
+          let size = baseSize;
+          ctx.font = `${weight} ${size}px ${family}`;
+          if (maxW > 0) {
+            while (size > minSize && Draw.measureWidth(ctx, text) > maxW) {
+              size -= 1;
+              ctx.font = `${weight} ${size}px ${family}`;
+            }
+          }
+          return size;
+        },
+
+        roundRectPath(ctx, x, y, w, h, r) {
+          const radius = Math.min(r, w / 2, h / 2);
+          ctx.beginPath();
+          ctx.moveTo(x + radius, y);
+          ctx.arcTo(x + w, y, x + w, y + h, radius);
+          ctx.arcTo(x + w, y + h, x, y + h, radius);
+          ctx.arcTo(x, y + h, x, y, radius);
+          ctx.arcTo(x, y, x + w, y, radius);
+          ctx.closePath();
+        },
+
+        drawGridBg(ctx) {
+          ctx.fillStyle = '#070B14';
+          ctx.fillRect(0, 0, STAGE_W, STAGE_H);
+
+          // 居中柔光
+          const grad = ctx.createRadialGradient(STAGE_W / 2, STAGE_H / 2, 40, STAGE_W / 2, STAGE_H / 2, 620);
+          grad.addColorStop(0, 'rgba(56, 189, 248, 0.08)');
+          grad.addColorStop(1, 'rgba(7, 11, 20, 0)');
+          ctx.fillStyle = grad;
+          ctx.fillRect(0, 0, STAGE_W, STAGE_H);
+
+          // 科技网格线
+          ctx.strokeStyle = 'rgba(30, 41, 59, 0.55)';
+          ctx.lineWidth = 1;
+          const step = 40;
+          ctx.beginPath();
+          for (let x = 0; x <= STAGE_W; x += step) {
+            ctx.moveTo(x, 0);
+            ctx.lineTo(x, STAGE_H);
+          }
+          for (let y = 0; y <= STAGE_H; y += step) {
+            ctx.moveTo(0, y);
+            ctx.lineTo(STAGE_W, y);
+          }
+          ctx.stroke();
+        },
+
+        drawStageHeader(ctx, title, badgeText, badgeColor) {
+          ctx.save();
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          Draw.fitFont(ctx, title, STAGE_W - 80, 27, 18, '700', FONT_SANS);
+          ctx.fillStyle = '#F8FAFC';
+          ctx.fillText(title, STAGE_W / 2, 66);
+
+          Draw.fitFont(ctx, badgeText, STAGE_W - 140, 15, 12, '600', FONT_SANS);
+          const textW = Math.min(STAGE_W - 60, Draw.measureWidth(ctx, badgeText) + 40);
+          Draw.roundRectPath(ctx, STAGE_W / 2 - textW / 2, 92, textW, 30, 15);
+          ctx.fillStyle = 'rgba(15, 23, 42, 0.9)';
+          ctx.fill();
+          ctx.strokeStyle = badgeColor;
+          ctx.lineWidth = 1.5;
+          ctx.stroke();
+
+          ctx.fillStyle = badgeColor;
+          ctx.fillText(badgeText, STAGE_W / 2, 107);
+          ctx.restore();
+        },
+
+        drawCard(ctx, cx, cy, w, h, opts = {}) {
+          const {
+            fill = '#111827',
+            stroke = '#334155',
+            lineWidth = 2,
+            radius = 16,
+            glow = 0,
+            alpha = 1,
+            scale = 1,
+          } = opts;
+          if (alpha <= 0.01 || scale <= 0.01) return;
+          ctx.save();
+          ctx.globalAlpha = alpha;
+          ctx.translate(cx, cy);
+          ctx.scale(scale, scale);
+          if (glow > 0) {
+            ctx.shadowColor = stroke;
+            ctx.shadowBlur = glow;
+          }
+          Draw.roundRectPath(ctx, -w / 2, -h / 2, w, h, radius);
+          ctx.fillStyle = fill;
+          ctx.fill();
+          ctx.shadowBlur = 0;
+          if (lineWidth > 0) {
+            ctx.strokeStyle = stroke;
+            ctx.lineWidth = lineWidth;
+            ctx.stroke();
+          }
+          ctx.restore();
+        },
+
+        drawArrow(ctx, x1, y1, x2, y2, progress, opts = {}) {
+          const p = MathUtils.clamp01(progress);
+          if (p <= 0.01) return;
+          const {
+            color = '#FBBF24',
+            lineWidth = 4,
+            dash = null,
+            headSize = 12,
+            label = '',
+            labelOffset = {x: 0, y: -16},
+            glow = 12,
+          } = opts;
+
+          const curX = MathUtils.lerp(x1, x2, p);
+          const curY = MathUtils.lerp(y1, y2, p);
+          const angle = Math.atan2(y2 - y1, x2 - x1);
+
+          ctx.save();
+          ctx.strokeStyle = color;
+          ctx.fillStyle = color;
+          ctx.lineWidth = lineWidth;
+          ctx.lineCap = 'round';
+          if (glow > 0) {
+            ctx.shadowColor = color;
+            ctx.shadowBlur = glow;
+          }
+          if (dash) ctx.setLineDash(dash);
+
+          ctx.beginPath();
+          ctx.moveTo(x1, y1);
+          ctx.lineTo(curX, curY);
+          ctx.stroke();
+
+          ctx.setLineDash([]);
+          if (p > 0.15) {
+            ctx.beginPath();
+            ctx.moveTo(curX, curY);
+            ctx.lineTo(
+              curX - headSize * Math.cos(angle - Math.PI / 6),
+              curY - headSize * Math.sin(angle - Math.PI / 6)
+            );
+            ctx.lineTo(
+              curX - headSize * Math.cos(angle + Math.PI / 6),
+              curY - headSize * Math.sin(angle + Math.PI / 6)
+            );
+            ctx.closePath();
+            ctx.fill();
+          }
+
+          if (label && p > 0.45) {
+            ctx.shadowBlur = 0;
+            ctx.globalAlpha = MathUtils.segment(p, 0.45, 0.9);
+            ctx.font = `700 16px ${FONT_SANS}`;
+            ctx.textAlign = 'center';
+            ctx.fillText(label, (x1 + curX) / 2 + labelOffset.x, (y1 + curY) / 2 + labelOffset.y);
+          }
+          ctx.restore();
+        },
+
+        cubicPoint(p0, p1, p2, p3, t) {
+          const u = 1 - t;
+          const tt = t * t;
+          const uu = u * u;
+          const uuu = uu * u;
+          const ttt = tt * t;
+          return {
+            x: uuu * p0.x + 3 * uu * t * p1.x + 3 * u * tt * p2.x + ttt * p3.x,
+            y: uuu * p0.y + 3 * uu * t * p1.y + 3 * u * tt * p2.y + ttt * p3.y,
+          };
+        },
+
+        /** 绘制带流光粒子的三阶贝塞尔光束 */
+        drawAttentionBeam(ctx, p0, p1, p2, p3, progress, opts = {}) {
+          const p = MathUtils.clamp01(progress);
+          if (p <= 0.01) return;
+          const {
+            color = '#FBBF24',
+            lineWidth = 8,
+            alpha = 1,
+            time = 0,
+            showParticles = true,
+          } = opts;
+
+          ctx.save();
+          ctx.globalAlpha = alpha;
+          ctx.strokeStyle = color;
+          ctx.lineWidth = lineWidth;
+          ctx.lineCap = 'round';
+          ctx.shadowColor = color;
+          ctx.shadowBlur = lineWidth * 2.2;
+
+          const steps = 48;
+          const maxIdx = Math.max(1, Math.floor(steps * p));
+          ctx.beginPath();
+          for (let i = 0; i <= maxIdx; i++) {
+            const pt = Draw.cubicPoint(p0, p1, p2, p3, i / steps);
+            if (i === 0) ctx.moveTo(pt.x, pt.y);
+            else ctx.lineTo(pt.x, pt.y);
+          }
+          ctx.stroke();
+
+          // 沿光束流动的能量光点
+          if (showParticles && p > 0.5) {
+            ctx.fillStyle = '#FFFFFF';
+            ctx.shadowColor = '#FFFFFF';
+            ctx.shadowBlur = 10;
+            for (let k = 0; k < 3; k++) {
+              const ptNorm = ((time * 0.65 + k * 0.33) % 1) * p;
+              const orb = Draw.cubicPoint(p0, p1, p2, p3, ptNorm);
+              ctx.beginPath();
+              ctx.arc(orb.x, orb.y, Math.max(2.5, lineWidth * 0.42), 0, Math.PI * 2);
+              ctx.fill();
+            }
+          }
+          ctx.restore();
+        },
+
+        drawGear(ctx, cx, cy, r, teeth, angle, color, alpha = 1) {
+          ctx.save();
+          ctx.globalAlpha = alpha;
+          ctx.translate(cx, cy);
+          ctx.rotate(angle);
+          ctx.strokeStyle = color;
+          ctx.lineWidth = 3;
+          ctx.shadowColor = color;
+          ctx.shadowBlur = 14;
+
+          ctx.beginPath();
+          const outerR = r + 10;
+          const innerR = r - 4;
+          for (let i = 0; i < teeth; i++) {
+            const a0 = (i / teeth) * Math.PI * 2;
+            const a1 = ((i + 0.25) / teeth) * Math.PI * 2;
+            const a2 = ((i + 0.55) / teeth) * Math.PI * 2;
+            const a3 = ((i + 0.8) / teeth) * Math.PI * 2;
+            if (i === 0) ctx.moveTo(Math.cos(a0) * innerR, Math.sin(a0) * innerR);
+            else ctx.lineTo(Math.cos(a0) * innerR, Math.sin(a0) * innerR);
+            ctx.lineTo(Math.cos(a1) * outerR, Math.sin(a1) * outerR);
+            ctx.lineTo(Math.cos(a2) * outerR, Math.sin(a2) * outerR);
+            ctx.lineTo(Math.cos(a3) * innerR, Math.sin(a3) * innerR);
+          }
+          ctx.closePath();
+          ctx.fillStyle = 'rgba(15, 23, 42, 0.85)';
+          ctx.fill();
+          ctx.stroke();
+
+          ctx.beginPath();
+          ctx.arc(0, 0, r * 0.48, 0, Math.PI * 2);
+          ctx.strokeStyle = 'rgba(248, 250, 252, 0.35)';
+          ctx.lineWidth = 2;
+          ctx.stroke();
+          ctx.restore();
+        },
+      };
+
+      // =========================================================================
+      // 3. 三语国际学校配置 (en 默认 | zh 简体中文 | th ภาษาไทย)
+      // =========================================================================
+      const LANGS = ['en', 'zh', 'th'];
+
+      function resolveInitialLang() {
+        try {
+          const params = new URLSearchParams(window.location.search);
+          const qLang = params.get('lang');
+          if (LANGS.includes(qLang)) return qLang;
+        } catch (_) {}
+        try {
+          const saved = localStorage.getItem('ai_course_lang');
+          if (LANGS.includes(saved)) return saved;
+        } catch (_) {}
+        return 'en';
+      }
+
+      const UI_I18N = {
+        en: {
+          htmlLang: 'en',
+          docTitle: 'AI Science Micro-Course Studio · Motion Canvas Timeline System',
+          brandTitle: 'AI Micro-Course Studio',
+          brandBadge: '60fps Engine',
+          lessonAria: 'Lesson Navigation',
+          modeAria: 'Presentation Mode',
+          modePpt: 'Slides PPT',
+          modeAnim: 'Animation',
+          fullscreen: '⛶ Fullscreen',
+          fullscreenTitle: 'Fullscreen Presentation',
+          pptConceptHeading: '📌 Core Concepts Breakdown',
+          pptSlideLabel: 'Slide',
+          pptPrev: '◀ Prev Slide',
+          pptNext: 'Next Slide ▶',
+          enterAnim: '⚡ Launch Timeline Animation',
+          backToPpt: '📑 Back to Slides',
+          stepPrev: '⏮ Prev',
+          stepPrevTitle: 'Previous Step (←)',
+          play: '▶ Play',
+          pause: '⏸ Pause',
+          playTitle: 'Play / Pause (Space)',
+          stepNext: '⏭ Next',
+          stepNextTitle: 'Next Step (→)',
+          replay: '↺ Replay',
+          replayTitle: 'Replay from Start',
+          speedTitle: 'Playback Speed',
+          notesBtn: '🎙️ Speaker Notes',
+          notesHeading: '🎙️ Teacher Speaker Notes',
+          pptNotesTag: 'Slides Mode · Slide',
+          pptNotesPrefix: '[Slide Walkthrough]',
+          pptNotesTip: '💡 Teaching Tip: After explaining the metaphor, click "Launch Timeline Animation" on the bottom right to start the demo.',
+          stagePrefix: 'Stage:',
+        },
+        zh: {
+          htmlLang: 'zh-CN',
+          docTitle: 'AI 科普微课工坊 · Motion Canvas 程序化时间轴课件系统',
+          brandTitle: 'AI 科普微课工坊',
+          brandBadge: '60fps 程序化引擎',
+          lessonAria: '课程切换',
+          modeAria: '演示模式切换',
+          modePpt: '讲义 PPT',
+          modeAnim: '动画舞台',
+          fullscreen: '⛶ 全屏',
+          fullscreenTitle: '全屏演示',
+          pptConceptHeading: '📌 核心概念拆解',
+          pptSlideLabel: 'Slide',
+          pptPrev: '◀ 上一页讲义',
+          pptNext: '下一页讲义 ▶',
+          enterAnim: '⚡ 进入程序化时间轴动画',
+          backToPpt: '📑 返回讲义 PPT',
+          stepPrev: '⏮ 上一步',
+          stepPrevTitle: '上一步 (←)',
+          play: '▶ 播放',
+          pause: '⏸ 暂停',
+          playTitle: '播放/暂停 (Space)',
+          stepNext: '⏭ 下一步',
+          stepNextTitle: '下一步 (→)',
+          replay: '↺ 重播',
+          replayTitle: '重头播放',
+          speedTitle: '播放倍速',
+          notesBtn: '🎙️ 演讲提词器',
+          notesHeading: '🎙️ 教师演讲提词器 (Speaker Notes)',
+          pptNotesTag: '讲义模式 · Slide',
+          pptNotesPrefix: '【讲义精讲】',
+          pptNotesTip: '💡 教学建议：讲完比喻后，点击右下角「进入程序化时间轴动画」开始动态演示。',
+          stagePrefix: '当前阶段：',
+        },
+        th: {
+          htmlLang: 'th',
+          docTitle: 'สตูดิโอคอร์ส AI วิทยาศาสตร์ · ระบบไทม์ไลน์ Motion Canvas',
+          brandTitle: 'สตูดิโอคอร์ส AI',
+          brandBadge: 'เอนจิน 60fps',
+          lessonAria: 'เลือกบทเรียน',
+          modeAria: 'สลับโหมดการสอน',
+          modePpt: 'สไลด์ PPT',
+          modeAnim: 'แอนิเมชัน',
+          fullscreen: '⛶ เต็มจอ',
+          fullscreenTitle: 'นำเสนอเต็มหน้าจอ',
+          pptConceptHeading: '📌 สรุปแนวคิดหลัก',
+          pptSlideLabel: 'สไลด์',
+          pptPrev: '◀ สไลด์ก่อนหน้า',
+          pptNext: 'สไลด์ถัดไป ▶',
+          enterAnim: '⚡ เข้าสู่แอนิเมชันไทม์ไลน์',
+          backToPpt: '📑 กลับไปสไลด์ PPT',
+          stepPrev: '⏮ ก่อนหน้า',
+          stepPrevTitle: 'ขั้นก่อนหน้า (←)',
+          play: '▶ เล่น',
+          pause: '⏸ หยุดชั่วคราว',
+          playTitle: 'เล่น / หยุด (Space)',
+          stepNext: '⏭ ถัดไป',
+          stepNextTitle: 'ขั้นถัดไป (→)',
+          replay: '↺ เล่นซ้ำ',
+          replayTitle: 'เล่นใหม่ตั้งแต่ต้น',
+          speedTitle: 'ความเร็วในการเล่น',
+          notesBtn: '🎙️ สคริปต์ผู้สอน',
+          notesHeading: '🎙️ สคริปต์คำบรรยายครูผู้สอน',
+          pptNotesTag: 'โหมดสไลด์ · สไลด์',
+          pptNotesPrefix: '[คำอธิบายสไลด์]',
+          pptNotesTip: '💡 คำแนะนำการสอน: หลังอธิบายอุปมาเสร็จแล้ว คลิก "เข้าสู่แอนิเมชันไทม์ไลน์" มุมขวาล่างเพื่อเริ่มการสาธิต',
+          stagePrefix: 'ขั้นตอนปัจจุบัน:',
+        },
+      };
+
+      const CANVAS_I18N = {
+        en: {
+          l1: {
+            headerTitle: 'Lesson 1 · Tokenizer Cutter & Embedding Vector Balance',
+            badge1: 'Step 1 · Sentence slides into the Tokenizer Laser Cutter',
+            badge2: 'Step 2 · 4D Semantic Attribute Balance ([AI], [King] vs [Queen])',
+            badge3: 'Step 3 · Vector Space Magic Formula: King - Man + Woman = Queen',
+            chamberLabel: 'TOKENIZER LASER CHAMBER · LEGO BRICK CUTTER',
+            rawSentence: 'AI shapes our future',
+            tokens: [
+              {text: 'AI', id: '#2048', color: '#38BDF8', x: 270},
+              {text: 'shape', id: '#4102', color: '#818CF8', x: 455},
+              {text: 's', id: '#1084', color: '#FBBF24', x: 640},
+              {text: 'our', id: '#7891', color: '#34D399', x: 825},
+              {text: 'future', id: '#5310', color: '#F472B6', x: 1010},
+            ],
+            cardW: 152,
+            chamberW: 980,
+            dimHeader: 'Projecting words onto a 4D semantic balance (closer to 1.0 = stronger trait)',
+            legends: ['[AI]', '[King]', '[Queen]'],
+            dimLabels: ['Tech', 'Life', 'Royal', 'Gender (F)'],
+            axisX: 'Semantic Axis X (Gender Bias)',
+            axisY: 'Semantic Axis Y (Royalty)',
+            originLabel: 'Origin (0,0)',
+            vecKingArrow: '+ Vector(King)',
+            vecKingTag: '[King]',
+            vecManArrow: '- Vector(Man)',
+            vecWomanArrow: '+ Vector(Woman)',
+            vecQueenTag: '= [Queen] ★',
+            formulaBar: 'Vector(King) - Vector(Man) + Vector(Woman) ≈ Vector(Queen)',
+          },
+          l2: {
+            headerTitle: 'Lesson 2 · Self-Attention Spotlight: How Does "it" Know Who It Is?',
+            badge1: 'Step 1 · Q-K-V Lock & Key Scan: "[it]" searches context clues',
+            badge2: 'Step 2 · Case A: "[it] was hungry" ──▶ Gold Beam Focuses on "dog" (88%)',
+            badge3: 'Step 3 · Case B Flip: "[it] was tasty" ──▶ Cyan Beam Locks on "bone" (92%)',
+            words: [
+              {text: 'The', x: 96, w: 72, key: 'Key: Det', role: 'mid'},
+              {text: 'dog', x: 210, w: 134, key: 'Key: Animal/Hungry', role: 'dog'},
+              {text: 'chased', x: 344, w: 112, key: 'Key: Action', role: 'mid'},
+              {text: 'the', x: 447, w: 72, key: 'Key: Det', role: 'mid'},
+              {text: 'bone', x: 561, w: 134, key: 'Key: Food / Tasty', role: 'bone'},
+              {text: 'because', x: 698, w: 118, key: 'Key: Conj', role: 'mid'},
+              {text: '[it]', x: 836, w: 136, key: 'Query Spotlight', role: 'it'},
+              {text: 'was', x: 957, w: 84, key: 'Key: Verb', role: 'mid'},
+              {text: 'hungry', x: 1105, w: 190, key: 'Context Trigger', role: 'tail'},
+            ],
+            tailA: 'hungry',
+            tailB: 'tasty',
+            keyMatched: '🔑 Q×K Locked!',
+            keySearching: '🔑 Query: Who is hungry?',
+            dashTitle: 'Token Attention Weight Live Bars (Softmax Distribution)',
+            dogRowLabel: 'To [dog]',
+            boneRowLabel: 'To [bone]',
+            badgeA: 'A: hungry → dog',
+            badgeB: 'B: tasty → bone',
+            qkvA: 'Q-K-V Result: Query("Who is [it]?") × Key(Animal / Hungry) ──▶ Value(Injects "dog" meaning into [it])',
+            qkvB: 'Q-K-V Result: Query("Who is [it]?") × Key(Food / Tasty) ──▶ Value(Injects "bone" meaning into [it])',
+          },
+          l3: {
+            headerTitle: 'Lesson 3 · AI Agent Iron Man Suit: Sense-Plan-Memory-Tool Loop',
+            badge1: 'Step 1 · Brain spins ReAct gears ──▶ Calls [Weather API Arm]',
+            badge2: 'Step 2 · Afternoon storm detected ──▶ [Self-Correction Alert] revises plan',
+            badge3: 'Step 3 · Queries [RAG Memory Library] ──▶ Retrieves Grandpa preferences',
+            badge4: 'Step 4 · Calls [Map Tool] for indoor teahouse ──▶ Delivers closed-loop plan',
+            userTask: '👤 User Prompt: "Plan a Saturday park trip with Grandpa — sun protection & weather-ready"',
+            arrowWeather: '① GET /weather',
+            arrowReflect: '② Self-Correction',
+            arrowRag: '③ Query Memory',
+            arrowMap: '④ Map Search',
+            coreTitle: 'LLM Brain',
+            coreSub: 'ReAct Suit Core',
+            weatherTitle: '🦾 Weather API Arm',
+            weatherWait: 'Awaiting live weather API call...',
+            weatherLine1: 'AM: Sunny 25°C ☀️ (Sunscreen OK)',
+            weatherLine2: 'PM: Thunderstorm ⛈️ Storm Alert!',
+            reflectTitle: '🚨 Self-Correction Alert',
+            reflectWait: 'Monitoring feasibility & safety rules',
+            reflectLine1: 'Conflict! PM outdoor plan fails in rain',
+            reflectLine2: '➔ Pivot: AM Outdoor + PM Indoor',
+            alertBanner: '⚠️ Self-Correction Triggered: Abort Full-Day Outdoor!',
+            ragTitle: '📚 RAG Memory Library',
+            ragWait: 'Long-term personal memory archive',
+            ragLine1: 'Hit: Grandpa prefers indoor tea',
+            ragLine2: 'Hit: Sensitive knees & loves chess ♟️',
+            mapTitle: '🗺️ Accessible Map Tool',
+            mapWait: 'Ready to search indoor accessible spots',
+            mapLine1: 'Locked: Garden Teahouse (150m away)',
+            mapLine2: '♿ Direct elevator · Dry & quiet chess',
+            finalLine1: '✅ Final Plan: 09:30 Sunny park stroll (sunscreen + hat) ──▶ 11:45 Elevator to indoor teahouse for tea & chess!',
+            finalLine2: 'ReAct Closed Loop: Think → Tool(Weather) → Reflect(Storm Alert) → Memory(RAG) → Tool(Map) → Final Plan',
+          },
+        },
+        zh: {
+          l1: {
+            headerTitle: '第 1 课 · Tokenizer 切割机与 Embedding 向量天平',
+            badge1: 'Step 1 · 句子滑入 Tokenizer 激光切割机',
+            badge2: 'Step 2 · 4 维语义属性天平（对比 [AI]、[国王] 与 [女王]）',
+            badge3: 'Step 3 · 向量空间魔法算式：国王 - 男人 + 女人 = 女王',
+            chamberLabel: 'TOKENIZER LASER CHAMBER · 乐高积木激光切割腔',
+            rawSentence: 'AI改变未来的世界',
+            tokens: [
+              {text: 'AI', id: '#2048', color: '#38BDF8', x: 305},
+              {text: '改变', id: '#4102', color: '#818CF8', x: 525},
+              {text: '未来', id: '#7891', color: '#34D399', x: 745},
+              {text: '的世界', id: '#5310', color: '#F472B6', x: 965},
+            ],
+            cardW: 176,
+            chamberW: 940,
+            dimHeader: '把词投射进 4 维语义坐标天平（数字打分越接近 1.0，属性越强烈）',
+            legends: ['[AI]', '[国王]', '[女王]'],
+            dimLabels: ['科技感', '生命感', '皇室度', '性别度(女)'],
+            axisX: '语义维度 X（性别特征偏向）',
+            axisY: '语义维度 Y（皇室尊贵度）',
+            originLabel: 'Origin (0,0)',
+            vecKingArrow: '+ Vector(国王)',
+            vecKingTag: '[国王]',
+            vecManArrow: '- Vector(男人)',
+            vecWomanArrow: '+ Vector(女人)',
+            vecQueenTag: '= [女王] ★',
+            formulaBar: 'Vector(国王) - Vector(男人) + Vector(女人) ≈ Vector(女王)',
+          },
+          l2: {
+            headerTitle: '第 2 课 · Self-Attention 探照灯：为什么“它”知道自己是谁？',
+            badge1: 'Step 1 · Q-K-V 锁钥扫描：代词【它】正在查找上下文线索',
+            badge2: 'Step 2 · 情景 A：【它】太饿了 ──▶ 金色光束照亮「小狗」(88%)',
+            badge3: 'Step 3 · 情景 B 一字逆转：【它】太香了 ──▶ 青色光束切换锁定「骨头」(92%)',
+            words: [
+              {text: '小狗', x: 165, w: 132, key: 'Key: 动物/会饿', role: 'dog'},
+              {text: '追着', x: 315, w: 112, key: 'Key: 动作', role: 'mid'},
+              {text: '骨头', x: 465, w: 132, key: 'Key: 食物/很香', role: 'bone'},
+              {text: '跑，', x: 610, w: 100, key: 'Key: 状态', role: 'mid'},
+              {text: '因为', x: 745, w: 108, key: 'Key: 连词', role: 'mid'},
+              {text: '【它】', x: 895, w: 132, key: 'Query 探照灯', role: 'it'},
+              {text: '太饿了。', x: 1075, w: 162, key: '语境决定词', role: 'tail'},
+            ],
+            tailA: '太饿了。',
+            tailB: '太香了。',
+            keyMatched: '🔑 Q×K 咬合成功！',
+            keySearching: '🔑 Query: 谁会饿？',
+            dashTitle: '词元注意力权重实时分配条 (Softmax 权重分布)',
+            dogRowLabel: '指向 [小狗]',
+            boneRowLabel: '指向 [骨头]',
+            badgeA: '句 A: 太饿了 → 小狗',
+            badgeB: '句 B: 太香了 → 骨头',
+            qkvA: 'Q-K-V 匹配结果：Query(“它”在找谁？) × Key(动物/会饿) ──▶ Value(把“小狗”含义注入【它】)',
+            qkvB: 'Q-K-V 匹配结果：Query(“它”在找谁？) × Key(食物/很香) ──▶ Value(把“骨头”含义注入【它】)',
+          },
+          l3: {
+            headerTitle: '第 3 课 · AI Agent 钢铁侠战甲：感知-规划-记忆-工具闭环',
+            badge1: 'Step 1 · 大脑启动 ReAct 齿轮 ──▶ 调用【天气 API 机械臂】',
+            badge2: 'Step 2 · 检测到周六下午雷阵雨 ──▶ 触发【反思 Correction 警报】修正计划',
+            badge3: 'Step 3 · 检索【RAG 记忆图书馆】──▶ 提取爷爷健康与喜好档案',
+            badge4: 'Step 4 · 调用【地图工具】核验直梯茶馆 ──▶ 输出完美闭环方案',
+            userTask: '👤 用户指令：“帮我规划周六带爷爷去公园的方案，要防晒且看天气”',
+            arrowWeather: '① GET /weather',
+            arrowReflect: '② Correction 重规划',
+            arrowRag: '③ Query Memory',
+            arrowMap: '④ Map Search',
+            coreTitle: 'LLM 大脑',
+            coreSub: 'ReAct 战甲中枢',
+            weatherTitle: '🦾 天气 API 机械臂',
+            weatherWait: '等待调用外部气象接口...',
+            weatherLine1: '上午：晴 25℃ ☀️（宜防晒）',
+            weatherLine2: '下午：雷阵雨 ⛈️ 暴雨预警！',
+            reflectTitle: '🚨 反思 Correction 警报',
+            reflectWait: '监控计划可行性与安全边界',
+            reflectLine1: '冲突！下午公园淋雨计划失效',
+            reflectLine2: '➔ 自动改为：上午户外 + 下午室内',
+            alertBanner: '⚠️ 触发反思纠偏：放弃全天露天方案！',
+            ragTitle: '📚 RAG 记忆图书馆',
+            ragWait: '长期个人记忆档案库',
+            ragLine1: '命中：爷爷膝盖怕潮湿爱喝茶',
+            ragLine2: '命中：最喜欢安静下象棋 ♟️',
+            mapTitle: '🗺️ 地图无障碍导航工具',
+            mapWait: '待检索附近室内与无障碍路线',
+            mapLine1: '锁定：园博古风茶馆（距北门150m）',
+            mapLine2: '♿ 配备直达电梯 · 室内干燥可对弈',
+            finalLine1: '✅ Agent 闭环方案：09:30 晴朗逛园(涂防晒+遮阳帽) ──▶ 11:45 走无障碍通道转入室内茶馆喝茶下棋！',
+            finalLine2: 'ReAct Closed Loop: Think → Tool(Weather) → Reflect(Rain Alert) → Memory(RAG) → Tool(Map) → Final Plan',
+          },
+        },
+        th: {
+          l1: {
+            headerTitle: 'บทที่ 1 · เครื่องตัด Tokenizer และตาชั่งเวกเตอร์ Embedding',
+            badge1: 'Step 1 · ประโยคเลื่อนเข้าสู่เครื่องตัดเลเซอร์ Tokenizer',
+            badge2: 'Step 2 · ตาชั่งคุณลักษณะ 4 มิติ (เทียบ [AI], [ราชา] และ [ราชินี])',
+            badge3: 'Step 3 · สมการเวกเตอร์มหัศจรรย์: ราชา - ผู้ชาย + ผู้หญิง = ราชินี',
+            chamberLabel: 'TOKENIZER LASER CHAMBER · ห้องตัดเลเซอร์ตัวต่อเลโก้',
+            rawSentence: 'AI เปลี่ยนโลกอนาคต',
+            tokens: [
+              {text: 'AI', id: '#2048', color: '#38BDF8', x: 305},
+              {text: 'เปลี่ยน', id: '#4102', color: '#818CF8', x: 525},
+              {text: 'โลก', id: '#7891', color: '#34D399', x: 745},
+              {text: 'อนาคต', id: '#5310', color: '#F472B6', x: 965},
+            ],
+            cardW: 176,
+            chamberW: 940,
+            dimHeader: 'ฉายคำศัพท์ลงบนตาชั่งความหมาย 4 มิติ (ค่าใกล้ 1.0 = มีคุณสมบัตินั้นมาก)',
+            legends: ['[AI]', '[ราชา]', '[ราชินี]'],
+            dimLabels: ['เทคโนโลยี', 'สิ่งมีชีวิต', 'ราชวงศ์', 'เพศ (หญิง)'],
+            axisX: 'แกนความหมาย X (มิติทางเพศ)',
+            axisY: 'แกนความหมาย Y (ความเป็นราชวงศ์)',
+            originLabel: 'จุดกำเนิด (0,0)',
+            vecKingArrow: '+ Vector(ราชา)',
+            vecKingTag: '[ราชา]',
+            vecManArrow: '- Vector(ผู้ชาย)',
+            vecWomanArrow: '+ Vector(ผู้หญิง)',
+            vecQueenTag: '= [ราชินี] ★',
+            formulaBar: 'Vector(ราชา) - Vector(ผู้ชาย) + Vector(ผู้หญิง) ≈ Vector(ราชินี)',
+          },
+          l2: {
+            headerTitle: 'บทที่ 2 · สปอตไลท์ Self-Attention: ทำไม "[มัน]" จึงรู้ว่าตัวเองหมายถึงใคร?',
+            badge1: 'Step 1 · สแกนแม่กุญแจ-ลูกกุญแจ Q-K-V: "[มัน]" กำลังหาเบาะแสบริบท',
+            badge2: 'Step 2 · กรณี A: "[มัน] หิวมาก" ──▶ ลำแสงทองส่องไปที่ "ลูกหมา" (88%)',
+            badge3: 'Step 3 · กรณี B พลิกความหมาย: "[มัน] หอมอร่อย" ──▶ ลำแสงฟ้าจับที่ "กระดูก" (92%)',
+            words: [
+              {text: 'ลูกหมา', x: 165, w: 166, key: 'Key: สัตว์/หิว', role: 'dog'},
+              {text: 'วิ่งไล่', x: 350, w: 156, key: 'Key: กริยา', role: 'mid'},
+              {text: 'กระดูก', x: 535, w: 166, key: 'Key: อาหาร/หอม', role: 'bone'},
+              {text: 'เพราะ', x: 715, w: 146, key: 'Key: คำเชื่อม', role: 'mid'},
+              {text: '[มัน]', x: 885, w: 146, key: 'Query ไฟฉาย', role: 'it'},
+              {text: 'หิวมาก', x: 1085, w: 206, key: 'คำกำหนดบริบท', role: 'tail'},
+            ],
+            tailA: 'หิวมาก',
+            tailB: 'หอมอร่อย',
+            keyMatched: '🔑 Q×K จับคู่สำเร็จ!',
+            keySearching: '🔑 Query: ใครหิว?',
+            dashTitle: 'แถบค่าน้ำหนักความสนใจแบบเรียลไทม์ (Softmax Distribution)',
+            dogRowLabel: 'ชี้ไปที่ [ลูกหมา]',
+            boneRowLabel: 'ชี้ไปที่ [กระดูก]',
+            badgeA: 'A: หิวมาก → ลูกหมา',
+            badgeB: 'B: หอมอร่อย → กระดูก',
+            qkvA: 'ผลลัพธ์ Q-K-V: Query("[มัน]" คือใคร?) × Key(สัตว์/หิว) ──▶ Value(ส่งต่อความหมาย "ลูกหมา" ให้ [มัน])',
+            qkvB: 'ผลลัพธ์ Q-K-V: Query("[มัน]" คือใคร?) × Key(อาหาร/หอม) ──▶ Value(ส่งต่อความหมาย "กระดูก" ให้ [มัน])',
+          },
+          l3: {
+            headerTitle: 'บทที่ 3 · AI Agent ชุดเกราะไอรอนแมน: วงจรรับรู้-วางแผน-จำ-ใช้เครื่องมือ',
+            badge1: 'Step 1 · สมองหมุนเฟือง ReAct ──▶ เรียกใช้ [แขนกล Weather API]',
+            badge2: 'Step 2 · ตรวจพบพายุฝนบ่ายวันเสาร์ ──▶ [เตือนภัย Self-Correction] ปรับแผนทันที',
+            badge3: 'Step 3 · ค้นหา [คลังความจำ RAG] ──▶ ดึงข้อมูลสุขภาพและความชอบของคุณปู่',
+            badge4: 'Step 4 · เรียก [เครื่องมือแผนที่] หาร้านชาในร่มมีลิฟต์ ──▶ ส่งมอบแผนสมบูรณ์',
+            userTask: '👤 คำสั่งผู้ใช้: "ช่วยวางแผนพาคุณปู่ไปสวนสาธารณะวันเสาร์ ต้องกันแดดและดูสภาพอากาศ"',
+            arrowWeather: '① GET /weather',
+            arrowReflect: '② ปรับแผนใหม่',
+            arrowRag: '③ ค้นความจำ RAG',
+            arrowMap: '④ ค้นหาแผนที่',
+            coreTitle: 'สมอง LLM',
+            coreSub: 'แกนกลาง ReAct',
+            weatherTitle: '🦾 แขนกล Weather API',
+            weatherWait: 'รอเชื่อมต่อ API สภาพอากาศจริง...',
+            weatherLine1: 'เช้า: แดดจ้า 25°C ☀️ (ต้องกันแดด)',
+            weatherLine2: 'บ่าย: พายุฝนฟ้าคะนอง ⛈️ เตือนฝนหนัก!',
+            reflectTitle: '🚨 แจ้งเตือน Self-Correction',
+            reflectWait: 'ตรวจสอบความเป็นไปได้และความปลอดภัย',
+            reflectLine1: 'ขัดแย้ง! แผนสวนบ่ายเปียกฝนใช้ไม่ได้',
+            reflectLine2: '➔ เปลี่ยนเป็น: เช้ากลางแจ้ง + บ่ายในร่ม',
+            alertBanner: '⚠️ ระบบทบทวนทำงาน: ยกเลิกแผนกลางแจ้งทั้งวัน!',
+            ragTitle: '📚 คลังความจำ RAG',
+            ragWait: 'คลังบันทึกความทรงจำส่วนตัวระยะยาว',
+            ragLine1: 'พบ: คุณปู่ชอบจิบชาในร่ม',
+            ragLine2: 'พบ: ข้อเข่าแพ้ชื้น & ชอบหมากรุก ♟️',
+            mapTitle: '🗺️ เครื่องมือแผนที่นำทาง',
+            mapWait: 'พร้อมค้นหาสถานที่ในร่มที่เข้าถึงง่าย',
+            mapLine1: 'เลือก: เรือนน้ำชาในสวน (ห่าง 150 ม.)',
+            mapLine2: '♿ มีลิฟต์ตรง · ในร่มแห้งเล่นหมากรุกได้',
+            finalLine1: '✅ แผนสมบูรณ์จาก Agent: 09:30 เดินสวนรับแดดอ่อน (ทากันแดด+หมวก) ──▶ 11:45 ขึ้นลิฟต์เข้าเรือนน้ำชาจิบชาเล่นหมากรุก!',
+            finalLine2: 'วงจรปิด ReAct: คิด → ใช้เครื่องมือ(อากาศ) → ทบทวน(เตือนฝน) → ความจำ(RAG) → ใช้เครื่องมือ(แผนที่) → แผนสำเร็จ',
+          },
+        },
+      };
+
+      const LESSONS = [
+        {
+          id: 'lesson1',
+          duration: 15.0,
+          stepTimes: [0.0, 4.8, 9.8],
+          i18n: {
+            en: {
+              tabTitle: 'L1 · Tokenizer & Vectors',
+              slides: [
+                {
+                  tag: 'Lesson 1 · Slide 1 / 2 · Tokenization',
+                  title: 'Computers Can\'t Read Sentences? Send Them to the "LEGO Brick Cutter"!',
+                  subtitle: 'Large Language Models don\'t see full paragraphs—only standardized, numbered building blocks called Tokens.',
+                  points: [
+                    'Humans read word by word; AI processes text as Tokens (high-frequency semantic bricks).',
+                    'The sentence "AI shapes our future" is sliced by the Tokenizer into ["AI", "shape", "s", "our", "future"].',
+                    'Every brick gets a unique vocabulary ID, such as #2048 for "AI" and #4102 for "shape".',
+                    'Smarter slicing lets AI grasp meaning accurately while saving massive compute.',
+                  ],
+                  emoji: '🧱',
+                  metaphorTitle: 'Classroom Metaphor: The LEGO Brick Factory',
+                  metaphorDesc:
+                    'Shoving an entire "word castle" straight into a computer jams the gears. Once the laser cutter slices it into standard LEGO bricks with part numbers, AI can assemble new ideas at lightning speed!',
+                  formula: '"AI shapes our future" ──▶ [#2048] [#4102] [#1084] [#7891] [#5310]',
+                },
+                {
+                  tag: 'Lesson 1 · Slide 2 / 2 · Word Embeddings',
+                  title: 'Words in Cosmic Coordinates: You Can Actually Do Math on Meanings!',
+                  subtitle: 'Embeddings give each Token multi-dimensional coordinates—similar meanings cluster together like stars.',
+                  points: [
+                    'Token IDs alone (#2048 vs #2049) show no similarity, so AI needs a "semantic balance scale".',
+                    'Each word is scored across hundreds of dimensions, e.g., [Tech, Life, Royalty, Gender].',
+                    'In vector space, "King" and "Queen" almost overlap in Royalty, differing mostly along Gender.',
+                    'Semantic vector magic: follow the meaning arrows to land directly on the target word!',
+                  ],
+                  emoji: '🌌',
+                  metaphorTitle: 'Classroom Metaphor: Cosmic Meaning Compass',
+                  metaphorDesc:
+                    'Every word is a star floating in the Universe of Meaning. Take the star "King", subtract the "Man" vector, and fly along the "Woman" path—your spaceship lands right on planet "Queen"!',
+                  formula: 'Vector(King) - Vector(Man) + Vector(Woman) ≈ Vector(Queen)',
+                },
+              ],
+              steps: [
+                {
+                  label: 'Step 1 · Tokenizer Cutter',
+                  note: '[Opening] Look at the screen! Humans read "AI shapes our future" instantly, but computers only understand numbers. Let\'s feed it into the glowing Tokenizer Laser Cutter—zap! It splits into 5 colorful LEGO Token bricks, each stamped with a vocabulary ID!',
+                  tip: '💡 Class Prompt: Ask students "Why did \'shapes\' split into \'shape\' + \'s\' instead of staying one brick?"',
+                },
+                {
+                  label: 'Step 2 · 4D Semantic Balance',
+                  note: '[Deep Dive] IDs alone aren\'t enough—how does AI know "King" and "Queen" are closely related? Check the 4D Semantic Balance: "AI" maxes out Tech, while "King" and "Queen" match closely in Life and Royalty, differing mainly on the 4th bar: Gender!',
+                  tip: '💡 Key Takeaway: Embedding = attaching a multi-dimensional semantic radar score to every token.',
+                },
+                {
+                  label: 'Step 3 · Vector Math Magic',
+                  note: '[Climax] Watch the magic happen! Once words become coordinate arrows, we can add and subtract meanings! Start with the gold [King] vector, subtract the dashed blue [Man] vector, add the pink [Woman] vector... Boom! It lands squarely on [Queen]!',
+                  tip: '💡 Quick Quiz: Ask the class "Vector(Paris) - Vector(France) + Vector(Thailand) = ?" (Bangkok!)',
+                },
+              ],
+            },
+            zh: {
+              tabTitle: '第 1 课 · Tokenizer 与向量天平',
+              slides: [
+                {
+                  tag: '第 1 课 · Slide 1 / 2 · 词元化 (Tokenization)',
+                  title: '计算机读不懂汉字？先送进“乐高积木切割机”！',
+                  subtitle: '大语言模型眼里没有整段文字，只有标准化编号的一块块积木（Token）。',
+                  points: [
+                    '人类按“字/词”阅读，AI 按 Token（高频语义积木）处理输入。',
+                    '一句“AI改变未来的世界”会被 Tokenizer 切成 ["AI", "改变", "未来", "的世界"]。',
+                    '每块积木在字典里都有唯一身份证号（Token ID），例如 #2048、#4102。',
+                    '切割颗粒度越精准，AI 理解语义和节省计算资源的能力就越强。',
+                  ],
+                  emoji: '🧱',
+                  metaphorTitle: '初中生比喻：乐高标准积木厂',
+                  metaphorDesc:
+                    '如果直接把一整座“汉字城堡”塞进计算机，机器会直接卡住；但只要用切割机拆成标准乐高零件并贴上零件编号，AI 就能像拼乐高一样快速组装新句子！',
+                  formula: '"AI改变未来的世界" ──▶ [#2048] [#4102] [#7891] [#5310]',
+                },
+                {
+                  tag: '第 1 课 · Slide 2 / 2 · 词嵌入 (Embedding)',
+                  title: '把文字放进宇宙坐标：词语竟然能做“加减法”！',
+                  subtitle: 'Embedding 为每个 Token 赋予多维语义坐标，含义越近的词在星空中离得越近。',
+                  points: [
+                    '光有 ID 还不够，#2048 和 #2049 看不出意思相似，所以需要“语义打分天平”。',
+                    '把一个词投射到成百上千个维度上：比如 [科技感、生命感、皇室度、性别度]。',
+                    '在向量空间里，“国王”和“女王”在皇室维度几乎重叠，只在性别维度方向相反。',
+                    '神奇的语义几何推演：顺着语义箭头走，就能精准算出未知词汇的位置！',
+                  ],
+                  emoji: '🌌',
+                  metaphorTitle: '初中生比喻：宇宙魔法罗盘',
+                  metaphorDesc:
+                    '每个汉字都是一颗悬浮在“意义宇宙”里的星星。只要把“国王”这颗星，减去代表“男性”的飞行向量，再顺着“女性”航道往前飞，你会惊奇地发现：飞船正正好好降落在“女王”星球上！',
+                  formula: 'Vector(国王) - Vector(男人) + Vector(女人) ≈ Vector(女王)',
+                },
+              ],
+              steps: [
+                {
+                  label: 'Step 1 · Tokenizer 切割机',
+                  note: '【开场导入】同学们请看大屏幕！人类一眼能读懂“AI改变未来的世界”，但计算机只认识数字。现在，我们把这句话送进发光的 Tokenizer 激光切割机，看激光咔嚓一声将它切成 4 块彩色 Token 乐高积木，并贴上词表身份证号！',
+                  tip: '💡 课堂互动：问学生“如果把‘未来的世界’拆成更小的词，需要几块积木？”',
+                },
+                {
+                  label: 'Step 2 · 4 维属性天平',
+                  note: '【概念进阶】切好编号还不够，计算机怎么知道“国王”和“女王”关系很近？看中间的 4 维语义天平：AI 在“科技感”拉满，而“国王”和“女王”在“生命感、皇室度”两根柱子几乎一样高，唯一的差别就在第四根“性别度”柱子上！',
+                  tip: '💡 板书要点：Embedding = 给每个词元挂上多维语义雷达分数。',
+                },
+                {
+                  label: 'Step 3 · 向量魔法算式',
+                  note: '【高潮演示】见证奇迹的时刻到了！当把词变成坐标箭头后，汉字居然可以做加减法！看金色箭头[国王]出发，减去蓝色虚线[男人]，再加上粉色箭头[女人]……啪！箭头终点精准命中闪闪发光的[女王]！这就是大模型理解类比和推理的底层数学秘密！',
+                  tip: '💡 延伸提问：考考学生“北京 - 中国 + 日本 = ？”（东京！）',
+                },
+              ],
+            },
+            th: {
+              tabTitle: 'บทที่ 1 · Tokenizer และเวกเตอร์',
+              slides: [
+                {
+                  tag: 'บทที่ 1 · สไลด์ 1 / 2 · การตัดคำ (Tokenization)',
+                  title: 'คอมพิวเตอร์อ่านประโยคไม่ออก? ส่งเข้า "เครื่องตัดตัวต่อเลโก้" กันเลย!',
+                  subtitle: 'ในสายตาของ AI ไม่มีประโยคยาวๆ มีเพียงชิ้นส่วนตัวต่อมาตรฐานที่มีรหัสประจำตัวเรียกว่า Token',
+                  points: [
+                    'มนุษย์อ่านทีละคำ แต่ AI ประมวลผลข้อความเป็น Token (ชิ้นส่วนความหมายย่อยที่ใช้บ่อย)',
+                    'ประโยค "AI เปลี่ยนโลกอนาคต" จะถูก Tokenizer ตัดเป็น ["AI", "เปลี่ยน", "โลก", "อนาคต"]',
+                    'ตัวต่อแต่ละชิ้นมีหมายเลขประจำตัวในพจนานุกรม (Token ID) เช่น #2048 และ #4102',
+                    'การตัดคำที่แม่นยำช่วยให้ AI เข้าใจความหมายได้ดีขึ้นและประหยัดพลังประมวลผล',
+                  ],
+                  emoji: '🧱',
+                  metaphorTitle: 'อุปมาในห้องเรียน: โรงงานตัวต่อเลโก้มาตรฐาน',
+                  metaphorDesc:
+                    'หากยัด "ปราสาทตัวอักษร" ทั้งหลังเข้าคอมพิวเตอร์ เครื่องจะค้างทันที แต่เมื่อใช้เลเซอร์ตัดเป็นชิ้นเลโก้มาตรฐานพร้อมติดรหัสชิ้นส่วน AI ก็ประกอบประโยคใหม่ได้รวดเร็วทันใจ!',
+                  formula: '"AI เปลี่ยนโลกอนาคต" ──▶ [#2048] [#4102] [#7891] [#5310]',
+                },
+                {
+                  tag: 'บทที่ 1 · สไลด์ 2 / 2 · การฝังคำ (Embedding)',
+                  title: 'วางคำศัพท์ลงบนพิกัดจักรวาล: คำศัพท์ "บวกลบ" กันได้จริง!',
+                  subtitle: 'Embedding กำหนดพิกัดหลายมิติให้ทุก Token คำที่ความหมายใกล้กันจะอยู่ใกล้กันในอวกาศความหมาย',
+                  points: [
+                    'แค่รหัส ID (#2048 กับ #2049) ยังบอกความคล้ายไม่ได้ จึงต้องมี "ตาชั่งให้คะแนนความหมาย"',
+                    'แต่ละคำถูกประเมินในหลายร้อยมิติ เช่น [เทคโนโลยี, สิ่งมีชีวิต, ราชวงศ์, เพศ]',
+                    'ในปริภูมิเวกเตอร์ "ราชา" กับ "ราชินี" มีมิติราชวงศ์แทบเท่ากัน ต่างกันหลักๆ ที่มิติเพศ',
+                    'เวทมนตร์เรขาคณิตของความหมาย: เดินตามลูกศรเวกเตอร์เพื่อคำนวณหาคำศัพท์ปลายทางได้แม่นยำ!',
+                  ],
+                  emoji: '🌌',
+                  metaphorTitle: 'อุปมาในห้องเรียน: เข็มทิศเวทมนตร์แห่งจักรวาล',
+                  metaphorDesc:
+                    'ทุกคำคือดวงดาวที่ลอยอยู่ใน "จักรวาลแห่งความหมาย" ลองนำดาว "ราชา" ลบด้วยเวกเตอร์ "ผู้ชาย" แล้วบินต่อตามเส้นทาง "ผู้หญิง" ยานอวกาศจะลงจอดบนดาว "ราชินี" พอดีเป๊ะ!',
+                  formula: 'Vector(ราชา) - Vector(ผู้ชาย) + Vector(ผู้หญิง) ≈ Vector(ราชินี)',
+                },
+              ],
+              steps: [
+                {
+                  label: 'Step 1 · เครื่องตัด Tokenizer',
+                  note: '[นำเข้าบทเรียน] ดูที่หน้าจอกันครับ! มนุษย์อ่าน "AI เปลี่ยนโลกอนาคต" ได้ทันที แต่คอมพิวเตอร์รู้จักแค่ตัวเลข ตอนนี้เราส่งประโยคเข้าเครื่องตัดเลเซอร์ Tokenizer แล้ว ฉับ! กลายเป็นตัวต่อเลโก้ Token 4 สีพร้อมรหัส ID ประจำตัว!',
+                  tip: '💡 ชวนนักเรียนคิด: ลองถามนักเรียนว่า "ทำไมภาษาไทยถึงต้องอาศัยเครื่องตัดคำมากกว่าภาษาที่มีเว้นวรรค?"',
+                },
+                {
+                  label: 'Step 2 · ตาชั่งคุณลักษณะ 4 มิติ',
+                  note: '[เจาะลึกแนวคิด] มีแค่ ID ยังไม่พอ AI รู้ได้อย่างไรว่า "ราชา" ใกล้เคียง "ราชินี"? ดูที่ตาชั่ง 4 มิติตรงกลาง: "AI" ได้คะแนนเทคโนโลยีเต็มเปี่ยม ส่วน "ราชา" และ "ราชินี" มีแท่งสิ่งมีชีวิตและราชวงศ์สูงพอๆ กัน ต่างกันชัดเจนที่แท่งที่ 4 คือมิติเพศ!',
+                  tip: '💡 สรุปกระดาน: Embedding = การติดคะแนนเรดาร์ความหมายหลายมิติให้กับทุก Token',
+                },
+                {
+                  label: 'Step 3 · สมการเวกเตอร์มหัศจรรย์',
+                  note: '[ช่วงไคลแมกซ์] มาดูปาฏิหาริย์กัน! เมื่อคำกลายเป็นลูกศรพิกัด เราสามารถบวกลบความหมายได้! เริ่มจากลูกศรทอง [ราชา] ลบด้วยเส้นประฟ้า [ผู้ชาย] แล้วบวกลูกศรชมพู [ผู้หญิง]... ปิ๊ง! ปลายลูกศรชี้ตรงไปที่ [ราชินี] อย่างแม่นยำ!',
+                  tip: '💡 คำถามท้าทาย: ถามนักเรียนว่า "Vector(กรุงเทพ) - Vector(ไทย) + Vector(ญี่ปุ่น) = ?" (โตเกียว!)',
+                },
+              ],
+            },
+          },
+          render: renderLesson1,
+        },
+        {
+          id: 'lesson2',
+          duration: 15.0,
+          stepTimes: [0.0, 4.8, 9.6],
+          i18n: {
+            en: {
+              tabTitle: 'L2 · Self-Attention',
+              slides: [
+                {
+                  tag: 'Lesson 2 · Slide 1 / 2 · The Context Challenge',
+                  title: 'Why Does the Same Word "it" Mean the Dog One Moment and the Bone the Next?',
+                  subtitle: 'Reading a word in isolation causes ambiguity—only by looking across the whole Context does AI grasp the true meaning.',
+                  points: [
+                    'Natural language is packed with pronouns (it, they, this) and ambiguous words (bank, apple, bat).',
+                    'Legacy rule-based programs look up static dictionaries and often misread who "it" refers to.',
+                    'Transformers introduced Self-Attention, letting every word scan the entire sentence simultaneously.',
+                    'Changing just one word at the end instantly shifts AI\'s spotlight across the whole sentence!',
+                  ],
+                  emoji: '🔦',
+                  metaphorTitle: 'Classroom Metaphor: Stage Super-Spotlight',
+                  metaphorDesc:
+                    'Imagine the sentence as a dark theater stage. "[it]" stands center stage and asks, "Who am I really?" Overhead spotlights swing 88% of their beam onto "dog"—swap the last word, and the beam whips to "bone"!',
+                  formula: 'Case A: ...because [it] was hungry (dog 88%)  vs  Case B: ...because [it] was tasty (bone 92%)',
+                },
+                {
+                  tag: 'Lesson 2 · Slide 2 / 2 · Q-K-V Lock & Key',
+                  title: 'The Secret Behind the Spotlight: Query, Key, and Value Trio',
+                  subtitle: 'A lightning-fast three-step dance: "Ask a Question → Match Name Tags → Absorb Meaning".',
+                  points: [
+                    'Query (Q): The question sent out by the current word—"Which partner has the traits I need?"',
+                    'Key (K): The name badge worn by each word—e.g. dog [Animal/Hungry], bone [Food/Tasty].',
+                    'Similarity Score: Try fitting Q into each K lock—higher match produces a thicker, brighter beam!',
+                    'Value (V): Streams the rich semantic essence of high-scoring words straight into "[it]"!',
+                  ],
+                  emoji: '🔐',
+                  metaphorTitle: 'Classroom Metaphor: Library Lock & Key',
+                  metaphorDesc:
+                    '"[it]" holds a search slip (Query) saying "animal that gets hungry" and checks everyone\'s name tag (Key). The dog\'s tag clicks open the lock, pouring its story (Value) into "[it]"!',
+                  formula: 'Attention(Q, K, V) = softmax( Q · Kᵀ ) × V',
+                },
+              ],
+              steps: [
+                {
+                  label: 'Step 1 · Q-K-V Scan',
+                  note: '[Setup] Look at this classic sentence: "The dog chased the bone because [it] was hungry." The purple "[it]" fires up its Query key, scanning the Key badges of every earlier word in the sentence!',
+                  tip: '💡 Point Out: Watch the badges under "dog" (Key: Animal/Hungry) and "bone" (Key: Food / Tasty).',
+                },
+                {
+                  label: 'Step 2 · Case A: Dog (88%)',
+                  note: '[Case A Locked] Since the ending says "hungry"—and bones can\'t get hungry!—the spotlight blasts a thick gold Bézier beam onto "dog", pushing its live weight bar to 88%, leaving only 12% on "bone".',
+                  tip: '💡 Key Insight: Thicker, brighter beam = higher attention weight assigned by the model.',
+                },
+                {
+                  label: 'Step 3 · Case B Flip: Bone (92%)',
+                  note: '[Case B Dramatic Flip] Now watch one-word magic: we flip the last word from "hungry" to "tasty"! Instantly the spotlight whips over in electric cyan at 92% onto "bone", fading "dog" into the background!',
+                  tip: '💡 Activity: Challenge students to invent a pair of sentences where one final word flips what "it" means.',
+                },
+              ],
+            },
+            zh: {
+              tabTitle: '第 2 课 · Self-Attention 探照灯',
+              slides: [
+                {
+                  tag: '第 2 课 · Slide 1 / 2 · 上下文语境痛点',
+                  title: '为什么同一个“它”，一会儿指小狗，一会儿指骨头？',
+                  subtitle: '孤立地看一个词永远会产生误解，只有联系上下文（Context）才能读懂灵魂。',
+                  points: [
+                    '中文和英文里充满了代词（它、这、那）和多义词（苹果、银行、打）。',
+                    '传统程序只能死板背词典，遇到代词“它”经常张冠李戴。',
+                    'Transformer 架构引入革命性的 Self-Attention（自注意力机制），让每个词都能环顾全句。',
+                    '哪怕只是改动句子末尾的一个字，AI 眼里的核心焦点也会在瞬间完成全局切换！',
+                  ],
+                  emoji: '🔦',
+                  metaphorTitle: '初中生比喻：舞台超级探照灯',
+                  metaphorDesc:
+                    '把整句话想象成一个漆黑的舞台，“它”站在舞台中央大喊：“请问谁才是真正的我？”这时头顶的探照灯会自动把 88% 的强光打向“小狗”；如果剧本最后一字改掉，光束瞬间猛扫向“骨头”！',
+                  formula: '情景 A: ...因为【它】太饿了 (小狗 88%)  vs  情景 B: ...因为【它】太香了 (骨头 92%)',
+                },
+                {
+                  tag: '第 2 课 · Slide 2 / 2 · Q-K-V 锁钥匹配',
+                  title: '探照灯背后秘密武器：Query、Key、Value 三重奏',
+                  subtitle: '一次精准的“提问 → 核对标签 → 提取内容”闪电配对过程。',
+                  points: [
+                    'Query（提问钥匙 Q）：代表当前词发出的灵魂拷问——“我在找具备什么特点的伙伴？”',
+                    'Key（身份标签 K）：每个词挂在胸前的名牌——比如小狗[动物/会饿]，骨头[食物/很香]。',
+                    '相似度打分：Q 钥匙和每个 K 锁孔试插，匹配度越高，注意力光束就越粗越亮！',
+                    'Value（内容载荷 V）：把高权重词携带的语义精华，顺着光束直接灌注给“它”！',
+                  ],
+                  emoji: '🔐',
+                  metaphorTitle: '初中生比喻：图书馆锁钥配对',
+                  metaphorDesc:
+                    '“它”拿着写有“会觉得饿的动物”的检索条（Query），去扫描前面同学胸前的名牌（Key）。小狗的名牌咔哒一声精准开锁，于是小狗把自己的故事（Value）传给了“它”！',
+                  formula: 'Attention(Q, K, V) = softmax( Q · Kᵀ ) × V',
+                },
+              ],
+              steps: [
+                {
+                  label: 'Step 1 · Q-K-V 锁钥扫描',
+                  note: '【原理铺垫】来看这句经典测试句：“小狗追着骨头跑，因为【它】太饿了。”现在紫色“【它】”亮起了 Query 提问钥匙，正在向全句发送扫描波，核对前面每一个词胸前的 Key 标签牌！',
+                  tip: '💡 引导观察：注意小狗头上的“Key: 动物/会饿”与骨头头上的“Key: 食物/很香”。',
+                },
+                {
+                  label: 'Step 2 · 句 A 聚焦小狗(88%)',
+                  note: '【情景 A 锁定】因为末尾写了“太饿了”，骨头不可能饿！于是探照灯爆发出一道粗壮的金色贝塞尔光束狠狠照亮“小狗”，下方连线强度条瞬间拉满到 88%！而骨头只分到微弱的 12% 余光。',
+                  tip: '💡 重点强调：光束越粗、光线越亮，代表 AI 分配的注意力权重数值越大！',
+                },
+                {
+                  label: 'Step 3 · 句 B 一字逆转(92%)',
+                  note: '【情景 B 双句震撼对比】现在魔法发生了——我只把最后一个字从“饿”改成“香”！看！“太香了”卡片一翻转，探照灯一瞬间甩尾切换焦点，电光青色的 92% 超强光束直接锁死“骨头”，小狗立刻退居幕后！这就是 Self-Attention 读懂语境的真实瞬间！',
+                  tip: '💡 互动练习：让学生自己造一对“一字之差改变指代”的中文句子。',
+                },
+              ],
+            },
+            th: {
+              tabTitle: 'บทที่ 2 · Self-Attention',
+              slides: [
+                {
+                  tag: 'บทที่ 2 · สไลด์ 1 / 2 · ปัญหาการเข้าใจบริบท',
+                  title: 'ทำไมคำว่า "[มัน]" คำเดียวกัน เดี๋ยวหมายถึงลูกหมา เดี๋ยวหมายถึงกระดูก?',
+                  subtitle: 'การมองคำเพียงคำเดียวแยกส่วนทำให้สับสน ต้องเชื่อมโยงบริบท (Context) ทั้งประโยคจึงจะเข้าใจแท้จริง',
+                  points: [
+                    'ภาษามนุษย์เต็มไปด้วยสรรพนาม (มัน, เขา, นี่) และคำหลายความหมาย',
+                    'โปรแกรมแบบเก่าเปิดดูแค่พจนานุกรมตายตัว จึงมักจับคู่สรรพนามผิดพลาดบ่อยครั้ง',
+                    'สถาปัตยกรรม Transformer สร้างกลไก Self-Attention ให้ทุกคำกวาดตามองเชื่อมโยงกันได้ทั้งประโยค',
+                    'แค่เปลี่ยนคำท้ายประโยคเพียงคำเดียว จุดโฟกัสของ AI ก็สลับเป้าหมายได้ในพริบตา!',
+                  ],
+                  emoji: '🔦',
+                  metaphorTitle: 'อุปมาในห้องเรียน: สปอตไลท์ซูเปอร์สตาร์บนเวที',
+                  metaphorDesc:
+                    'ลองจินตนาการว่าประโยคคือเวทีที่มืดมิด "[มัน]" ยืนอยู่กลางเวทีแล้วตะโกนถามว่า "ตกลงฉันคือใคร?" สปอตไลท์จะสาดแสง 88% ไปที่ "ลูกหมา" ทันที แต่พอเปลี่ยนคำท้ายประโยค ลำแสงก็พุ่งไปที่ "กระดูก" แทน!',
+                  formula: 'กรณี A: ...เพราะ [มัน] หิวมาก (ลูกหมา 88%)  vs  กรณี B: ...เพราะ [มัน] หอมอร่อย (กระดูก 92%)',
+                },
+                {
+                  tag: 'บทที่ 2 · สไลด์ 2 / 2 · การจับคู่ Query-Key-Value',
+                  title: 'อาวุธลับหลังสปอตไลท์: สามประสาน Query, Key และ Value',
+                  subtitle: 'กระบวนการจับคู่ความเร็วแสง: "ตั้งคำถาม → ตรวจป้ายชื่อ → ส่งมอบความหมาย"',
+                  points: [
+                    'Query (ลูกกุญแจถาม Q): คำถามที่คำปัจจุบันส่งออกไป — "ฉันกำลังตามหาคำที่มีลักษณะแบบไหน?"',
+                    'Key (ป้ายชื่อประจำตัว K): ป้ายที่ติดหน้าอกแต่ละคำ — เช่น ลูกหมา [สัตว์/หิว], กระดูก [อาหาร/หอม]',
+                    'ให้คะแนนความเข้ากัน: นำ Q ไปไขป้าย K ทุกคำ ยิ่งเข้ากันมาก ลำแสงความสนใจยิ่งหนาและสว่าง!',
+                    'Value (เนื้อหาความหมาย V): ส่งผ่านความหมายจากคำที่ได้น้ำหนักสูงเข้าไปเติมเต็มคำว่า "[มัน]"!',
+                  ],
+                  emoji: '🔐',
+                  metaphorTitle: 'อุปมาในห้องเรียน: จับคู่แม่กุญแจ-ลูกกุญแจในห้องสมุด',
+                  metaphorDesc:
+                    '"[มัน]" ถือบัตรคำถาม (Query) ที่เขียนว่า "สัตว์ที่หิวได้" ไปสแกนป้ายชื่อเพื่อนข้างหน้า (Key) ป้ายของลูกหมาคลิกล็อกพอดี ลูกหมาจึงส่งต่อเรื่องราวของตน (Value) ให้ "[มัน]" ทันที!',
+                  formula: 'Attention(Q, K, V) = softmax( Q · Kᵀ ) × V',
+                },
+              ],
+              steps: [
+                {
+                  label: 'Step 1 · สแกน Q-K-V',
+                  note: '[ปูพื้นฐาน] มาดูประโยคตัวอย่าง: "ลูกหมาวิ่งไล่กระดูกเพราะ [มัน] หิวมาก" คำว่า "[มัน]" สีม่วงกำลังเปิดลูกกุญแจ Query ส่องสแกนหาป้าย Key ของคำด้านหน้าทุกคำในประโยค!',
+                  tip: '💡 ชวนสังเกต: ดูป้ายใต้คำว่า "ลูกหมา" (Key: สัตว์/หิว) และ "กระดูก" (Key: อาหาร/หอม)',
+                },
+                {
+                  label: 'Step 2 · กรณี A โฟกัสลูกหมา (88%)',
+                  note: '[กรณี A] เพราะท้ายประโยคบอกว่า "หิวมาก" กระดูกหิวไม่ได้! สปอตไลท์จึงยิงลำแสงสีทองเส้นหนาไปที่ "ลูกหมา" แถบน้ำหนักด้านล่างพุ่งไป 88% ส่วนกระดูกเหลือเพียงแสงจางๆ 12%',
+                  tip: '💡 จุดเน้นสำคัญ: ลำแสงยิ่งหนาและสว่าง หมายถึงค่า Attention Weight ยิ่งสูง',
+                },
+                {
+                  label: 'Step 3 · กรณี B สลับไปกระดูก (92%)',
+                  note: '[กรณี B พลิกผัน] ดูเวทมนตร์ครับ! เราเปลี่ยนคำท้ายจาก "หิวมาก" เป็น "หอมอร่อย" เพียงคำเดียว การ์ดพลิกปุ๊บ ลำแสงสีฟ้า 92% พุ่งสลับไปจับที่ "กระดูก" ทันที นี่คือวินาทีที่ AI เข้าใจบริบทจริง!',
+                  tip: '💡 กิจกรรม: ให้นักเรียนลองแต่งประโยคภาษาไทยที่เปลี่ยนคำท้ายคำเดียวแล้ว "[มัน]" เปลี่ยนความหมาย',
+                },
+              ],
+            },
+          },
+          render: renderLesson2,
+        },
+        {
+          id: 'lesson3',
+          duration: 16.0,
+          stepTimes: [0.0, 4.0, 8.0, 12.0],
+          i18n: {
+            en: {
+              tabTitle: 'L3 · AI Agent',
+              slides: [
+                {
+                  tag: 'Lesson 3 · Slide 1 / 2 · From Brain to Actor',
+                  title: 'A Raw LLM Is a "Brain in a Jar"—An Agent Is Iron Man in Full Armor!',
+                  subtitle: 'If Tony Stark\'s mind is the LLM, then the radar sensors, jet thrusters, and memory HUD make up the AI Agent.',
+                  points: [
+                    'Plain chatbots have blind spots: they don\'t know today\'s weather or your local restaurant map.',
+                    'AI Agent = LLM Brain + Planning + Long-Term Memory (RAG) + External Tools.',
+                    'For complex, fuzzy goals, Agents break down tasks, call real APIs, and self-correct errors.',
+                    'Driven by the ReAct loop (Reasoning + Acting): think, act, observe, and fix mistakes on the fly!',
+                  ],
+                  emoji: '🦾',
+                  metaphorTitle: 'Classroom Metaphor: JARVIS & the Iron Man Suit',
+                  metaphorDesc:
+                    'A pure LLM is like a genius locked in a dark room who can only recite textbooks. Equip that genius with weather radar, a personal notebook, and robotic arms—and you get an Iron Man assistant!',
+                  formula: 'AI Agent = LLM Brain + Planning & Reflection + RAG Memory + Tool Loop',
+                },
+                {
+                  tag: 'Lesson 3 · Slide 2 / 2 · Closed-Loop Workflow',
+                  title: 'Mission: "Plan a Saturday Park Trip with Grandpa—Sun Protection & Weather"',
+                  subtitle: 'Watch the Agent execute "Weather Check → Storm Alert Reflection → RAG Memory → Map Search" in one closed loop!',
+                  points: [
+                    '1. Sense & Tool Use: Never guesses weather—extends the [Weather API Arm] and detects afternoon storms.',
+                    '2. Self-Correction: Notices "all-day sunny park" clashes with rain; rings the alert and rewrites the plan!',
+                    '3. Long-Term Memory (RAG): Checks family notes—Grandpa prefers indoor tea, hates dampness, loves chess.',
+                    '4. Smart Delivery: Uses [Map Tool] to book a morning stroll + indoor teahouse with an elevator!',
+                  ],
+                  emoji: '⚙️',
+                  metaphorTitle: 'Classroom Metaphor: A Butler Who Reads the Room',
+                  metaphorDesc:
+                    'A rigid script sees rain and marches Grandpa into the storm anyway. A smart Agent hits the "Reflection Brake", checks Grandpa\'s favorite tea spot in memory, and finds an accessible indoor plan!',
+                  formula: 'Think ──▶ Tool(Weather) ──▶ Reflect ──▶ Memory(RAG) ──▶ Tool(Map) ──▶ Answer',
+                },
+              ],
+              steps: [
+                {
+                  label: 'Step 1 · Boot & Weather API',
+                  note: '[Step 1: Tools] The user gives a multi-step goal: "Plan a Saturday park trip with Grandpa — sun protection & weather-ready." The central LLM spins up its ReAct gears and triggers the top-left [Weather API Arm]: sunny morning, but afternoon thunderstorms!',
+                  tip: '💡 Core Concept: LLMs cannot see live weather by themselves—they rely on Tool Use (APIs).',
+                },
+                {
+                  label: 'Step 2 · Self-Correction Alert',
+                  note: '[Step 2: Reflection] Hearing "thunderstorm", the bottom-left [Self-Correction Alert] flashes orange! The Agent catches the hazard of taking an elder outdoors in rain, hits the brakes, and pivots to "Morning Outdoors + Afternoon Indoors"!',
+                  tip: '💡 Key Difference: Static scripts fail blindly; Agents adapt through Reflection.',
+                },
+                {
+                  label: 'Step 3 · Query RAG Memory',
+                  note: '[Step 3: Personal Memory] Where should they go indoors? A noisy arcade or cinema? The brain queries the [RAG Memory Library] on the top right and retrieves personal context: "Grandpa prefers indoor tea, has sensitive knees, and loves chess!"',
+                  tip: '💡 Explaining RAG: Like giving an LLM a personal reference library it can flip through anytime.',
+                },
+                {
+                  label: 'Step 4 · Map Tool & Final Plan',
+                  note: '[Step 4: Closed Loop] Matching Grandpa\'s needs, the Agent instructs the bottom-right [Accessible Map Tool] to find a quiet garden teahouse with a direct elevator! Finally, the green output card delivers a complete morning-plus-afternoon plan.',
+                  tip: '💡 Wrap-Up: Sense → Plan → Remember → Act → Reflect forms a truly capable AI Agent.',
+                },
+              ],
+            },
+            zh: {
+              tabTitle: '第 3 课 · AI Agent 钢铁侠战甲',
+              slides: [
+                {
+                  tag: '第 3 课 · Slide 1 / 2 · 从大脑到行动者',
+                  title: '裸大模型只是“缸中之脑”，Agent 才是穿戴战甲的钢铁侠！',
+                  subtitle: '如果把托尼·斯塔克的大脑比作大模型，那么会查雷达、会飞行的战甲外设才是智能体（Agent）。',
+                  points: [
+                    '普通聊天 AI 的局限：不知道此时此刻的外界天气，也没法打开手机地图订餐厅。',
+                    'AI Agent = LLM 大脑 + 规划器（Planning） + 记忆库（Memory） + 工具手脚（Tools）。',
+                    '面对复杂模糊任务，Agent 会像工程师一样拆解步骤、调用外部 API 并自我检查纠错。',
+                    '核心工作法叫 ReAct（Reasoning 思考 + Acting 行动）：边想边做，错了立刻修正！',
+                  ],
+                  emoji: '🦾',
+                  metaphorTitle: '初中生比喻：贾维斯与钢铁战甲',
+                  metaphorDesc:
+                    '纯大模型就像被关在黑屋里的博学天才，全靠记忆背书答题；而给天才装上天气雷达传感器、个人记事本和机械手臂后，它就成了能帮你解决真实生活难题的钢铁侠管家！',
+                  formula: 'AI Agent = 大模型核心大脑 + 规划反思 + RAG 记忆 + 工具调用闭环',
+                },
+                {
+                  tag: '第 3 课 · Slide 2 / 2 · 复杂任务闭环流',
+                  title: '实战任务：“周六带爷爷去公园，要防晒且看天气”',
+                  subtitle: '看 Agent 如何一步步完成“查天气 → 遇暴雨触发反思 → 翻记忆档案 → 查地图”的精密闭环！',
+                  points: [
+                    '1. 感知与工具调用：不瞎猜天气，直接伸出【天气 API 机械臂】查到周六下午有雷阵雨。',
+                    '2. 反思纠错 (Correction)：发现原“公园防晒”计划与暴雨冲突，立刻警报响起推翻重写！',
+                    '3. 长期记忆检索 (RAG)：翻找家庭档案，记住“爷爷膝盖怕潮湿爱喝茶、喜欢下象棋”。',
+                    '4. 组合决策交付：结合【地图工具】挑选出“上午逛园 + 下午带直梯室内茶馆”的完美方案！',
+                  ],
+                  emoji: '⚙️',
+                  metaphorTitle: '初中生比喻：会看脸色也会兜底的管家',
+                  metaphorDesc:
+                    '笨机器人查到下雨还会死板带你去公园淋雨；聪明 Agent 会触发“反思警报”紧急刹车，再翻开小本本查爷爷喜欢什么，最后用地图找个有电梯的室内茶社完美兜底！',
+                  formula: 'Think ──▶ Tool(Weather) ──▶ Reflect ──▶ Memory(RAG) ──▶ Tool(Map) ──▶ Answer',
+                },
+              ],
+              steps: [
+                {
+                  label: 'Step 1 · 启动与天气 API',
+                  note: '【第 1 步：工具手脚】用户下单了一个复杂任务：“周六带爷爷去公园，要防晒且看天气”。中央 LLM 核心大脑的 ReAct 齿轮开始飞速转动，第一时间向左上角发射脉冲，伸出【天气 API 机械臂】抓取真实气象：糟糕，周六上午晴，下午居然有雷阵雨！',
+                  tip: '💡 强调概念：大模型本身不知道明天的天气，必须依靠 Tool Use（工具调用）。',
+                },
+                {
+                  label: 'Step 2 · 反思 Correction 警报',
+                  note: '【第 2 步：自我纠错】天气工具传回雷阵雨，左下角的【反思 Correction 警报器】瞬间亮起红橙警示！智能体自我察觉到“带老人下午暴晒淋雨”存在严重冲突，果断刹车推翻旧计划，自动改道寻找“晴朗时段 + 室内避雨场所”！',
+                  tip: '💡 关键区分：传统脚本死板往下跑，Agent 的核心灵性在于 Reflection（反思修正）。',
+                },
+                {
+                  label: 'Step 3 · 检索 RAG 记忆库',
+                  note: '【第 3 步：专属记忆】找室内避雨去哪好？网吧还是电影院？大脑转向右上角检索【RAG 记忆图书馆】，书页翻动间精确提取了家庭历史档案：“爷爷膝盖怕潮湿爱喝茶，平时最爱安静下象棋”！',
+                  tip: '💡 科普 RAG：就像给大模型配了一座随身携带、随时翻页的私人记忆图书馆。',
+                },
+                {
+                  label: 'Step 4 · 地图工具与闭环交付',
+                  note: '【第 4 步：完美闭环】结合爷爷膝盖怕潮与爱喝茶下棋的特点，大脑向右下方【地图导航工具】发出筛选指令，精准定位出带“直达无障碍电梯”的园博古风茶馆！最后下方绿卡输出完整闭环方案，既有上午防晒逛园，又有下午室内喝茶下棋，满分交付！',
+                  tip: '💡 总结升华：感知 → 规划 → 记忆 → 工具 → 反思，构成真正能干活的智能体闭环。',
+                },
+              ],
+            },
+            th: {
+              tabTitle: 'บทที่ 3 · AI Agent ชุดเกราะ',
+              slides: [
+                {
+                  tag: 'บทที่ 3 · สไลด์ 1 / 2 · จากสมองสู่ผู้ลงมือทำ',
+                  title: 'LLM เปล่าๆ ก็เหมือน "สมองในโหลแก้ว" — AI Agent คือไอรอนแมนสวมชุดเกราะ!',
+                  subtitle: 'ถ้าสมองของโทนี่ สตาร์กคือ LLM เรดาร์ตรวจอากาศ แขนกล และหน่วยความจำก็คืออุปกรณ์เสริมที่ทำให้กลายเป็น Agent',
+                  points: [
+                    'แชทบอททั่วไปมีข้อจำกัด: ไม่รู้สภาพอากาศวันนี้ และเปิดแผนที่จองร้านให้เราไม่ได้',
+                    'AI Agent = สมอง LLM + การวางแผน (Planning) + คลังความจำ (RAG) + เครื่องมือ (Tools)',
+                    'เมื่อเจอภารกิจซับซ้อน Agent จะแตกขั้นตอน เรียกใช้ API จริง และตรวจสอบแก้ไขข้อผิดพลาดเองได้',
+                    'หัวใจการทำงานคือวงจร ReAct (Reasoning คิด + Acting ทำ): คิดไปทำไป ผิดปุ๊บปรับแผนปั๊บ!',
+                  ],
+                  emoji: '🦾',
+                  metaphorTitle: 'อุปมาในห้องเรียน: จาร์วิสและชุดเกราะไอรอนแมน',
+                  metaphorDesc:
+                    'LLM เพียวๆ เหมือนอัจฉริยะที่ถูกขังในห้องมืด ตอบได้แค่สิ่งที่ท่องจำ แต่เมื่อติดเรดาร์สภาพอากาศ สมุดบันทึกส่วนตัว และแขนกลให้เขา เขาก็กลายเป็นผู้ช่วยไอรอนแมนที่แก้ปัญหาจริงได้!',
+                  formula: 'AI Agent = สมอง LLM + การวางแผนทบทวน + ความจำ RAG + วงจรเครื่องมือ',
+                },
+                {
+                  tag: 'บทที่ 3 · สไลด์ 2 / 2 · ภารกิจวงจรปิดครบสูตร',
+                  title: 'ภารกิจจริง: "วางแผนพาคุณปู่ไปสวนวันเสาร์ ต้องกันแดดและเช็กอากาศ"',
+                  subtitle: 'ดู Agent ทำงานทีละขั้น: "เช็กอากาศ → เจอฝนแล้วทบทวนแก้แผน → ค้นความจำ → เปิดแผนที่" จนครบวงจร!',
+                  points: [
+                    '1. รับรู้และใช้เครื่องมือ: ไม่เดาอากาศเอง ยื่น [แขนกล Weather API] ไปเช็กจนพบว่าบ่ายมีพายุฝนฟ้าคะนอง',
+                    '2. ทบทวนแก้ไข (Self-Correction): รู้ว่าแผนเดินสวนทั้งวันขัดกับฝน จึงเปิดสัญญาณเตือนแล้วเขียนแผนใหม่ทันที!',
+                    '3. ค้นความจำระยะยาว (RAG): เปิดแฟ้มครอบครัว พบว่า "คุณปู่ชอบจิบชาในร่ม ข้อเข่าแพ้ชื้น ชอบเล่นหมากรุก"',
+                    '4. ส่งมอบแผนสมบูรณ์: ใช้ [เครื่องมือแผนที่] หาเรือนน้ำชาที่มีลิฟต์ สรุปเป็นทริปเช้าเดินสวน-บ่ายจิบชา!',
+                  ],
+                  emoji: '⚙️',
+                  metaphorTitle: 'อุปมาในห้องเรียน: พ่อบ้านสุดฉลาดที่รู้ใจและมีแผนสำรอง',
+                  metaphorDesc:
+                    'บอททื่อๆ เห็นฝนก็จะยังพาไปตากฝนกลางสวน แต่ Agent ที่ฉลาดจะเหยียบเบรก "ทบทวนแผน" เปิดสมุดโน้ตดูความชอบของคุณปู่ แล้วใช้แผนที่หาร้านน้ำชาที่มีลิฟต์ให้จบอย่างสวยงาม!',
+                  formula: 'Think ──▶ Tool(Weather) ──▶ Reflect ──▶ Memory(RAG) ──▶ Tool(Map) ──▶ Answer',
+                },
+              ],
+              steps: [
+                {
+                  label: 'Step 1 · เริ่มทำงานและเช็ก Weather API',
+                  note: '[ขั้นที่ 1: ใช้เครื่องมือ] ผู้ใช้สั่งภารกิจซับซ้อน: "ช่วยวางแผนพาคุณปู่ไปสวนวันเสาร์ ต้องกันแดดและดูอากาศ" เฟือง ReAct ในสมอง LLM หมุนทันที และส่งสัญญาณไปที่ [แขนกล Weather API] มุมซ้ายบน พบว่าเช้าแดดดี แต่บ่ายมีพายุฝน!',
+                  tip: '💡 เน้นแนวคิด: LLM ไม่รู้สภาพอากาศปัจจุบันด้วยตัวเอง ต้องอาศัย Tool Use (การเรียกเครื่องมือ)',
+                },
+                {
+                  label: 'Step 2 · แจ้งเตือน Self-Correction',
+                  note: '[ขั้นที่ 2: ทบทวนแก้ไข] เมื่อรู้ว่าบ่ายฝนตก [แจ้งเตือน Self-Correction] มุมซ้ายล่างจะกระพริบสีส้มทันที! Agent ตระหนักว่าพาผู้สูงอายุตากฝนอันตราย จึงเบรกแผนเก่าและเปลี่ยนเป็น "เช้ากลางแจ้ง + บ่ายในร่ม"!',
+                  tip: '💡 ข้อแตกต่างสำคัญ: สคริปต์ทั่วไปทำงานทื่อๆ แต่ Agent มีความยืดหยุ่นจาก Reflection',
+                },
+                {
+                  label: 'Step 3 · ค้นหาคลังความจำ RAG',
+                  note: '[ขั้นที่ 3: ความจำส่วนตัว] แล้วตอนบ่ายหลบฝนที่ไหนดี? โรงหนังหรือร้านเกม? สมองหันไปค้น [คลังความจำ RAG] มุมขวาบน และดึงบันทึกครอบครัวออกมาได้แม่นยำ: "คุณปู่ชอบจิบชาในร่ม ข้อเข่าแพ้ชื้น และชอบเล่นหมากรุก"!',
+                  tip: '💡 อธิบาย RAG: เหมือนการมอบห้องสมุดส่วนตัวให้ AI เปิดค้นหาข้อมูลเฉพาะตัวได้ทุกเมื่อ',
+                },
+                {
+                  label: 'Step 4 · แผนที่และแผนสมบูรณ์',
+                  note: '[ขั้นที่ 4: ปิดวงจรสมบูรณ์] สมองสั่ง [เครื่องมือแผนที่นำทาง] มุมขวาล่างคัดกรองจนเจอเรือนน้ำชาในสวนที่มีลิฟต์และเงียบสงบ! สุดท้ายการ์ดสีเขียวด้านล่างสรุปแผนครบวงจร เช้าเดินสวนทากันแดด บ่ายขึ้นลิฟต์จิบชาเล่นหมากรุก!',
+                  tip: '💡 สรุปท้ายคาบ: รับรู้ → วางแผน → จำ → ใช้เครื่องมือ → ทบทวน คือหัวใจของ AI Agent ตัวจริง',
+                },
+              ],
+            },
+          },
+          render: renderLesson3,
+        },
+      ];
+
+      // =========================================================================
+      // 4. 三大课程的 60fps 程序化矢量渲染函数 (纯时间 t 驱动，支持任意拖拽)
+      // =========================================================================
+
+      /** 第 1 课渲染：Tokenizer 切割机 + 4 维天平 + 向量魔法算式 */
+      function renderLesson1(ctx, t) {
+        const c1 = (CANVAS_I18N[state.lang] || CANVAS_I18N.en).l1;
+        Draw.drawGridBg(ctx);
+
+        let badge = c1.badge1;
+        let badgeColor = '#38BDF8';
+        if (t >= 4.8 && t < 9.8) {
+          badge = c1.badge2;
+          badgeColor = '#FBBF24';
+        } else if (t >= 9.8) {
+          badge = c1.badge3;
+          badgeColor = '#F472B6';
+        }
+        Draw.drawStageHeader(ctx, c1.headerTitle, badge, badgeColor);
+
+        // ----- 阶段 1 (0s - 4.8s): Tokenizer 激光切割机 -----
+        const step1FadeOut = 1 - MathUtils.segment(t, 4.5, 5.1, MathUtils.easeInOutCubic);
+        if (step1FadeOut > 0.01) {
+          ctx.save();
+          ctx.globalAlpha = step1FadeOut;
+          const cy = 385;
+
+          // 工业切割机腔体与传送带轨道
+          Draw.drawCard(ctx, STAGE_W / 2, cy, c1.chamberW, 260, {
+            fill: 'rgba(15, 23, 42, 0.92)',
+            stroke: '#334155',
+            lineWidth: 2.5,
+            radius: 22,
+          });
+          ctx.fillStyle = '#64748B';
+          ctx.font = `700 13px ${FONT_MONO}`;
+          ctx.textAlign = 'center';
+          ctx.fillText(c1.chamberLabel, STAGE_W / 2, cy - 102);
+
+          // 传送带流光虚线
+          ctx.strokeStyle = 'rgba(56, 189, 248, 0.25)';
+          ctx.lineWidth = 2;
+          ctx.setLineDash([12, 10]);
+          ctx.lineDashOffset = -t * 45;
+          ctx.beginPath();
+          ctx.moveTo(190, cy + 88);
+          ctx.lineTo(1090, cy + 88);
+          ctx.stroke();
+          ctx.setLineDash([]);
+
+          // 原句胶囊滑入 (0.0 -> 1.1s)
+          const slideIn = MathUtils.segment(t, 0.0, 1.1, MathUtils.easeOutCubic);
+          const rawX = MathUtils.lerp(-260, STAGE_W / 2, slideIn);
+          const rawAlpha = 1 - MathUtils.segment(t, 2.3, 2.75);
+          if (rawAlpha > 0.01) {
+            Draw.drawCard(ctx, rawX, cy, 560, 92, {
+              fill: '#1E293B',
+              stroke: '#38BDF8',
+              lineWidth: 2.5,
+              radius: 16,
+              glow: 14,
+              alpha: rawAlpha,
+            });
+            ctx.save();
+            ctx.globalAlpha = rawAlpha * step1FadeOut;
+            ctx.fillStyle = '#F8FAFC';
+            Draw.fitFont(ctx, c1.rawSentence, 500, 34, 20, '700', FONT_SANS);
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(c1.rawSentence, rawX, cy);
+            ctx.restore();
+          }
+
+          // 激光切割束扫过 (1.15 -> 2.45s)
+          const laserProg = MathUtils.segment(t, 1.15, 2.45, MathUtils.easeInOutCubic);
+          if (t >= 1.1 && t <= 2.65) {
+            const laserAlpha =
+              MathUtils.segment(t, 1.1, 1.25) * (1 - MathUtils.segment(t, 2.42, 2.65));
+            const lx = MathUtils.lerp(330, 950, laserProg);
+            ctx.save();
+            ctx.globalAlpha = laserAlpha * step1FadeOut;
+            ctx.strokeStyle = '#22D3EE';
+            ctx.lineWidth = 4;
+            ctx.shadowColor = '#22D3EE';
+            ctx.shadowBlur = 24;
+            ctx.beginPath();
+            ctx.moveTo(lx, cy - 82);
+            ctx.lineTo(lx, cy + 82);
+            ctx.stroke();
+
+            // 切割火花粒子
+            for (let s = 0; s < 6; s++) {
+              const ang = t * 18 + s * 1.1;
+              const dist = 12 + ((t * 90 + s * 17) % 28);
+              ctx.fillStyle = s % 2 === 0 ? '#FBBF24' : '#38BDF8';
+              ctx.beginPath();
+              ctx.arc(lx + Math.cos(ang) * dist, cy + Math.sin(ang) * (dist * 0.8), 2.5, 0, Math.PI * 2);
+              ctx.fill();
+            }
+            ctx.restore();
+          }
+
+          // 切分后弹出的彩色 Token 乐高积木 (2.4 -> 4.6s，支持 4 块或 5 块自适应)
+          const cardW = c1.cardW;
+          const studW = Math.round(cardW * 0.19);
+          const studGap = Math.round(cardW * 0.08);
+          const badgeW = Math.round(cardW * 0.64);
+          c1.tokens.forEach((tok, idx) => {
+            const delay = 2.38 + idx * 0.14;
+            const popT = MathUtils.segment(t, delay, delay + 0.72);
+            if (popT <= 0.01) return;
+            const springScale = MathUtils.spring(popT, 240, 15);
+            const yOffset = MathUtils.lerp(0, Math.sin(t * 2.4 + idx) * 5, MathUtils.clamp01((t - 3.3) / 0.8));
+
+            ctx.save();
+            ctx.globalAlpha = step1FadeOut * Math.min(1, popT * 3);
+            ctx.translate(tok.x, cy + yOffset);
+            ctx.scale(springScale, springScale);
+
+            // 乐高顶部凸点装饰
+            ctx.fillStyle = tok.color;
+            Draw.roundRectPath(ctx, -studGap - studW, -64, studW, 12, 4);
+            ctx.fill();
+            Draw.roundRectPath(ctx, studGap, -64, studW, 12, 4);
+            ctx.fill();
+
+            // 积木主体
+            Draw.drawCard(ctx, 0, 0, cardW, 108, {
+              fill: '#0F172A',
+              stroke: tok.color,
+              lineWidth: 3,
+              radius: 15,
+              glow: 16,
+            });
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillStyle = '#F8FAFC';
+            Draw.fitFont(ctx, tok.text, cardW - 22, 28, 16, '700', FONT_SANS);
+            ctx.fillText(tok.text, 0, -14);
+
+            // ID 徽章
+            Draw.roundRectPath(ctx, -badgeW / 2, 14, badgeW, 26, 8);
+            ctx.fillStyle = tok.color + '30';
+            ctx.fill();
+            ctx.fillStyle = tok.color;
+            ctx.font = `700 13px ${FONT_MONO}`;
+            ctx.fillText(`ID ${tok.id}`, 0, 27);
+            ctx.restore();
+          });
+
+          ctx.restore();
+        }
+
+        // ----- 阶段 2 (4.8s - 9.8s): 4 维属性天平 -----
+        const step2Fade =
+          MathUtils.segment(t, 4.75, 5.3, MathUtils.easeOutCubic) *
+          (1 - MathUtils.segment(t, 9.5, 10.05, MathUtils.easeInOutCubic));
+        if (step2Fade > 0.01) {
+          ctx.save();
+          ctx.globalAlpha = step2Fade;
+
+          // 外框架
+          Draw.drawCard(ctx, STAGE_W / 2, 405, 1060, 445, {
+            fill: 'rgba(13, 20, 36, 0.94)',
+            stroke: '#334155',
+            lineWidth: 2,
+            radius: 22,
+          });
+
+          // 图例指示
+          ctx.textAlign = 'center';
+          Draw.fitFont(ctx, c1.dimHeader, 980, 17, 13, '600', FONT_SANS);
+          ctx.fillStyle = '#CBD5E1';
+          ctx.fillText(c1.dimHeader, STAGE_W / 2, 218);
+
+          const legends = [
+            {name: c1.legends[0], color: '#38BDF8', x: 445},
+            {name: c1.legends[1], color: '#FBBF24', x: 635},
+            {name: c1.legends[2], color: '#F472B6', x: 825},
+          ];
+          legends.forEach((lg) => {
+            ctx.fillStyle = lg.color;
+            Draw.roundRectPath(ctx, lg.x - 42, 240, 14, 14, 4);
+            ctx.fill();
+            ctx.textAlign = 'left';
+            ctx.font = `700 15px ${FONT_SANS}`;
+            ctx.fillText(lg.name, lg.x - 20, 252);
+          });
+
+          // 顶部装饰物理天平
+          const balanceProgress = MathUtils.segment(t, 5.2, 7.6);
+          const tiltAngle = Math.sin(balanceProgress * Math.PI * 3) * (1 - balanceProgress) * 0.14;
+          ctx.save();
+          ctx.translate(STAGE_W / 2, 294);
+          ctx.strokeStyle = '#64748B';
+          ctx.lineWidth = 3;
+          ctx.beginPath();
+          ctx.moveTo(0, 20);
+          ctx.lineTo(0, 0);
+          ctx.stroke();
+          ctx.rotate(tiltAngle);
+          ctx.strokeStyle = '#94A3B8';
+          ctx.beginPath();
+          ctx.moveTo(-120, 0);
+          ctx.lineTo(120, 0);
+          ctx.stroke();
+          ctx.fillStyle = '#FBBF24';
+          ctx.beginPath();
+          ctx.arc(-120, 0, 7, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.fillStyle = '#F472B6';
+          ctx.beginPath();
+          ctx.arc(120, 0, 7, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.restore();
+
+          // 4 根特征柱组
+          const dims = [
+            {label: c1.dimLabels[0], ai: 0.96, king: 0.12, queen: 0.14, color: '#38BDF8', x: 295},
+            {label: c1.dimLabels[1], ai: 0.18, king: 0.88, queen: 0.89, color: '#34D399', x: 525},
+            {label: c1.dimLabels[2], ai: 0.06, king: 0.95, queen: 0.94, color: '#FBBF24', x: 755},
+            {label: c1.dimLabels[3], ai: 0.50, king: 0.08, queen: 0.93, color: '#F472B6', x: 985},
+          ];
+
+          dims.forEach((dim, i) => {
+            const grow = MathUtils.segment(t, 5.2 + i * 0.28, 6.4 + i * 0.28, MathUtils.easeOutBack);
+            const barBaseY = 560;
+            const maxH = 215;
+
+            // 底槽背板
+            Draw.roundRectPath(ctx, dim.x - 78, barBaseY - maxH - 12, 156, maxH + 20, 12);
+            ctx.fillStyle = 'rgba(30, 41, 59, 0.55)';
+            ctx.fill();
+
+            const items = [
+              {val: dim.ai, color: '#38BDF8', dx: -44},
+              {val: dim.king, color: '#FBBF24', dx: 0},
+              {val: dim.queen, color: '#F472B6', dx: 44},
+            ];
+
+            items.forEach((it) => {
+              const h = Math.max(4, it.val * maxH * Math.max(0, grow));
+              const bx = dim.x + it.dx - 16;
+              const by = barBaseY - h;
+
+              ctx.save();
+              ctx.fillStyle = it.color;
+              ctx.shadowColor = it.color;
+              ctx.shadowBlur = 10;
+              Draw.roundRectPath(ctx, bx, by, 32, h, 6);
+              ctx.fill();
+              ctx.restore();
+
+              if (grow > 0.35) {
+                ctx.fillStyle = '#E2E8F0';
+                ctx.font = `700 12px ${FONT_MONO}`;
+                ctx.textAlign = 'center';
+                ctx.fillText((it.val * Math.min(1, grow)).toFixed(2), dim.x + it.dx, by - 9);
+              }
+            });
+
+            ctx.fillStyle = dim.color;
+            Draw.fitFont(ctx, dim.label, 175, 17, 13, '700', FONT_SANS);
+            ctx.textAlign = 'center';
+            ctx.fillText(dim.label, dim.x, barBaseY + 26);
+          });
+
+          ctx.restore();
+        }
+
+        // ----- 阶段 3 (9.8s - 15.0s): 向量魔法算式 -----
+        const step3Fade = MathUtils.segment(t, 9.7, 10.25, MathUtils.easeOutCubic);
+        if (step3Fade > 0.01) {
+          ctx.save();
+          ctx.globalAlpha = step3Fade;
+
+          Draw.drawCard(ctx, STAGE_W / 2, 412, 1060, 460, {
+            fill: 'rgba(13, 20, 36, 0.95)',
+            stroke: '#334155',
+            lineWidth: 2,
+            radius: 22,
+          });
+
+          // 坐标区裁剪与子网格
+          const origin = {x: 340, y: 555};
+          ctx.save();
+          ctx.strokeStyle = 'rgba(51, 65, 85, 0.45)';
+          ctx.lineWidth = 1;
+          for (let gx = 180; gx <= 1080; gx += 45) {
+            ctx.beginPath();
+            ctx.moveTo(gx, 210);
+            ctx.lineTo(gx, 585);
+            ctx.stroke();
+          }
+          for (let gy = 225; gy <= 585; gy += 45) {
+            ctx.beginPath();
+            ctx.moveTo(180, gy);
+            ctx.lineTo(1080, gy);
+            ctx.stroke();
+          }
+          ctx.restore();
+
+          // 主坐标轴
+          Draw.drawArrow(ctx, 220, origin.y, 1060, origin.y, 1, {
+            color: '#64748B',
+            lineWidth: 2,
+            headSize: 10,
+            glow: 0,
+          });
+          Draw.drawArrow(ctx, origin.x, 585, origin.x, 220, 1, {
+            color: '#64748B',
+            lineWidth: 2,
+            headSize: 10,
+            glow: 0,
+          });
+          ctx.fillStyle = '#94A3B8';
+          ctx.font = `600 14px ${FONT_SANS}`;
+          ctx.textAlign = 'right';
+          ctx.fillText(c1.axisX, 1055, origin.y + 24);
+          ctx.textAlign = 'left';
+          ctx.fillText(c1.axisY, origin.x + 14, 232);
+
+          // 原点标记
+          ctx.fillStyle = '#CBD5E1';
+          ctx.beginPath();
+          ctx.arc(origin.x, origin.y, 6, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.font = `600 13px ${FONT_MONO}`;
+          ctx.textAlign = 'right';
+          ctx.fillText(c1.originLabel, origin.x - 14, origin.y + 22);
+
+          // 向量关键坐标点
+          const pKing = {x: 610, y: 280};
+          const pAfterMinusMan = {x: 745, y: 365};
+          const pQueen = {x: 915, y: 265};
+
+          // 1) [国王] 向量 (10.2 -> 11.4s)
+          const p1 = MathUtils.segment(t, 10.2, 11.4, MathUtils.easeInOutCubic);
+          Draw.drawArrow(ctx, origin.x, origin.y, pKing.x, pKing.y, p1, {
+            color: '#FBBF24',
+            lineWidth: 5,
+            headSize: 14,
+            label: c1.vecKingArrow,
+            labelOffset: {x: -36, y: -18},
+          });
+          if (p1 > 0.9) {
+            Draw.drawCard(ctx, pKing.x, pKing.y - 26, 98, 30, {
+              fill: '#451A03',
+              stroke: '#FBBF24',
+              radius: 8,
+            });
+            ctx.fillStyle = '#FBBF24';
+            ctx.font = `700 15px ${FONT_SANS}`;
+            ctx.textAlign = 'center';
+            ctx.fillText(c1.vecKingTag, pKing.x, pKing.y - 21);
+          }
+
+          // 2) - [男人] 向量 (11.5 -> 12.6s)
+          const p2 = MathUtils.segment(t, 11.5, 12.6, MathUtils.easeInOutCubic);
+          Draw.drawArrow(ctx, pKing.x, pKing.y, pAfterMinusMan.x, pAfterMinusMan.y, p2, {
+            color: '#38BDF8',
+            lineWidth: 4,
+            dash: [10, 7],
+            headSize: 13,
+            label: c1.vecManArrow,
+            labelOffset: {x: 66, y: -14},
+          });
+
+          // 3) + [女人] 向量 (12.7 -> 13.8s)
+          const p3 = MathUtils.segment(t, 12.7, 13.8, MathUtils.easeInOutCubic);
+          Draw.drawArrow(ctx, pAfterMinusMan.x, pAfterMinusMan.y, pQueen.x, pQueen.y, p3, {
+            color: '#F472B6',
+            lineWidth: 5,
+            headSize: 14,
+            label: c1.vecWomanArrow,
+            labelOffset: {x: 62, y: 18},
+          });
+
+          // 4) 命中 [女王] 落点星标脉冲 (13.8 -> 15.0s)
+          const pHit = MathUtils.segment(t, 13.75, 14.45);
+          if (pHit > 0.01) {
+            const hitScale = MathUtils.spring(pHit, 220, 14);
+            // 原点到女王的最终合成虚线对照向量
+            Draw.drawArrow(ctx, origin.x, origin.y, pQueen.x, pQueen.y, pHit, {
+              color: 'rgba(244, 114, 182, 0.45)',
+              lineWidth: 2.5,
+              dash: [6, 6],
+              headSize: 11,
+              glow: 0,
+            });
+
+            ctx.save();
+            ctx.translate(pQueen.x, pQueen.y);
+            const ringR = 16 + ((t * 26) % 28);
+            ctx.strokeStyle = `rgba(244, 114, 182, ${1 - ((t * 26) % 28) / 28})`;
+            ctx.lineWidth = 2.5;
+            ctx.beginPath();
+            ctx.arc(0, 0, ringR, 0, Math.PI * 2);
+            ctx.stroke();
+
+            ctx.scale(hitScale, hitScale);
+            ctx.fillStyle = '#F472B6';
+            ctx.shadowColor = '#F472B6';
+            ctx.shadowBlur = 22;
+            ctx.beginPath();
+            ctx.arc(0, 0, 14, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.strokeStyle = '#FDF2F8';
+            ctx.lineWidth = 3;
+            ctx.stroke();
+
+            Draw.drawCard(ctx, 0, -40, 148, 34, {
+              fill: '#500724',
+              stroke: '#F472B6',
+              radius: 10,
+              glow: 16,
+            });
+            ctx.fillStyle = '#FDF2F8';
+            ctx.font = `700 16px ${FONT_SANS}`;
+            ctx.textAlign = 'center';
+            ctx.fillText(c1.vecQueenTag, 0, -34);
+            ctx.restore();
+
+            // 魔法公式条
+            ctx.font = `700 16px ${FONT_MONO}`;
+            const formulaW = Math.min(980, Math.max(660, Draw.measureWidth(ctx, c1.formulaBar) + 70));
+            Draw.drawCard(ctx, STAGE_W / 2, 612, formulaW, 44, {
+              fill: '#1E293B',
+              stroke: '#F472B6',
+              lineWidth: 2,
+              radius: 12,
+              alpha: pHit,
+            });
+            ctx.save();
+            ctx.globalAlpha = pHit * step3Fade;
+            ctx.fillStyle = '#F8FAFC';
+            Draw.fitFont(ctx, c1.formulaBar, formulaW - 36, 16, 12, '700', FONT_MONO);
+            ctx.textAlign = 'center';
+            ctx.fillText(c1.formulaBar, STAGE_W / 2, 618);
+            ctx.restore();
+          }
+
+          ctx.restore();
+        }
+      }
+
+      /** 第 2 课渲染：Self-Attention 探照灯对比与 Q-K-V 锁钥匹配 */
+      function renderLesson2(ctx, t) {
+        const c2 = (CANVAS_I18N[state.lang] || CANVAS_I18N.en).l2;
+        Draw.drawGridBg(ctx);
+
+        const isScenarioB = t >= 9.6;
+        let badge = c2.badge1;
+        let badgeColor = '#A78BFA';
+        if (t >= 4.8 && t < 9.6) {
+          badge = c2.badge2;
+          badgeColor = '#FBBF24';
+        } else if (isScenarioB) {
+          badge = c2.badge3;
+          badgeColor = '#22D3EE';
+        }
+        Draw.drawStageHeader(ctx, c2.headerTitle, badge, badgeColor);
+
+        // 计算动画关键插值
+        const beamAppear = MathUtils.segment(t, 1.0, 2.3, MathUtils.easeInOutCubic);
+        const focusA = MathUtils.segment(t, 4.6, 5.7, MathUtils.easeInOutCubic);
+        const switchB = MathUtils.segment(t, 9.6, 10.7, MathUtils.easeInOutCubic);
+
+        // 当前权重值实时平滑插值
+        const dogWeight = MathUtils.lerp(
+          MathUtils.lerp(0.22, 0.88, focusA),
+          0.08,
+          switchB
+        );
+        const boneWeight = MathUtils.lerp(
+          MathUtils.lerp(0.18, 0.12, focusA),
+          0.92,
+          switchB
+        );
+
+        const words = c2.words;
+        const dogWord = words.find((w) => w.role === 'dog') || words[0];
+        const boneWord = words.find((w) => w.role === 'bone') || words[1];
+        const itWord = words.find((w) => w.role === 'it') || words[words.length - 2];
+        const midWords = words.filter((w) => w.role === 'mid');
+        const wordY = 330;
+
+        // 1. 绘制从 [it] 射向各个词的贝塞尔探照灯光束
+        const itOrigin = {x: itWord.x, y: wordY - 46};
+
+        // 弱背景关联线
+        if (beamAppear > 0.05) {
+          midWords.forEach((mw) => {
+            Draw.drawAttentionBeam(
+              ctx,
+              itOrigin,
+              {x: (itOrigin.x + mw.x) / 2, y: 215},
+              {x: (itOrigin.x + mw.x) / 2, y: 215},
+              {x: mw.x, y: wordY - 42},
+              beamAppear,
+              {color: 'rgba(148, 163, 184, 0.25)', lineWidth: 2, alpha: 0.45, showParticles: false}
+            );
+          });
+        }
+
+        // 射向 dog 的光束
+        const dogCp1 = {x: MathUtils.lerp(itOrigin.x, dogWord.x, 0.25), y: 135};
+        const dogCp2 = {x: MathUtils.lerp(itOrigin.x, dogWord.x, 0.75), y: 135};
+        const dogEnd = {x: dogWord.x, y: wordY - 48};
+        Draw.drawAttentionBeam(ctx, itOrigin, dogCp1, dogCp2, dogEnd, beamAppear, {
+          color: '#FBBF24',
+          lineWidth: 2 + dogWeight * 14,
+          alpha: 0.25 + dogWeight * 0.75,
+          time: t,
+          showParticles: dogWeight > 0.4,
+        });
+
+        // 射向 bone 的光束
+        const boneCp1 = {x: MathUtils.lerp(itOrigin.x, boneWord.x, 0.25), y: 180};
+        const boneCp2 = {x: MathUtils.lerp(itOrigin.x, boneWord.x, 0.75), y: 180};
+        const boneEnd = {x: boneWord.x, y: wordY - 48};
+        Draw.drawAttentionBeam(ctx, itOrigin, boneCp1, boneCp2, boneEnd, beamAppear, {
+          color: '#22D3EE',
+          lineWidth: 2 + boneWeight * 14,
+          alpha: 0.25 + boneWeight * 0.75,
+          time: t,
+          showParticles: boneWeight > 0.4,
+        });
+
+        // 光束权重悬浮标签
+        if (beamAppear > 0.6) {
+          const dogPct = Math.round(dogWeight * 100);
+          const bonePct = Math.round(boneWeight * 100);
+          const dogMid = Draw.cubicPoint(itOrigin, dogCp1, dogCp2, dogEnd, 0.55);
+          const boneMid = Draw.cubicPoint(itOrigin, boneCp1, boneCp2, boneEnd, 0.52);
+          ctx.save();
+          ctx.textAlign = 'center';
+          ctx.font = `800 16px ${FONT_MONO}`;
+          ctx.fillStyle = '#FBBF24';
+          ctx.fillText(`${dogPct}%`, dogMid.x, dogMid.y - 16);
+          ctx.fillStyle = '#22D3EE';
+          ctx.fillText(`${bonePct}%`, boneMid.x, boneMid.y - 14);
+          ctx.restore();
+        }
+
+        // 2. 绘制词元卡片
+        words.forEach((item) => {
+          let stroke = '#334155';
+          let fill = '#0F172A';
+          let glow = 0;
+          let scale = 1;
+          let displayWord = item.text;
+
+          if (item.role === 'dog') {
+            if (dogWeight > 0.45) {
+              stroke = '#FBBF24';
+              fill = '#231A09';
+              glow = 20 * dogWeight;
+              scale = 1 + 0.08 * dogWeight;
+            }
+          } else if (item.role === 'bone') {
+            if (boneWeight > 0.45) {
+              stroke = '#22D3EE';
+              fill = '#082636';
+              glow = 22 * boneWeight;
+              scale = 1 + 0.08 * boneWeight;
+            }
+          } else if (item.role === 'it') {
+            stroke = '#A78BFA';
+            fill = '#1E1B4B';
+            glow = 18;
+          } else if (item.role === 'tail') {
+            const flipScaleX = switchB > 0 && switchB < 1 ? Math.abs(Math.cos(switchB * Math.PI)) : 1;
+            scale = flipScaleX;
+            displayWord = switchB >= 0.5 ? c2.tailB : c2.tailA;
+            stroke = switchB >= 0.5 ? '#22D3EE' : '#F472B6';
+            fill = switchB >= 0.5 ? '#082F49' : '#31102A';
+            glow = 14;
+          }
+
+          ctx.save();
+          ctx.translate(item.x, wordY);
+          if (item.role === 'tail') {
+            ctx.scale(scale, 1);
+          } else {
+            ctx.scale(scale, scale);
+          }
+
+          Draw.drawCard(ctx, 0, 0, item.w, 86, {
+            fill,
+            stroke,
+            lineWidth: glow > 0 ? 3 : 2,
+            radius: 15,
+            glow,
+          });
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.fillStyle = item.role === 'mid' ? '#94A3B8' : '#F8FAFC';
+          Draw.fitFont(ctx, displayWord, item.w - 14, 24, 15, '700', FONT_SANS);
+          ctx.fillText(displayWord, 0, -10);
+
+          ctx.fillStyle =
+            item.role === 'dog'
+              ? '#FBBF24'
+              : item.role === 'bone'
+                ? '#22D3EE'
+                : item.role === 'it'
+                  ? '#C4B5FD'
+                  : '#64748B';
+          Draw.fitFont(ctx, item.key, item.w - 10, 11.5, 9, '600', FONT_MONO);
+          ctx.fillText(item.key, 0, 24);
+          ctx.restore();
+        });
+
+        // 3. Q-K-V 锁钥匹配飞行动画
+        const keyFly = MathUtils.segment(t, 1.4, 4.2, MathUtils.easeInOutCubic);
+        if (t >= 1.3 && t <= 4.7) {
+          const flyAlpha = 1 - MathUtils.segment(t, 4.2, 4.7);
+          const kx = MathUtils.lerp(itWord.x, dogWord.x, keyFly);
+          const ky = wordY + 58;
+          ctx.save();
+          ctx.globalAlpha = flyAlpha;
+          Draw.drawCard(ctx, kx, ky, 210, 32, {
+            fill: '#312E81',
+            stroke: '#A78BFA',
+            radius: 10,
+            glow: 12,
+          });
+          ctx.fillStyle = '#F8FAFC';
+          const keyLabel = keyFly > 0.8 ? c2.keyMatched : c2.keySearching;
+          Draw.fitFont(ctx, keyLabel, 192, 13, 10.5, '700', FONT_SANS);
+          ctx.textAlign = 'center';
+          ctx.fillText(keyLabel, kx, ky + 4);
+          ctx.restore();
+        }
+
+        // 4. 底部词元连线强度条仪表盘 + 双句对比卡片
+        Draw.drawCard(ctx, STAGE_W / 2, 515, 1080, 148, {
+          fill: 'rgba(13, 20, 36, 0.94)',
+          stroke: '#334155',
+          radius: 18,
+        });
+
+        ctx.textAlign = 'left';
+        ctx.font = `700 15px ${FONT_SANS}`;
+        ctx.fillStyle = '#CBD5E1';
+        ctx.fillText(c2.dashTitle, 128, 466);
+
+        // 指向 dog 进度条
+        ctx.fillStyle = '#FBBF24';
+        Draw.fitFont(ctx, c2.dogRowLabel, 138, 16, 12, '700', FONT_SANS);
+        ctx.fillText(c2.dogRowLabel, 128, 505);
+        Draw.roundRectPath(ctx, 278, 492, 560, 22, 11);
+        ctx.fillStyle = '#1E293B';
+        ctx.fill();
+        Draw.roundRectPath(ctx, 278, 492, Math.max(18, 560 * dogWeight), 22, 11);
+        ctx.fillStyle = '#FBBF24';
+        ctx.fill();
+        ctx.font = `700 18px ${FONT_MONO}`;
+        ctx.fillText(`${Math.round(dogWeight * 100)}%`, 854, 508);
+
+        // 指向 bone 进度条
+        ctx.fillStyle = '#22D3EE';
+        Draw.fitFont(ctx, c2.boneRowLabel, 138, 16, 12, '700', FONT_SANS);
+        ctx.fillText(c2.boneRowLabel, 128, 548);
+        Draw.roundRectPath(ctx, 278, 535, 560, 22, 11);
+        ctx.fillStyle = '#1E293B';
+        ctx.fill();
+        Draw.roundRectPath(ctx, 278, 535, Math.max(18, 560 * boneWeight), 22, 11);
+        ctx.fillStyle = '#22D3EE';
+        ctx.fill();
+        ctx.font = `700 18px ${FONT_MONO}`;
+        ctx.fillText(`${Math.round(boneWeight * 100)}%`, 854, 551);
+
+        // 情景对比缩略徽章
+        Draw.drawCard(ctx, 1046, 504, 214, 36, {
+          fill: !isScenarioB ? 'rgba(251, 191, 36, 0.2)' : '#1E293B',
+          stroke: !isScenarioB ? '#FBBF24' : '#475569',
+          radius: 9,
+        });
+        ctx.textAlign = 'center';
+        Draw.fitFont(ctx, c2.badgeA, 196, 13, 10.5, '700', FONT_SANS);
+        ctx.fillStyle = !isScenarioB ? '#FBBF24' : '#94A3B8';
+        ctx.fillText(c2.badgeA, 1046, 509);
+
+        Draw.drawCard(ctx, 1046, 548, 214, 36, {
+          fill: isScenarioB ? 'rgba(34, 211, 238, 0.2)' : '#1E293B',
+          stroke: isScenarioB ? '#22D3EE' : '#475569',
+          radius: 9,
+        });
+        Draw.fitFont(ctx, c2.badgeB, 196, 13, 10.5, '700', FONT_SANS);
+        ctx.fillStyle = isScenarioB ? '#22D3EE' : '#94A3B8';
+        ctx.fillText(c2.badgeB, 1046, 553);
+
+        // 底部 QKV 公式阐释条
+        Draw.drawCard(ctx, STAGE_W / 2, 624, 1080, 46, {
+          fill: '#1E293B',
+          stroke: isScenarioB ? '#22D3EE' : '#818CF8',
+          radius: 12,
+        });
+        ctx.fillStyle = '#E2E8F0';
+        const qkvSummary = isScenarioB ? c2.qkvB : c2.qkvA;
+        Draw.fitFont(ctx, qkvSummary, 1030, 15, 11.5, '600', FONT_SANS);
+        ctx.textAlign = 'center';
+        ctx.fillText(qkvSummary, STAGE_W / 2, 629);
+      }
+
+      /** 第 3 课渲染：AI Agent 钢铁侠战甲闭环 */
+      function renderLesson3(ctx, t) {
+        const c3 = (CANVAS_I18N[state.lang] || CANVAS_I18N.en).l3;
+        Draw.drawGridBg(ctx);
+
+        let badge = c3.badge1;
+        let badgeColor = '#38BDF8';
+        if (t >= 4.0 && t < 8.0) {
+          badge = c3.badge2;
+          badgeColor = '#FB923C';
+        } else if (t >= 8.0 && t < 12.0) {
+          badge = c3.badge3;
+          badgeColor = '#A78BFA';
+        } else if (t >= 12.0) {
+          badge = c3.badge4;
+          badgeColor = '#34D399';
+        }
+        Draw.drawStageHeader(ctx, c3.headerTitle, badge, badgeColor);
+
+        // 顶部用户任务卡
+        Draw.drawCard(ctx, STAGE_W / 2, 162, 980, 46, {
+          fill: '#0F172A',
+          stroke: '#475569',
+          radius: 12,
+        });
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillStyle = '#E2E8F0';
+        Draw.fitFont(ctx, c3.userTask, 940, 16, 12, '600', FONT_SANS);
+        ctx.fillText(c3.userTask, STAGE_W / 2, 162);
+
+        const core = {x: STAGE_W / 2, y: 375};
+        const p1 = MathUtils.segment(t, 0.5, 2.2, MathUtils.easeInOutCubic);
+        const p2 = MathUtils.segment(t, 4.1, 5.8, MathUtils.easeInOutCubic);
+        const p3 = MathUtils.segment(t, 8.1, 9.8, MathUtils.easeInOutCubic);
+        const p4 = MathUtils.segment(t, 12.1, 13.7, MathUtils.easeInOutCubic);
+        const pOut = MathUtils.segment(t, 13.8, 15.1, MathUtils.easeOutCubic);
+
+        // 四个外设节点坐标 (卡片宽 316)
+        const cardW = 316;
+        const nodes = {
+          weather: {x: 232, y: 280},
+          reflect: {x: 232, y: 470},
+          rag: {x: 1048, y: 280},
+          map: {x: 1048, y: 470},
+        };
+
+        // 连接脉冲线
+        Draw.drawArrow(ctx, core.x - 95, core.y - 35, nodes.weather.x + cardW / 2 + 6, nodes.weather.y, p1, {
+          color: '#38BDF8',
+          lineWidth: 4,
+          label: c3.arrowWeather,
+          labelOffset: {x: 0, y: -16},
+        });
+
+        Draw.drawArrow(ctx, nodes.reflect.x + cardW / 2 + 6, nodes.reflect.y, core.x - 95, core.y + 35, p2, {
+          color: '#FB923C',
+          lineWidth: 4,
+          dash: [9, 6],
+          label: c3.arrowReflect,
+          labelOffset: {x: 0, y: 22},
+        });
+
+        Draw.drawArrow(ctx, core.x + 95, core.y - 35, nodes.rag.x - cardW / 2 - 6, nodes.rag.y, p3, {
+          color: '#A78BFA',
+          lineWidth: 4,
+          label: c3.arrowRag,
+          labelOffset: {x: 0, y: -16},
+        });
+
+        Draw.drawArrow(ctx, core.x + 95, core.y + 35, nodes.map.x - cardW / 2 - 6, nodes.map.y, p4, {
+          color: '#34D399',
+          lineWidth: 4,
+          label: c3.arrowMap,
+          labelOffset: {x: 0, y: 22},
+        });
+
+        Draw.drawArrow(ctx, core.x, core.y + 102, core.x, 560, pOut, {
+          color: '#FBBF24',
+          lineWidth: 5,
+        });
+
+        // 中心 ReAct 双层旋转机械齿轮 + 弧形反应堆大脑
+        const gearAngle = t * 0.95;
+        Draw.drawGear(ctx, core.x, core.y, 92, 14, gearAngle, '#38BDF8', 0.85);
+        Draw.drawGear(ctx, core.x, core.y, 68, 10, -gearAngle * 1.4, '#818CF8', 0.75);
+
+        ctx.save();
+        ctx.translate(core.x, core.y);
+        ctx.fillStyle = '#0B1120';
+        ctx.strokeStyle = badgeColor;
+        ctx.lineWidth = 3.5;
+        ctx.shadowColor = badgeColor;
+        ctx.shadowBlur = 24;
+        ctx.beginPath();
+        ctx.arc(0, 0, 56, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+        ctx.shadowBlur = 0;
+
+        ctx.textAlign = 'center';
+        ctx.fillStyle = '#F8FAFC';
+        Draw.fitFont(ctx, c3.coreTitle, 96, 17, 13, '700', FONT_SANS);
+        ctx.fillText(c3.coreTitle, 0, -8);
+        ctx.fillStyle = badgeColor;
+        Draw.fitFont(ctx, c3.coreSub, 98, 12, 10, '700', FONT_MONO);
+        ctx.fillText(c3.coreSub, 0, 14);
+        ctx.restore();
+
+        // 工具 1：天气 API 机械臂
+        const wActive = t >= 1.6;
+        const wScale = wActive ? MathUtils.spring(MathUtils.segment(t, 1.6, 2.5), 220, 15) : 1;
+        Draw.drawCard(ctx, nodes.weather.x, nodes.weather.y, cardW, 108, {
+          fill: wActive ? '#082F49' : '#0F172A',
+          stroke: wActive ? '#38BDF8' : '#334155',
+          lineWidth: wActive ? 3 : 2,
+          glow: wActive ? 18 : 0,
+          alpha: wActive ? 1 : 0.45,
+          scale: wScale,
+        });
+        ctx.save();
+        ctx.globalAlpha = wActive ? 1 : 0.5;
+        ctx.textAlign = 'center';
+        ctx.fillStyle = '#38BDF8';
+        Draw.fitFont(ctx, c3.weatherTitle, cardW - 24, 17, 13, '700', FONT_SANS);
+        ctx.fillText(c3.weatherTitle, nodes.weather.x, nodes.weather.y - 22);
+        ctx.fillStyle = '#E2E8F0';
+        const wMsg = wActive ? c3.weatherLine1 : c3.weatherWait;
+        Draw.fitFont(ctx, wMsg, cardW - 24, 14, 11, '600', FONT_SANS);
+        ctx.fillText(wMsg, nodes.weather.x, nodes.weather.y + 6);
+        if (wActive) {
+          ctx.fillStyle = '#FB923C';
+          Draw.fitFont(ctx, c3.weatherLine2, cardW - 24, 14, 11, '700', FONT_SANS);
+          ctx.fillText(c3.weatherLine2, nodes.weather.x, nodes.weather.y + 30);
+        }
+        ctx.restore();
+
+        // 工具 2：反思 Correction 警报器
+        const rActive = t >= 4.2;
+        const alarmPulse = rActive && t < 8.0 ? 0.5 + 0.5 * Math.sin(t * 14) : 0;
+        Draw.drawCard(ctx, nodes.reflect.x, nodes.reflect.y, cardW, 108, {
+          fill: rActive ? '#431407' : '#0F172A',
+          stroke: rActive ? '#FB923C' : '#334155',
+          lineWidth: rActive ? 3 : 2,
+          glow: rActive ? 16 + alarmPulse * 14 : 0,
+          alpha: rActive ? 1 : 0.4,
+        });
+        ctx.save();
+        ctx.globalAlpha = rActive ? 1 : 0.45;
+        ctx.textAlign = 'center';
+        ctx.fillStyle = '#FB923C';
+        Draw.fitFont(ctx, c3.reflectTitle, cardW - 24, 17, 13, '700', FONT_SANS);
+        ctx.fillText(c3.reflectTitle, nodes.reflect.x, nodes.reflect.y - 20);
+        ctx.fillStyle = '#FFEDD5';
+        const rMsg = rActive ? c3.reflectLine1 : c3.reflectWait;
+        Draw.fitFont(ctx, rMsg, cardW - 24, 14, 11, '600', FONT_SANS);
+        ctx.fillText(rMsg, nodes.reflect.x, nodes.reflect.y + 8);
+        if (rActive) {
+          ctx.fillStyle = '#FBBF24';
+          Draw.fitFont(ctx, c3.reflectLine2, cardW - 24, 13, 11, '700', FONT_SANS);
+          ctx.fillText(c3.reflectLine2, nodes.reflect.x, nodes.reflect.y + 31);
+        }
+        ctx.restore();
+
+        // 悬浮警报提示徽章 (4.6s - 7.8s)
+        if (t >= 4.6 && t <= 7.9) {
+          const alP = MathUtils.segment(t, 4.6, 5.2) * (1 - MathUtils.segment(t, 7.4, 7.9));
+          Draw.drawCard(ctx, core.x, 232, 430, 38, {
+            fill: '#7C2D12',
+            stroke: '#FB923C',
+            radius: 10,
+            glow: 20,
+            alpha: alP,
+          });
+          ctx.save();
+          ctx.globalAlpha = alP;
+          ctx.textAlign = 'center';
+          ctx.fillStyle = '#FFEDD5';
+          Draw.fitFont(ctx, c3.alertBanner, 404, 14, 11, '700', FONT_SANS);
+          ctx.fillText(c3.alertBanner, core.x, 237);
+          ctx.restore();
+        }
+
+        // 工具 3：RAG 记忆图书馆
+        const ragActive = t >= 8.4;
+        const ragScale = ragActive ? MathUtils.spring(MathUtils.segment(t, 8.4, 9.3), 220, 15) : 1;
+        Draw.drawCard(ctx, nodes.rag.x, nodes.rag.y, cardW, 108, {
+          fill: ragActive ? '#2E1065' : '#0F172A',
+          stroke: ragActive ? '#A78BFA' : '#334155',
+          lineWidth: ragActive ? 3 : 2,
+          glow: ragActive ? 18 : 0,
+          alpha: ragActive ? 1 : 0.45,
+          scale: ragScale,
+        });
+        ctx.save();
+        ctx.globalAlpha = ragActive ? 1 : 0.5;
+        ctx.textAlign = 'center';
+        ctx.fillStyle = '#C4B5FD';
+        Draw.fitFont(ctx, c3.ragTitle, cardW - 24, 17, 13, '700', FONT_SANS);
+        ctx.fillText(c3.ragTitle, nodes.rag.x, nodes.rag.y - 22);
+        ctx.fillStyle = '#EDE9FE';
+        const ragMsg = ragActive ? c3.ragLine1 : c3.ragWait;
+        Draw.fitFont(ctx, ragMsg, cardW - 24, 14, 11, '600', FONT_SANS);
+        ctx.fillText(ragMsg, nodes.rag.x, nodes.rag.y + 6);
+        if (ragActive) {
+          ctx.fillStyle = '#34D399';
+          Draw.fitFont(ctx, c3.ragLine2, cardW - 24, 14, 11, '700', FONT_SANS);
+          ctx.fillText(c3.ragLine2, nodes.rag.x, nodes.rag.y + 30);
+        }
+        ctx.restore();
+
+        // 工具 4：地图无障碍工具
+        const mapActive = t >= 12.4;
+        const mapScale = mapActive ? MathUtils.spring(MathUtils.segment(t, 12.4, 13.3), 220, 15) : 1;
+        Draw.drawCard(ctx, nodes.map.x, nodes.map.y, cardW, 108, {
+          fill: mapActive ? '#064E3B' : '#0F172A',
+          stroke: mapActive ? '#34D399' : '#334155',
+          lineWidth: mapActive ? 3 : 2,
+          glow: mapActive ? 18 : 0,
+          alpha: mapActive ? 1 : 0.45,
+          scale: mapScale,
+        });
+        ctx.save();
+        ctx.globalAlpha = mapActive ? 1 : 0.5;
+        ctx.textAlign = 'center';
+        ctx.fillStyle = '#34D399';
+        Draw.fitFont(ctx, c3.mapTitle, cardW - 24, 17, 13, '700', FONT_SANS);
+        ctx.fillText(c3.mapTitle, nodes.map.x, nodes.map.y - 22);
+        ctx.fillStyle = '#ECFDF5';
+        const mapMsg = mapActive ? c3.mapLine1 : c3.mapWait;
+        Draw.fitFont(ctx, mapMsg, cardW - 24, 14, 11, '600', FONT_SANS);
+        ctx.fillText(mapMsg, nodes.map.x, nodes.map.y + 6);
+        if (mapActive) {
+          ctx.fillStyle = '#6EE7B7';
+          Draw.fitFont(ctx, c3.mapLine2, cardW - 24, 14, 11, '700', FONT_SANS);
+          ctx.fillText(c3.mapLine2, nodes.map.x, nodes.map.y + 30);
+        }
+        ctx.restore();
+
+        // 底部最终行动方案输出面板
+        const resAlpha = MathUtils.segment(t, 14.1, 15.1, MathUtils.easeOutCubic);
+        if (resAlpha > 0.01) {
+          Draw.drawCard(ctx, STAGE_W / 2, 622, 1120, 104, {
+            fill: 'rgba(6, 78, 59, 0.92)',
+            stroke: '#34D399',
+            lineWidth: 2.5,
+            radius: 16,
+            glow: 20,
+            alpha: resAlpha,
+          });
+          ctx.save();
+          ctx.globalAlpha = resAlpha;
+          ctx.textAlign = 'center';
+          ctx.fillStyle = '#ECFDF5';
+          Draw.fitFont(ctx, c3.finalLine1, 1070, 18, 12.5, '700', FONT_SANS);
+          ctx.fillText(c3.finalLine1, STAGE_W / 2, 606);
+          ctx.fillStyle = '#A7F3D0';
+          Draw.fitFont(ctx, c3.finalLine2, 1070, 13, 10.5, '600', FONT_MONO);
+          ctx.fillText(c3.finalLine2, STAGE_W / 2, 642);
+          ctx.restore();
+        }
+      }
+
+      // =========================================================================
+      // 5. 播放器与交互控制器 (支持 EN / ZH / TH 三语同步与 postMessage)
+      // =========================================================================
+      const state = {
+        lang: resolveInitialLang(),
+        lessonIndex: 0,
+        mode: 'ppt', // 'ppt' | 'anim'
+        pptSlideIndex: 0,
+        currentTime: 0,
+        isPlaying: false,
+        speed: 1,
+        notesOpen: true,
+        isDragging: false,
+        lastFrameTs: 0,
+      };
+
+      const el = {
+        appShell: document.getElementById('appShell'),
+        brandTitle: document.getElementById('brandTitle'),
+        brandBadgeText: document.getElementById('brandBadgeText'),
+        lessonTabs: document.getElementById('lessonTabs'),
+        langSwitch: document.getElementById('langSwitch'),
+        modeSwitch: document.getElementById('modeSwitch'),
+        btnModePpt: document.getElementById('btnModePpt'),
+        btnModeAnim: document.getElementById('btnModeAnim'),
+        btnFullscreen: document.getElementById('btnFullscreen'),
+        pptView: document.getElementById('pptView'),
+        canvasView: document.getElementById('canvasView'),
+        pptTag: document.getElementById('pptTag'),
+        pptTitle: document.getElementById('pptTitle'),
+        pptSubtitle: document.getElementById('pptSubtitle'),
+        pptPageIndicator: document.getElementById('pptPageIndicator'),
+        pptConceptHeading: document.getElementById('pptConceptHeading'),
+        pptPoints: document.getElementById('pptPoints'),
+        pptEmoji: document.getElementById('pptEmoji'),
+        pptMetaphorTitle: document.getElementById('pptMetaphorTitle'),
+        pptMetaphorDesc: document.getElementById('pptMetaphorDesc'),
+        pptFormula: document.getElementById('pptFormula'),
+        btnPptPrev: document.getElementById('btnPptPrev'),
+        btnPptNext: document.getElementById('btnPptNext'),
+        btnEnterAnim: document.getElementById('btnEnterAnim'),
+        btnEnterAnimText: document.getElementById('btnEnterAnimText'),
+        btnBackToPpt: document.getElementById('btnBackToPpt'),
+        stepPills: document.getElementById('stepPills'),
+        canvasContainer: document.getElementById('canvasContainer'),
+        animCanvas: document.getElementById('animCanvas'),
+        btnStepPrev: document.getElementById('btnStepPrev'),
+        btnPlayPause: document.getElementById('btnPlayPause'),
+        btnStepNext: document.getElementById('btnStepNext'),
+        btnReplay: document.getElementById('btnReplay'),
+        scrubberTrack: document.getElementById('scrubberTrack'),
+        scrubberRail: document.getElementById('scrubberRail'),
+        scrubberFill: document.getElementById('scrubberFill'),
+        scrubberThumb: document.getElementById('scrubberThumb'),
+        keyframeMarkers: document.getElementById('keyframeMarkers'),
+        timeDisplay: document.getElementById('timeDisplay'),
+        stepStatusText: document.getElementById('stepStatusText'),
+        speedGroup: document.getElementById('speedGroup'),
+        btnToggleNotes: document.getElementById('btnToggleNotes'),
+        notesDrawer: document.getElementById('notesDrawer'),
+        notesHeading: document.getElementById('notesHeading'),
+        notesStepTag: document.getElementById('notesStepTag'),
+        notesBody: document.getElementById('notesBody'),
+        notesTip: document.getElementById('notesTip'),
+      };
+
+      const ctx = el.animCanvas.getContext('2d');
+
+      function getUi() {
+        return UI_I18N[state.lang] || UI_I18N.en;
+      }
+
+      function getCurrentLesson() {
+        return LESSONS[state.lessonIndex];
+      }
+
+      function getLessonContent(lesson = getCurrentLesson()) {
+        return lesson.i18n[state.lang] || lesson.i18n.en;
+      }
+
+      function getLessonSteps(lesson = getCurrentLesson()) {
+        const content = getLessonContent(lesson);
+        return lesson.stepTimes.map((time, idx) => ({
+          time,
+          ...content.steps[idx],
+        }));
+      }
+
+      function getActiveStepIndex() {
+        const steps = getLessonSteps();
+        let activeIdx = 0;
+        for (let i = 0; i < steps.length; i++) {
+          if (state.currentTime + 0.05 >= steps[i].time) activeIdx = i;
+        }
+        return activeIdx;
+      }
+
+      function applyLangUI() {
+        const ui = getUi();
+        document.documentElement.lang = ui.htmlLang;
+        document.title = ui.docTitle;
+
+        el.brandTitle.textContent = ui.brandTitle;
+        el.brandBadgeText.textContent = ui.brandBadge;
+        el.lessonTabs.setAttribute('aria-label', ui.lessonAria);
+        el.modeSwitch.setAttribute('aria-label', ui.modeAria);
+        el.btnModePpt.textContent = ui.modePpt;
+        el.btnModeAnim.textContent = ui.modeAnim;
+        el.btnFullscreen.textContent = ui.fullscreen;
+        el.btnFullscreen.title = ui.fullscreenTitle;
+        el.pptConceptHeading.textContent = ui.pptConceptHeading;
+        el.btnPptPrev.textContent = ui.pptPrev;
+        el.btnPptNext.textContent = ui.pptNext;
+        el.btnEnterAnimText.textContent = ui.enterAnim;
+        el.btnBackToPpt.textContent = ui.backToPpt;
+        el.btnStepPrev.textContent = ui.stepPrev;
+        el.btnStepPrev.title = ui.stepPrevTitle;
+        el.btnPlayPause.title = ui.playTitle;
+        el.btnStepNext.textContent = ui.stepNext;
+        el.btnStepNext.title = ui.stepNextTitle;
+        el.btnReplay.textContent = ui.replay;
+        el.btnReplay.title = ui.replayTitle;
+        el.speedGroup.title = ui.speedTitle;
+        el.btnToggleNotes.textContent = ui.notesBtn;
+        el.notesHeading.textContent = ui.notesHeading;
+
+        el.lessonTabs.querySelectorAll('.lesson-tab').forEach((tab, idx) => {
+          const content = getLessonContent(LESSONS[idx]);
+          tab.textContent = content.tabTitle;
+          tab.classList.toggle('active', idx === state.lessonIndex);
+        });
+
+        el.langSwitch.querySelectorAll('.lang-btn').forEach((btn) => {
+          btn.classList.toggle('active', btn.dataset.lang === state.lang);
+        });
+      }
+
+      function setLang(lang, persist = true) {
+        if (!LANGS.includes(lang)) return;
+        state.lang = lang;
+        if (persist) {
+          try {
+            localStorage.setItem('ai_course_lang', lang);
+          } catch (_) {}
+        }
+        applyLangUI();
+        renderPptSlide();
+        renderStepPillsAndMarkers();
+        syncUI();
+        renderCanvasFrame();
+      }
+
+      /** HiDPI 等比缩放 Canvas，确保在任意屏占比下锐利呈现 */
+      function resizeCanvas() {
+        const rect = el.canvasContainer.getBoundingClientRect();
+        if (!rect.width || !rect.height) return;
+        const dpr = Math.min(window.devicePixelRatio || 1, 2);
+        el.animCanvas.width = Math.round(rect.width * dpr);
+        el.animCanvas.height = Math.round(rect.height * dpr);
+
+        const scale = Math.min(rect.width / STAGE_W, rect.height / STAGE_H);
+        const offsetX = (rect.width - STAGE_W * scale) / 2;
+        const offsetY = (rect.height - STAGE_H * scale) / 2;
+        ctx.setTransform(scale * dpr, 0, 0, scale * dpr, offsetX * dpr, offsetY * dpr);
+      }
+
+      function renderCanvasFrame() {
+        if (!ctx) return;
+        const rect = el.canvasContainer.getBoundingClientRect();
+        if (!rect.width || !rect.height) return;
+        const dpr = Math.min(window.devicePixelRatio || 1, 2);
+
+        // 清空整块物理画布背景
+        ctx.save();
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
+        ctx.fillStyle = '#070B14';
+        ctx.fillRect(0, 0, el.animCanvas.width, el.animCanvas.height);
+        ctx.restore();
+
+        // 逻辑坐标系下绘制当前课程帧
+        const scale = Math.min(rect.width / STAGE_W, rect.height / STAGE_H);
+        const offsetX = (rect.width - STAGE_W * scale) / 2;
+        const offsetY = (rect.height - STAGE_H * scale) / 2;
+        ctx.setTransform(scale * dpr, 0, 0, scale * dpr, offsetX * dpr, offsetY * dpr);
+
+        ctx.save();
+        ctx.beginPath();
+        ctx.rect(0, 0, STAGE_W, STAGE_H);
+        ctx.clip();
+        getCurrentLesson().render(ctx, state.currentTime);
+        ctx.restore();
+      }
+
+      function renderPptSlide() {
+        const ui = getUi();
+        const slides = getLessonContent().slides;
+        const slide = slides[state.pptSlideIndex];
+        el.pptTag.textContent = slide.tag;
+        el.pptTitle.textContent = slide.title;
+        el.pptSubtitle.textContent = slide.subtitle;
+        el.pptPageIndicator.textContent = `${ui.pptSlideLabel} ${state.pptSlideIndex + 1} / ${slides.length}`;
+        el.pptPoints.innerHTML = slide.points.map((pt) => `<li>${pt}</li>`).join('');
+        el.pptEmoji.textContent = slide.emoji;
+        el.pptMetaphorTitle.textContent = slide.metaphorTitle;
+        el.pptMetaphorDesc.textContent = slide.metaphorDesc;
+        el.pptFormula.textContent = slide.formula;
+
+        el.btnPptPrev.disabled = state.pptSlideIndex === 0;
+        el.btnPptNext.disabled = state.pptSlideIndex === slides.length - 1;
+        el.btnPptPrev.style.opacity = el.btnPptPrev.disabled ? '0.45' : '1';
+        el.btnPptNext.style.opacity = el.btnPptNext.disabled ? '0.45' : '1';
+      }
+
+      function renderStepPillsAndMarkers() {
+        const lesson = getCurrentLesson();
+        const steps = getLessonSteps(lesson);
+        el.stepPills.innerHTML = steps
+          .map((s, idx) => `<button class="step-pill" data-step="${idx}">${s.label}</button>`)
+          .join('');
+        el.keyframeMarkers.innerHTML = steps
+          .map((s) => {
+            const pct = (s.time / lesson.duration) * 100;
+            return `<span class="keyframe-diamond" style="left:${pct}%" title="${s.label}"></span>`;
+          })
+          .join('');
+      }
+
+      function syncUI() {
+        const ui = getUi();
+        const lesson = getCurrentLesson();
+        const content = getLessonContent(lesson);
+        const steps = getLessonSteps(lesson);
+        const pct = MathUtils.clamp01(state.currentTime / lesson.duration) * 100;
+        el.scrubberFill.style.width = `${pct}%`;
+        el.scrubberThumb.style.left = `${pct}%`;
+        el.timeDisplay.textContent = `${state.currentTime.toFixed(1).padStart(4, '0')}s / ${lesson.duration.toFixed(1)}s`;
+
+        const stepIdx = getActiveStepIndex();
+        const activeStep = steps[stepIdx];
+        el.stepStatusText.textContent = `${ui.stagePrefix} ${activeStep.label}`;
+
+        // 同步 Step 胶囊高亮
+        const pills = el.stepPills.querySelectorAll('.step-pill');
+        pills.forEach((pill, i) => {
+          pill.classList.toggle('active', i === stepIdx);
+        });
+
+        // 同步播放按钮
+        el.btnPlayPause.textContent = state.isPlaying ? ui.pause : ui.play;
+
+        // 同步模式显隐
+        const isPpt = state.mode === 'ppt';
+        el.pptView.classList.toggle('active', isPpt);
+        el.canvasView.classList.toggle('active', !isPpt);
+        el.btnModePpt.classList.toggle('active', isPpt);
+        el.btnModeAnim.classList.toggle('active', !isPpt);
+
+        // 同步提词器
+        if (isPpt) {
+          const slide = content.slides[state.pptSlideIndex];
+          el.notesStepTag.textContent = `${ui.pptNotesTag} ${state.pptSlideIndex + 1}`;
+          el.notesBody.textContent = `${ui.pptNotesPrefix} ${slide.title} — ${slide.metaphorDesc}`;
+          el.notesTip.textContent = ui.pptNotesTip;
+        } else {
+          el.notesStepTag.textContent = activeStep.label;
+          el.notesBody.textContent = activeStep.note;
+          el.notesTip.textContent = activeStep.tip;
+        }
+      }
+
+      function switchLesson(index) {
+        state.lessonIndex = index;
+        state.pptSlideIndex = 0;
+        state.currentTime = 0;
+        state.isPlaying = false;
+
+        el.lessonTabs.querySelectorAll('.lesson-tab').forEach((tab, idx) => {
+          tab.classList.toggle('active', idx === index);
+        });
+        renderPptSlide();
+        renderStepPillsAndMarkers();
+        syncUI();
+        renderCanvasFrame();
+      }
+
+      function setMode(mode, autoPlay = false) {
+        state.mode = mode;
+        if (mode === 'anim') {
+          resizeCanvas();
+          if (autoPlay) {
+            if (state.currentTime >= getCurrentLesson().duration - 0.1) {
+              state.currentTime = 0;
+            }
+            state.isPlaying = true;
+          }
+        } else {
+          state.isPlaying = false;
+        }
+        syncUI();
+        if (mode === 'anim') renderCanvasFrame();
+      }
+
+      function stepTo(delta) {
+        if (state.mode !== 'anim') setMode('anim', false);
+        const steps = getLessonSteps();
+        const curIdx = getActiveStepIndex();
+        const targetIdx = Math.max(0, Math.min(steps.length - 1, curIdx + delta));
+        state.currentTime = steps[targetIdx].time;
+        state.isPlaying = false;
+        syncUI();
+        renderCanvasFrame();
+      }
+
+      // 主循环：60fps requestAnimationFrame 调度器
+      function tick(ts) {
+        if (!state.lastFrameTs) state.lastFrameTs = ts;
+        const dt = Math.min(0.1, (ts - state.lastFrameTs) / 1000);
+        state.lastFrameTs = ts;
+
+        if (state.isPlaying && state.mode === 'anim' && !state.isDragging) {
+          const duration = getCurrentLesson().duration;
+          state.currentTime += dt * state.speed;
+          if (state.currentTime >= duration) {
+            state.currentTime = duration;
+            state.isPlaying = false;
+          }
+          syncUI();
+          renderCanvasFrame();
+        }
+        requestAnimationFrame(tick);
+      }
+
+      // 绑定事件监听器
+      el.langSwitch.addEventListener('click', (e) => {
+        const btn = e.target.closest('.lang-btn');
+        if (!btn) return;
+        setLang(btn.dataset.lang);
+      });
+
+      window.addEventListener('message', (e) => {
+        if (e.data?.type === 'SET_LANG') setLang(e.data.lang);
+      });
+
+      el.lessonTabs.addEventListener('click', (e) => {
+        const btn = e.target.closest('.lesson-tab');
+        if (!btn) return;
+        switchLesson(Number(btn.dataset.lesson));
+      });
+
+      el.btnModePpt.addEventListener('click', () => setMode('ppt'));
+      el.btnModeAnim.addEventListener('click', () => setMode('anim', true));
+      el.btnEnterAnim.addEventListener('click', () => setMode('anim', true));
+      el.btnBackToPpt.addEventListener('click', () => setMode('ppt'));
+
+      el.btnPptPrev.addEventListener('click', () => {
+        if (state.pptSlideIndex > 0) {
+          state.pptSlideIndex -= 1;
+          renderPptSlide();
+          syncUI();
+        }
+      });
+
+      el.btnPptNext.addEventListener('click', () => {
+        const max = getLessonContent().slides.length - 1;
+        if (state.pptSlideIndex < max) {
+          state.pptSlideIndex += 1;
+          renderPptSlide();
+          syncUI();
+        }
+      });
+
+      el.stepPills.addEventListener('click', (e) => {
+        const pill = e.target.closest('.step-pill');
+        if (!pill) return;
+        const idx = Number(pill.dataset.step);
+        state.currentTime = getLessonSteps()[idx].time;
+        state.isPlaying = true;
+        syncUI();
+        renderCanvasFrame();
+      });
+
+      el.btnPlayPause.addEventListener('click', () => {
+        if (state.mode !== 'anim') {
+          setMode('anim', true);
+          return;
+        }
+        if (!state.isPlaying && state.currentTime >= getCurrentLesson().duration - 0.05) {
+          state.currentTime = 0;
+        }
+        state.isPlaying = !state.isPlaying;
+        syncUI();
+      });
+
+      el.btnReplay.addEventListener('click', () => {
+        if (state.mode !== 'anim') setMode('anim', false);
+        state.currentTime = 0;
+        state.isPlaying = true;
+        syncUI();
+        renderCanvasFrame();
+      });
+
+      el.btnStepPrev.addEventListener('click', () => stepTo(-1));
+      el.btnStepNext.addEventListener('click', () => stepTo(1));
+
+      el.speedGroup.addEventListener('click', (e) => {
+        const btn = e.target.closest('.speed-btn');
+        if (!btn) return;
+        state.speed = Number(btn.dataset.speed);
+        el.speedGroup.querySelectorAll('.speed-btn').forEach((b) => {
+          b.classList.toggle('active', b === btn);
+        });
+      });
+
+      el.btnToggleNotes.addEventListener('click', () => {
+        state.notesOpen = !state.notesOpen;
+        el.notesDrawer.classList.toggle('open', state.notesOpen);
+        setTimeout(() => {
+          resizeCanvas();
+          renderCanvasFrame();
+        }, 300);
+      });
+
+      el.btnFullscreen.addEventListener('click', () => {
+        if (!document.fullscreenElement) {
+          el.appShell.requestFullscreen?.().catch(() => {});
+        } else {
+          document.exitFullscreen?.().catch(() => {});
+        }
+      });
+
+      // 时间轴进度条拖动 Scrubbing
+      function scrubAtClientX(clientX) {
+        const rect = el.scrubberRail.getBoundingClientRect();
+        if (!rect.width) return;
+        const ratio = MathUtils.clamp01((clientX - rect.left) / rect.width);
+        if (state.mode !== 'anim') setMode('anim', false);
+        state.currentTime = ratio * getCurrentLesson().duration;
+        syncUI();
+        renderCanvasFrame();
+      }
+
+      el.scrubberTrack.addEventListener('mousedown', (e) => {
+        state.isDragging = true;
+        scrubAtClientX(e.clientX);
+      });
+      window.addEventListener('mousemove', (e) => {
+        if (state.isDragging) scrubAtClientX(e.clientX);
+      });
+      window.addEventListener('mouseup', () => {
+        state.isDragging = false;
+      });
+      el.scrubberTrack.addEventListener('touchstart', (e) => {
+        state.isDragging = true;
+        if (e.touches[0]) scrubAtClientX(e.touches[0].clientX);
+      }, {passive: true});
+      window.addEventListener('touchmove', (e) => {
+        if (state.isDragging && e.touches[0]) scrubAtClientX(e.touches[0].clientX);
+      }, {passive: true});
+      window.addEventListener('touchend', () => {
+        state.isDragging = false;
+      });
+
+      // 键盘快捷键支持
+      window.addEventListener('keydown', (e) => {
+        if (e.code === 'Space') {
+          e.preventDefault();
+          el.btnPlayPause.click();
+        } else if (e.code === 'ArrowLeft') {
+          if (state.mode === 'ppt') el.btnPptPrev.click();
+          else stepTo(-1);
+        } else if (e.code === 'ArrowRight') {
+          if (state.mode === 'ppt') el.btnPptNext.click();
+          else stepTo(1);
+        } else if (e.key === 'm' || e.key === 'M') {
+          setMode(state.mode === 'ppt' ? 'anim' : 'ppt', state.mode === 'ppt');
+        }
+      });
+
+      window.addEventListener('resize', () => {
+        resizeCanvas();
+        renderCanvasFrame();
+      });
+
+      // 启动初始化
+      applyLangUI();
+      switchLesson(0);
+      resizeCanvas();
+      renderCanvasFrame();
+      requestAnimationFrame(tick);
+    })();
+  </script>
+</body>
+</html>

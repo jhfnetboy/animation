@@ -1,0 +1,1201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Post-University AI Innovation Lab · K-12 International Curriculum & Interactive Animations</title>
+  <style>
+    :root {
+      --bg: #070b14;
+      --bg-card: rgba(17, 25, 43, 0.78);
+      --bg-card-hover: rgba(24, 35, 60, 0.92);
+      --border: rgba(120, 165, 255, 0.18);
+      --border-active: rgba(56, 189, 248, 0.6);
+      --text: #e8eefc;
+      --muted: #93a4c8;
+      --accent: #38bdf8;
+      --accent-2: #a78bfa;
+      --accent-3: #f59e0b;
+      --accent-4: #34d399;
+      --shadow: 0 20px 50px rgba(0, 0, 0, 0.45);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Inter", "Noto Sans Thai", "Sarabun", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Segoe UI", Roboto, sans-serif;
+      background:
+        radial-gradient(circle at 12% 10%, rgba(56, 189, 248, 0.14), transparent 36%),
+        radial-gradient(circle at 88% 18%, rgba(167, 139, 250, 0.14), transparent 38%),
+        radial-gradient(circle at 50% 90%, rgba(245, 158, 11, 0.08), transparent 45%),
+        var(--bg);
+      color: var(--text);
+      line-height: 1.65;
+      min-height: 100vh;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .container {
+      max-width: 1380px;
+      margin: 0 auto;
+      padding: 24px 24px 72px;
+    }
+
+    /* Header */
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 20px;
+      background: rgba(12, 18, 32, 0.85);
+      backdrop-filter: blur(14px);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      position: sticky;
+      top: 14px;
+      z-index: 40;
+      margin-bottom: 28px;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 700;
+      font-size: 1.02rem;
+      letter-spacing: 0.2px;
+    }
+
+    .brand-badge {
+      width: 34px;
+      height: 34px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      display: grid;
+      place-items: center;
+      font-size: 1.1rem;
+      box-shadow: 0 4px 16px rgba(56, 189, 248, 0.35);
+      flex-shrink: 0;
+    }
+
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .nav-btn {
+      padding: 7px 13px;
+      border-radius: 999px;
+      font-size: 0.86rem;
+      color: var(--muted);
+      border: 1px solid transparent;
+      transition: all 0.2s;
+      cursor: pointer;
+      background: transparent;
+    }
+
+    .nav-btn:hover {
+      color: var(--text);
+      background: rgba(255, 255, 255, 0.06);
+      border-color: var(--border);
+    }
+
+    /* Language Switcher */
+    .lang-switcher {
+      display: inline-flex;
+      padding: 3px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border);
+      gap: 2px;
+    }
+
+    .lang-btn {
+      padding: 5px 12px;
+      border-radius: 999px;
+      border: none;
+      background: transparent;
+      color: var(--muted);
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: inherit;
+    }
+
+    .lang-btn:hover {
+      color: var(--text);
+    }
+
+    .lang-btn.active {
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      color: #06121f;
+      box-shadow: 0 2px 10px rgba(56, 189, 248, 0.35);
+    }
+
+    /* Hero */
+    .hero {
+      padding: 34px 32px;
+      border-radius: 24px;
+      background: linear-gradient(140deg, rgba(20, 31, 56, 0.92), rgba(10, 15, 28, 0.95));
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow);
+      margin-bottom: 30px;
+      display: grid;
+      grid-template-columns: 1.32fr 0.95fr;
+      gap: 28px;
+      align-items: center;
+    }
+
+    @media (max-width: 960px) {
+      .hero {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .hero-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 5px 13px;
+      border-radius: 999px;
+      background: rgba(56, 189, 248, 0.12);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      color: var(--accent);
+      font-size: 0.82rem;
+      font-weight: 600;
+      margin-bottom: 14px;
+    }
+
+    .hero h1 {
+      font-size: clamp(1.65rem, 2.8vw, 2.38rem);
+      line-height: 1.24;
+      margin-bottom: 14px;
+      background: linear-gradient(90deg, #ffffff, #a5d8ff 60%, #c4b5fd);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero p {
+      color: var(--muted);
+      font-size: 0.96rem;
+      margin-bottom: 18px;
+      max-width: 68ch;
+    }
+
+    .grade-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .grade-pill {
+      padding: 6px 12px;
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border);
+      font-size: 0.8rem;
+      color: #cfe0ff;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .grade-pill b {
+      color: var(--accent-4);
+    }
+
+    .pillars {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+
+    @media (max-width: 560px) {
+      .pillars {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .pillar {
+      padding: 14px 16px;
+      border-radius: 14px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border);
+    }
+
+    .pillar-tag {
+      font-size: 0.74rem;
+      font-weight: 700;
+      letter-spacing: 0.3px;
+      margin-bottom: 4px;
+    }
+
+    .pillar h3 {
+      font-size: 0.94rem;
+      margin-bottom: 4px;
+    }
+
+    .pillar p {
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin: 0;
+    }
+
+    /* Section Header */
+    .section-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      margin: 36px 0 18px;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .section-head h2 {
+      font-size: 1.42rem;
+      font-weight: 700;
+    }
+
+    .section-head span {
+      color: var(--muted);
+      font-size: 0.89rem;
+    }
+
+    /* Interactive Theater */
+    .theater-shell {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      overflow: hidden;
+      box-shadow: var(--shadow);
+    }
+
+    .theater-tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      padding: 14px 18px;
+      background: rgba(9, 13, 24, 0.88);
+      border-bottom: 1px solid var(--border);
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .tab-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .demo-tab {
+      padding: 9px 15px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: rgba(255, 255, 255, 0.03);
+      color: var(--muted);
+      font-size: 0.86rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-family: inherit;
+    }
+
+    .demo-tab:hover {
+      color: var(--text);
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .demo-tab.active {
+      color: #06121f;
+      background: linear-gradient(135deg, var(--accent), #7dd3fc);
+      border-color: transparent;
+      box-shadow: 0 4px 18px rgba(56, 189, 248, 0.35);
+    }
+
+    .demo-actions {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .action-link {
+      padding: 8px 14px;
+      border-radius: 10px;
+      background: rgba(167, 139, 250, 0.14);
+      border: 1px solid rgba(167, 139, 250, 0.35);
+      color: #ddd6fe;
+      font-size: 0.84rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .action-link:hover {
+      background: rgba(167, 139, 250, 0.26);
+    }
+
+    .demo-meta-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 20px;
+      background: rgba(14, 21, 38, 0.7);
+      border-bottom: 1px solid var(--border);
+      font-size: 0.86rem;
+      color: var(--muted);
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .demo-meta-bar strong {
+      color: var(--text);
+    }
+
+    .iframe-wrap {
+      position: relative;
+      width: 100%;
+      height: 690px;
+      background: #050811;
+    }
+
+    .iframe-wrap iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+      display: block;
+    }
+
+    /* 6 Lessons Grid */
+    .lessons-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+      gap: 18px;
+    }
+
+    .lesson-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 20px 22px;
+      transition: all 0.25s;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 14px;
+    }
+
+    .lesson-card:hover {
+      background: var(--bg-card-hover);
+      border-color: var(--border-active);
+      transform: translateY(-3px);
+    }
+
+    .lesson-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .lesson-num {
+      font-size: 0.78rem;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: rgba(56, 189, 248, 0.14);
+      color: var(--accent);
+    }
+
+    .lesson-dim {
+      font-size: 0.76rem;
+      color: var(--accent-2);
+      font-weight: 600;
+    }
+
+    .lesson-card h3 {
+      font-size: 1.06rem;
+      line-height: 1.42;
+    }
+
+    .metaphor-box {
+      padding: 10px 12px;
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.03);
+      border-left: 3px solid var(--accent-3);
+      font-size: 0.85rem;
+      color: #dbe6ff;
+    }
+
+    .pbl-text {
+      font-size: 0.84rem;
+      color: var(--muted);
+    }
+
+    .lesson-footer {
+      display: flex;
+      justify-content: flex-start;
+      align-items: center;
+      padding-top: 10px;
+      border-top: 1px solid rgba(255, 255, 255, 0.07);
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .jump-demo-btn {
+      padding: 6px 12px;
+      border-radius: 8px;
+      background: rgba(52, 211, 153, 0.14);
+      border: 1px solid rgba(52, 211, 153, 0.35);
+      color: #6ee7b7;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.2s;
+      font-family: inherit;
+    }
+
+    .jump-demo-btn:hover {
+      background: rgba(52, 211, 153, 0.26);
+    }
+
+    /* Docs Section */
+    .docs-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+      gap: 16px;
+    }
+
+    .doc-card {
+      padding: 18px 20px;
+      border-radius: 16px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      transition: 0.2s;
+      display: block;
+    }
+
+    .doc-card:hover {
+      border-color: var(--accent);
+      background: var(--bg-card-hover);
+    }
+
+    .doc-card h4 {
+      font-size: 0.98rem;
+      margin-bottom: 6px;
+      color: #fff;
+    }
+
+    .doc-card p {
+      font-size: 0.84rem;
+      color: var(--muted);
+    }
+
+    .doc-path {
+      margin-top: 10px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 0.76rem;
+      color: var(--accent);
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: rgba(15, 23, 42, 0.95);
+      border: 1px solid var(--accent);
+      color: #fff;
+      padding: 10px 18px;
+      border-radius: 12px;
+      font-size: 0.88rem;
+      box-shadow: var(--shadow);
+      opacity: 0;
+      transform: translateY(12px);
+      pointer-events: none;
+      transition: 0.25s;
+      z-index: 99;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-badge">🧭</div>
+        <span id="brandText">Post-University AI Innovation Lab</span>
+      </div>
+      <div class="nav-right">
+        <nav class="nav-links">
+          <a class="nav-btn" href="#theater" id="navTheater">3 Animation Labs</a>
+          <a class="nav-btn" href="#lessons" id="navLessons">6 Demo Lessons</a>
+          <a class="nav-btn" href="#docs" id="navDocs">Syllabus & Docs</a>
+        </nav>
+        <div class="lang-switcher" role="group" aria-label="Language Selector">
+          <button type="button" class="lang-btn active" data-lang="en" onclick="setLang('en')">EN</button>
+          <button type="button" class="lang-btn" data-lang="zh" onclick="setLang('zh')">中文</button>
+          <button type="button" class="lang-btn" data-lang="th" onclick="setLang('th')">ไทย</button>
+        </div>
+      </div>
+    </header>
+
+    <section class="hero">
+      <div>
+        <div class="hero-eyebrow" id="heroEyebrow">🌏 Chiang Mai · Thailand & Southeast Asia · International K-12 AI Program</div>
+        <h1 id="heroTitle">Beyond Pure Coding: Visual AI Intuition, 72-Hour Domain Mastery & Student Innovation</h1>
+        <p id="heroSubtitle">
+          Built for international schools across Chiang Mai, Thailand, Southeast Asia, and China (IB / IGCSE / AP). When static knowledge becomes free, students need intuitive mental models of how AI works, rapid meta-learning superpowers, and human problem-framing taste.
+        </p>
+        <div class="grade-pills" id="gradePills"></div>
+      </div>
+      <div class="pillars" id="pillarsGrid"></div>
+    </section>
+
+    <section id="theater">
+      <div class="section-head">
+        <h2 id="theaterHeading">🎬 3 Interactive Animation & Simulation Labs</h2>
+        <span id="theaterSub">One curriculum · Three distinct visual & interactive teaching engines (switch language anytime)</span>
+      </div>
+
+      <div class="theater-shell">
+        <div class="theater-tabs">
+          <div class="tab-group">
+            <button class="demo-tab active" data-demo="demo1" onclick="switchDemo('demo1')" id="tabDemo1">
+              🌊 Demo 1 · Hand-Painted Sea (Three.js + GLSL)
+            </button>
+            <button class="demo-tab" data-demo="demo2" onclick="switchDemo('demo2')" id="tabDemo2">
+              📐 Demo 2 · Timeline Slides (Motion Canvas)
+            </button>
+            <button class="demo-tab" data-demo="demo3" onclick="switchDemo('demo3')" id="tabDemo3">
+              ⚙️ Demo 3 · Physics Sandbox & 72h Forge
+            </button>
+          </div>
+          <div class="demo-actions">
+            <a id="openNewTab" class="action-link" href="./demos/demo1-kujira-art/index.html?lang=en" target="_blank">↗ Open Fullscreen</a>
+          </div>
+        </div>
+
+        <div class="demo-meta-bar">
+          <div><strong id="demoTitle"></strong> — <span id="demoDesc"></span></div>
+          <div id="demoTags"></div>
+        </div>
+
+        <div class="iframe-wrap">
+          <iframe id="demoFrame" src="./demos/demo1-kujira-art/index.html?lang=en" title="AI Course Interactive Demo"></iframe>
+        </div>
+      </div>
+    </section>
+
+    <section id="lessons">
+      <div class="section-head">
+        <h2 id="lessonsHeading">📚 6 Benchmark Demo Lessons (90-Min Workshop Loop)</h2>
+        <span id="lessonsSub">Visual Metaphor Hook (15m) → Interactive Sandbox (25m) → PBL Sprint (35m) → Pitch & Critique (15m)</span>
+      </div>
+      <div class="lessons-grid" id="lessonsGrid"></div>
+    </section>
+
+    <section id="docs">
+      <div class="section-head">
+        <h2 id="docsHeading">🗂️ Curriculum Frameworks & Teaching Docs (docs/)</h2>
+        <span id="docsSub">Complete trilingual syllabus, international school guides, and 6-lesson scripts</span>
+      </div>
+      <div class="docs-grid" id="docsGrid"></div>
+    </section>
+  </div>
+
+  <div id="toast" class="toast"></div>
+
+  <script>
+    const VALID_LANGS = ['en', 'zh', 'th'];
+    let currentLang = 'en';
+    let currentDemo = 'demo1';
+
+    function detectInitialLang() {
+      const urlLang = new URLSearchParams(window.location.search).get('lang');
+      if (VALID_LANGS.includes(urlLang)) return urlLang;
+      try {
+        const stored = localStorage.getItem('ai_course_lang');
+        if (VALID_LANGS.includes(stored)) return stored;
+      } catch (e) {}
+      return 'en';
+    }
+
+    const I18N = {
+      en: {
+        pageTitle: 'Post-University AI Innovation Lab · K-12 International Curriculum',
+        brand: 'Post-University AI Innovation Lab',
+        navTheater: '3 Animation Labs',
+        navLessons: '6 Demo Lessons',
+        navDocs: 'Syllabus & Docs',
+        heroEyebrow: '🌏 Chiang Mai · Thailand · Southeast Asia & Global International Schools',
+        heroTitle: 'Beyond Pure Coding: Visual AI Intuition, 72-Hour Domain Mastery & Student Innovation',
+        heroSubtitle: 'Designed for international schools (IB / IGCSE / AP) across Upper Primary, Middle, and High School. In an era where static answers are free, we train students to see inside AI through vivid metaphors, master any new field in 72 hours, and build human-centered prototypes.',
+        grades: [
+          { tag: 'G4–G6', text: 'Upper Primary · Visual Curiosity & Safe AI Play' },
+          { tag: 'G7–G9', text: 'Middle School · Mental Models & Socratic Inquiry' },
+          { tag: 'G10–G12', text: 'High School · 72h Mastery & Solo Founder PBL' }
+        ],
+        pillars: [
+          { tag: 'L1 · AI INTUITION', color: 'var(--accent)', title: 'Visual & Mechanical Metaphors', desc: 'Replace dry calculus with starfields, searchlights, and marble pinball machines.' },
+          { tag: 'L2 · 72H META-LEARNING', color: 'var(--accent-2)', title: 'Rapid Domain Mastery', desc: 'First-principles decomposition + Socratic AI sparring to grasp new fields in 3 days.' },
+          { tag: 'L3 · HUMAN MOAT', color: 'var(--accent-3)', title: 'Taste & Problem Framing', desc: 'When answers cost zero, street empathy and asking the right questions win.' },
+          { tag: 'L4 · PBL INCUBATOR', color: 'var(--accent-4)', title: 'Vibe Prototyping & MVM', desc: 'Turn local community insights into real interactive prototypes & Demo Day pitches.' }
+        ],
+        theaterHeading: '🎬 3 Interactive Animation & Simulation Labs',
+        theaterSub: 'One curriculum · Three distinct visual & interactive teaching engines (synced with your selected language)',
+        tabs: {
+          demo1: '🌊 Demo 1 · Hand-Painted Sea (Three.js + GLSL)',
+          demo2: '📐 Demo 2 · Timeline Slides (Motion Canvas)',
+          demo3: '⚙️ Demo 3 · Physics Sandbox & 72h Forge'
+        },
+        openNewTab: '↗ Open Fullscreen',
+        demos: {
+          demo1: {
+            url: './demos/demo1-kujira-art/index.html',
+            title: 'The Sea of Mind: From Word Stardust to the Whale of Emergence',
+            desc: 'Inspired by kujira-js: watercolor GLSL shaders + 5 AI metaphor acts + Web Audio synthesized score',
+            tags: 'Stack: Three.js + GLSL + Web Audio'
+          },
+          demo2: {
+            url: './demos/demo2-motion-slides/index.html',
+            title: 'Interactive Micro-Slides & Procedural Timeline Animations',
+            desc: 'Step-by-step visualization of Tokenization, Vector Math, Multi-Head Attention & Agent ReAct loops',
+            tags: 'Stack: Motion Canvas + Interactive Slides'
+          },
+          demo3: {
+            url: './demos/demo3-mechanical-sandbox/index.html',
+            title: 'Steampunk Probability Pinball & 72h Domain Mastery Forge',
+            desc: 'Hands-on physics simulation for Temperature / Top-K sampling + 4-stage rapid domain deconstruction lab',
+            tags: 'Stack: Canvas 2D Rigid Physics + Gears'
+          }
+        },
+        lessonsHeading: '📚 6 Benchmark Demo Lessons (90-Min Workshop Loop)',
+        lessonsSub: 'Metaphor Hook (15m) → Sandbox Lab (25m) → PBL Sprint (35m) → Critique & Pitch (15m)',
+        metaphorLabel: 'Core Metaphor:',
+        pblLabel: 'PBL Mission:',
+        lessons: [
+          {
+            num: 'Lesson 1 · Language & Space', dim: 'L1 AI Intuition',
+            title: 'Sea of Words: How AI Turns Human Language into Cosmic Coordinates',
+            metaphor: 'Word-slicing LEGO cutter (Tokenizer) + Semantic Gravity Starfield (King - Man + Woman = Queen)',
+            pbl: 'Pick a subculture or frontier science topic, map its concept constellations, and discover unexpected cross-domain bridges.',
+            buttons: [
+              { label: '🌊 Watch Star Sea (Demo 1)', demo: 'demo1' },
+              { label: '📐 Try Vector Scale (Demo 2)', demo: 'demo2' }
+            ]
+          },
+          {
+            num: 'Lesson 2 · Mechanics & Sampling', dim: 'L1 AI Intuition',
+            title: 'Deep-Sea Searchlights & Probability Pinball: Inside the LLM Engine Room',
+            metaphor: 'Context Searchlights (Self-Attention) + Steampunk Galton Funnel (Next-Token odds, Temperature & Hallucinations)',
+            pbl: 'Controlled Creativity Lab: tune Temperature & Top-K gates to run both a Zero-Hallucination Fact Check and a Sci-Fi Worldbuilder.',
+            buttons: [
+              { label: '📐 Attention Spotlight (Demo 2)', demo: 'demo2' },
+              { label: '⚙️ Play Pinball Rig (Demo 3)', demo: 'demo3' }
+            ]
+          },
+          {
+            num: 'Lesson 3 · Agency & Action', dim: 'L1 + L4 Orchestration',
+            title: 'From Brain-in-a-Vat to Iron Man Suit: How AI Agents Plan & Act',
+            metaphor: 'Chatting brain in glass vs. armored suit equipped with Radar (Perception), Magic Library (RAG), Arms (Tools) & Self-Check',
+            pbl: 'Design an Iron Man Agent blueprint with at least 3 tool calls and a self-correction loop for a real school or family hassle.',
+            buttons: [
+              { label: '📐 Watch Agent Loop (Demo 2)', demo: 'demo2' }
+            ]
+          },
+          {
+            num: 'Lesson 4 · 72h Meta-Learning', dim: 'L2 Domain Mastery',
+            title: 'Outpacing a 4-Year Major: Mastering Any Unfamiliar Field in 72 Hours',
+            metaphor: 'Holographic Strategy Sandtable — First-Principles Crusher, Jargon Decoder & Socratic Red-Team Chains',
+            pbl: 'Draw a blind frontier topic (Synthetic Bio, BCI, Orbital Debris, Elder Exoskeletons) and produce an expert domain map in 72h.',
+            buttons: [
+              { label: '⚙️ Launch 72h Forge (Demo 3)', demo: 'demo3' }
+            ]
+          },
+          {
+            num: 'Lesson 5 · Taste & Framing', dim: 'L3 Human Moat',
+            title: 'When Answers Cost Zero, Great Questions Are Priceless: Your Human Niche',
+            metaphor: 'AI is an tireless 1,000-piece orchestra; only a human with lived empathy & aesthetic taste can conduct and steer',
+            pbl: 'Street Fieldwork: interview a local artisan, elder, or community worker in Chiang Mai/your city to uncover a pain point AI misses.',
+            buttons: [
+              { label: '🌊 Act 5: Steering Future (Demo 1)', demo: 'demo1' },
+              { label: '⚙️ Empathy Spotlight (Demo 3)', demo: 'demo3' }
+            ]
+          },
+          {
+            num: 'Lesson 6 · Solo-Founder Pitch', dim: 'L4 Innovation Launch',
+            title: 'Vibe Prototyping: Turning Your Original Idea into Interactive Reality',
+            metaphor: 'Alchemist Maker Studio — using natural language, visual storyboards & rapid prototyping to craft Minimum Viable Magic (MVM)',
+            pbl: 'International Demo Day: 5-minute live showcase uniting your 72h domain map, real field pain point, and clickable AI prototype.',
+            buttons: [
+              { label: '⚙️ Forge Project Charter (Demo 3)', demo: 'demo3' }
+            ]
+          }
+        ],
+        docsHeading: '🗂️ Curriculum Frameworks & Teaching Docs (docs/)',
+        docsSub: 'All design research, trilingual syllabi, and classroom scripts stored in docs/',
+        docs: [
+          {
+            title: '1. Trilingual International School Syllabus (EN / 中文 / ไทย)',
+            desc: 'Official K-12 alignment for Chiang Mai, Thailand, SEA & China international schools (Upper Primary G4-6, Middle G7-9, High G10-12; IB / IGCSE / AP).',
+            path: 'docs/trilingual_international_school_syllabus.md'
+          },
+          {
+            title: '2. Post-University AI Curriculum Architecture (Master Plan)',
+            desc: 'Global benchmarks (MIT DAILy, Stanford CRAFT, AI4K12, Minerva, Alpha School), 4-Layer Pyramid, 90m loop & 12-week PBL funnel.',
+            path: 'docs/post_university_ai_curriculum.md'
+          },
+          {
+            title: '3. Six Benchmark Demo Lessons & Animation Storyboards',
+            desc: 'Minute-by-minute lesson plans, text-first-then-animation storyboards, prompt scaffolds, and non-exam PBL rubrics.',
+            path: 'docs/six_demo_courses_handbook.md'
+          },
+          {
+            title: '4. Open-Source Animation Tech Stack Research',
+            desc: 'Comparative evaluation of Motion Canvas, Manim, Remotion, Three.js + GLSL shaders, Slidev, and physics engines.',
+            path: 'docs/animation_tech_stack_research.md'
+          }
+        ],
+        toastSwitched: 'Switched to: '
+      },
+      zh: {
+        pageTitle: '后大学时代 · 国际学校 K-12 三语 AI 创新课程与动画工坊',
+        brand: '后大学时代 · AI 创新课程工坊',
+        navTheater: '三大动画工坊',
+        navLessons: '6 节示范课程',
+        navDocs: '课程大纲与文档',
+        heroEyebrow: '🌏 面向清迈 · 泰国 · 东南亚及中国国际学校 (小学高段 / 初中 / 高中)',
+        heroTitle: '不止教纯 Coding：用视觉直觉看懂 AI、72 小时跨界破壁并创造真实价值',
+        heroSubtitle: '专为国际学校（IB / IGCSE / AP 体系）打造的下一代 AI 创新课程。当静态知识获取成本归零，我们帮助 4–12 年级学生通过生动比喻理解大模型原理，练就三天吃透陌生领域的元学习力，并基于真实社会痛点打造可交互原型。',
+        grades: [
+          { tag: 'G4–G6 小学高段', text: 'AI 奇趣启蒙 · 机制直觉与安全创造' },
+          { tag: 'G7–G9 初中段', text: '心智建模 · 苏格拉底追问与算法审计' },
+          { tag: 'G10–G12 高中段', text: '72h 领域破壁 · 一人独角兽 PBL 孵化' }
+        ],
+        pillars: [
+          { tag: 'L1 · 机器心智直觉', color: 'var(--accent)', title: '视觉与机械隐喻', desc: '用语义星空、深海探照灯与蒸汽弹珠机替代枯燥公式，零代码直觉入局。' },
+          { tag: 'L2 · 72h 超速元学习', color: 'var(--accent-2)', title: '陌生领域极速破壁', desc: '第一性原理拆解 + 苏格拉底对抗追问，三天吃透任何硬核新领域。' },
+          { tag: 'L3 · 人类护城河', color: 'var(--accent-3)', title: '品味与问题定义力', desc: '答案一文不值的时代，街头田野共情与提出“好问题”才是核心壁垒。' },
+          { tag: 'L4 · 超级个体孵化', color: 'var(--accent-4)', title: 'Vibe Prototyping', desc: 'PBL 真实项目驱动，用自然语言与动画快速交付最小可行性魔法 (MVM)。' }
+        ],
+        theaterHeading: '🎬 三大技术栈示范动画实验台',
+        theaterSub: '同一套国际学校教案 · 三种截然不同的可视化教学引擎（支持顶栏一键切换 EN / 中文 / ไทย 同步联动）',
+        tabs: {
+          demo1: '🌊 Demo 1 · 手绘艺术流 (Three.js + GLSL)',
+          demo2: '📐 Demo 2 · 程序化时间轴 + 讲义 (Motion Canvas)',
+          demo3: '⚙️ Demo 3 · 物理机械沙盒 + 72h 破壁炉'
+        },
+        openNewTab: '↗ 新窗口全屏演示',
+        demos: {
+          demo1: {
+            url: './demos/demo1-kujira-art/index.html',
+            title: '《心智之海：从词语星尘到涌现之鲸》',
+            desc: '致敬 kujira-js：纯代码驱动的水彩着色器 + 5 幕 AI 科普隐喻 + Web Audio 实时合成音乐',
+            tags: '技术栈：Three.js + GLSL + Web Audio'
+          },
+          demo2: {
+            url: './demos/demo2-motion-slides/index.html',
+            title: '《Slidev 互动讲义 + Motion Canvas 程序化时间轴动画》',
+            desc: '逐帧拆解分词切割、词向量加减法、多头注意力探照灯对比与 AI Agent 钢铁侠闭环',
+            tags: '技术栈：Motion Canvas + 交互式微课课件'
+          },
+          demo3: {
+            url: './demos/demo3-mechanical-sandbox/index.html',
+            title: '《蒸汽朋克概率弹珠机 + 72小时领域破壁反应炉》',
+            desc: '双模式动手实验台：拖滑块观察 Temperature/Top-K 物理碰撞，或一键启动陌生硬核领域破壁流水线',
+            tags: '技术栈：Canvas 2D 刚体物理 + 机械传动'
+          }
+        },
+        lessonsHeading: '📚 6 节标杆示范课程路线图（90 分钟黄金闭环）',
+        lessonsSub: '视觉隐喻引入 (15m) → 交互沙盒实验 (25m) → PBL 破壁实战 (35m) → 路演交锋 (15m)',
+        metaphorLabel: '核心隐喻：',
+        pblLabel: 'PBL 实战：',
+        lessons: [
+          {
+            num: '第 1 课 · 语言与空间', dim: 'L1 机器心智直觉',
+            title: '《词语的星辰大海：AI 如何把人类语言变成宇宙坐标？》',
+            metaphor: '乐高积木切割机（Tokenizer）+ 语义引力星空（Embedding，`国王 - 男人 + 女人 = 女王`）',
+            pbl: '选择一个你热爱的亚文化或前沿学科，绘制核心概念宇宙星座图，找出意想不到的跨界引力航线。',
+            buttons: [
+              { label: '🌊 看水彩语义星海 (Demo 1)', demo: 'demo1' },
+              { label: '📐 玩向量天平课件 (Demo 2)', demo: 'demo2' }
+            ]
+          },
+          {
+            num: '第 2 课 · 机制与生成', dim: 'L1 机器心智直觉',
+            title: '《深海探照灯与蒸汽弹珠机：拆解大模型的“思考”机械室》',
+            metaphor: '多束上下文探照灯（Self-Attention）+ 蒸汽朋克概率弹珠漏斗（Next-Token 与温度/幻觉）',
+            pbl: '可控创造力实验：分别调节温度与闸门参数，完成“零幻觉科学核查”与“高发散科幻世界观接龙”。',
+            buttons: [
+              { label: '📐 看探照灯对比 (Demo 2)', demo: 'demo2' },
+              { label: '⚙️ 玩蒸汽弹珠机 (Demo 3)', demo: 'demo3' }
+            ]
+          },
+          {
+            num: '第 3 课 · 智能体与行动', dim: 'L1 + L4 编排力',
+            title: '《从“缸中之脑”到“钢铁侠战甲”：AI Agent 与自主任务循环》',
+            metaphor: '只会聊天的玻璃缸大脑 vs 装上雷达（感知）、魔法图书馆（RAG）、机械臂（Tools）与反思大脑的战甲',
+            pbl: '针对校园或家庭真实麻烦，画出包含至少 3 个工具调用与自我纠错回路的 Agent 协作蓝图。',
+            buttons: [
+              { label: '📐 演示 Agent 闭环 (Demo 2)', demo: 'demo2' }
+            ]
+          },
+          {
+            num: '第 4 课 · 72h 领域破壁', dim: 'L2 超速元学习',
+            title: '《干掉四年大学专业：如何用 AI 在 72 小时内吃透陌生硬核领域？》',
+            metaphor: '未知大陆“全息作战沙盘”——第一性原理粉碎机 + 黑话词典 + 苏格拉底对抗追问链',
+            pbl: '盲抽一个全新前沿领域（合成生物/脑机接口/太空碎片/银发外骨骼），72 小时内产出专家级破壁图谱。',
+            buttons: [
+              { label: '⚙️ 启动 72h 破壁炉 (Demo 3)', demo: 'demo3' }
+            ]
+          },
+          {
+            num: '第 5 课 · 品味与好问题', dim: 'L3 人类护城河',
+            title: '《当答案变得一文不值，好问题值一亿美金：寻找你的生态位》',
+            metaphor: 'AI 是不知疲倦的千人交响乐团，人类少年是唯一拥有生命体验与审美直觉的指挥家和舵手',
+            pbl: '走出教室田野调查：在清迈或所在城市访谈一位手艺人、老人或社区工作者，发现 AI 在机房里感知不到的真实痛点。',
+            buttons: [
+              { label: '🌊 第 5 幕掌舵未来 (Demo 1)', demo: 'demo1' },
+              { label: '⚙️ 痛点探照灯匹配 (Demo 3)', demo: 'demo3' }
+            ]
+          },
+          {
+            num: '第 6 课 · 一人独角兽路演', dim: 'L4 创新孵化',
+            title: '《Vibe Prototyping：把你的创新 Idea 变成可交互现实》',
+            metaphor: '炼金术士创客工坊——用自然语言、分镜动画与快速原型打造“最小可行性魔法（MVM）”',
+            pbl: '国际学校创新 Demo Day：5 分钟全英文/双语路演，展示领域破壁图谱 + 真实痛点 + 可交互 AI 原型。',
+            buttons: [
+              { label: '⚙️ 锻造项目立项卡 (Demo 3)', demo: 'demo3' }
+            ]
+          }
+        ],
+        docsHeading: '🗂️ 教研规划与三语大纲文档库（docs/）',
+        docsSub: '所有设计调研、国际学校三语大纲与 6 课完整剧本均已沉淀于 docs/ 目录',
+        docs: [
+          {
+            title: '1. 国际学校三语课程大纲（EN / 中文 / ไทย）',
+            desc: '专为清迈、泰国、东南亚及中国国际学校编制，覆盖小学高段 G4-6、初中 G7-9、高中 G10-12 及 IB/IGCSE/AP 衔接。',
+            path: 'docs/trilingual_international_school_syllabus.md'
+          },
+          {
+            title: '2. 后大学时代初高中 AI 课程顶层设计',
+            desc: '对标 MIT DAILy、Stanford CRAFT、AI4K12、Minerva 与 Alpha School，提出四维金字塔与 12 周 PBL 漏斗。',
+            path: 'docs/post_university_ai_curriculum.md'
+          },
+          {
+            title: '3. 六节标杆示范课完整教案与分镜剧本',
+            desc: '包含每节课的核心隐喻、逐分钟课堂流程、先文字后动画分镜剧本与去应试化评估 Rubric。',
+            path: 'docs/six_demo_courses_handbook.md'
+          },
+          {
+            title: '4. 动画开源技术栈与科普隐喻调研报告',
+            desc: '深度对比 Motion Canvas、Manim、Remotion、Three.js+GLSL、Slidev 与物理沙盒三大路线。',
+            path: 'docs/animation_tech_stack_research.md'
+          }
+        ],
+        toastSwitched: '已切换至：'
+      },
+      th: {
+        pageTitle: 'ห้องปฏิบัติการนวัตกรรม AI ยุคหลังมหาวิทยาลัย · หลักสูตรนานาชาติ K-12 (3 ภาษา)',
+        brand: 'ห้องปฏิบัติการนวัตกรรม AI ยุคใหม่',
+        navTheater: '3 สตูดิโอแอนิเมชัน',
+        navLessons: '6 บทเรียนต้นแบบ',
+        navDocs: 'หลักสูตรและเอกสาร',
+        heroEyebrow: '🌏 เชียงใหม่ · ประเทศไทย · เอเชียตะวันออกเฉียงใต้ และโรงเรียนนานาชาติ (ป.4–ม.6)',
+        heroTitle: 'เหนือกว่าการเขียนโค้ด: เข้าใจ AI ด้วยภาพ เรียนรู้ข้ามศาสตร์ใน 72 ชม. และสร้างนวัตกรรมจริง',
+        heroSubtitle: 'ออกแบบสำหรับโรงเรียนนานาชาติ (IB / IGCSE / AP) ทั้งระดับประถมปลาย มัธยมต้น และมัธยมปลาย ในยุคที่ความรู้หาได้ฟรี เด็กไทยและนักเรียนนานาชาติต้องเข้าใจกลไก AI ผ่านอุปมาที่เห็นภาพ เชี่ยวชาญศาสตร์ใหม่ใน 72 ชั่วโมง และตั้งคำถามที่สร้างคุณค่าได้จริง',
+        grades: [
+          { tag: 'G4–G6 ประถมปลาย', text: 'ปูพื้นฐานจินตนาการและการใช้ AI อย่างปลอดภัย' },
+          { tag: 'G7–G9 มัธยมต้น', text: 'เข้าใจโมเดลความคิดและฝึกตั้งคำถามเชิงวิพากษ์' },
+          { tag: 'G10–G12 มัธยมปลาย', text: 'เจาะลึกศาสตร์ใหม่ใน 72 ชม. & สร้างต้นแบบ PBL' }
+        ],
+        pillars: [
+          { tag: 'L1 · สัญชาตญาณ AI', color: 'var(--accent)', title: 'ภาพอุปมาและกลไกจำลอง', desc: 'แทนที่สมการแคลคูลัสด้วยหมู่ดาวความหมาย สปอตไลต์ และเครื่องพินบอลความน่าจะเป็น' },
+          { tag: 'L2 · เรียนรู้ไวใน 72 ชม.', color: 'var(--accent-2)', title: 'Meta-Learning ข้ามศาสตร์', desc: 'ย่อยด้วยหลักการพื้นฐาน (First Principles) + ฝึกโต้แย้งแบบโสกราตีสกับ AI' },
+          { tag: 'L3 · เกราะป้องกันมนุษย์', color: 'var(--accent-3)', title: 'รสนิยมและการตั้งโจทย์', desc: 'เมื่อคำตอบราคาศูนย์ ความเข้าอกเข้าใจผู้คนและการตั้งคำถามที่ดีคือพลังที่แท้จริง' },
+          { tag: 'L4 · บ่มเพาะนวัตกร', color: 'var(--accent-4)', title: 'Vibe Prototyping & MVM', desc: 'แปลงปัญหาจริงรอบตัวเป็นต้นแบบที่โต้ตอบได้จริง พร้อมนำเสนอในวัน Demo Day' }
+        ],
+        theaterHeading: '🎬 3 ห้องทดลองแอนิเมชันและสื่อการสอนแบบโต้ตอบ',
+        theaterSub: 'หนึ่งหลักสูตร · สามเทคโนโลยีการสอนด้วยภาพที่แตกต่างกัน (สลับภาษา EN / 中文 / ไทย ได้ทันที)',
+        tabs: {
+          demo1: '🌊 Demo 1 · ทะเลสีน้ำ 3 มิติ (Three.js + GLSL)',
+          demo2: '📐 Demo 2 · สไลด์ไทม์ไลน์ (Motion Canvas)',
+          demo3: '⚙️ Demo 3 · แซนด์บ็อกซ์ฟิสิกส์ & เตาหลอม 72 ชม.'
+        },
+        openNewTab: '↗ เปิดเต็มหน้าจอ',
+        demos: {
+          demo1: {
+            url: './demos/demo1-kujira-art/index.html',
+            title: 'ทะเลแห่งจิตใจ: จากละอองคำสู่วาฬแห่งปัญญาอุบัติใหม่',
+            desc: 'แรงบันดาลใจจาก kujira-js: สีน้ำ GLSL เขียนด้วยโค้ดล้วน + อุปมา AI 5 องก์ + ดนตรีสังเคราะห์ Web Audio',
+            tags: 'เทคโนโลยี: Three.js + GLSL + Web Audio'
+          },
+          demo2: {
+            url: './demos/demo2-motion-slides/index.html',
+            title: 'สไลด์การสอนโต้ตอบ + แอนิเมชันไทม์ไลน์เชิงกลไก',
+            desc: 'เจาะลึกการตัดคำ Token การบวกลบเวกเตอร์ สปอตไลต์ Attention และวงจรทำงานของ AI Agent',
+            tags: 'เทคโนโลยี: Motion Canvas + สไลด์แบบโต้ตอบ'
+          },
+          demo3: {
+            url: './demos/demo3-mechanical-sandbox/index.html',
+            title: 'เครื่องพินบอลความน่าจะเป็น & เตาหลอมศาสตร์ใหม่ 72 ชั่วโมง',
+            desc: 'ทดลองปรับค่า Temperature / Top-K ด้วยฟิสิกส์ลูกแก้วจริง พร้อมสายพานวิเคราะห์โจทย์ข้ามศาสตร์',
+            tags: 'เทคโนโลยี: Canvas 2D ฟิสิกส์การชน + ฟันเฟืองกล'
+          }
+        },
+        lessonsHeading: '📚 6 บทเรียนต้นแบบ (เวิร์กชอป 90 นาที)',
+        lessonsSub: 'จุดประกายด้วยภาพ (15 นาที) → ทดลองในแซนด์บ็อกซ์ (25 นาที) → ลงมือทำ PBL (35 นาที) → นำเสนอและวิพากษ์ (15 นาที)',
+        metaphorLabel: 'อุปมาหลัก:',
+        pblLabel: 'ภารกิจ PBL:',
+        lessons: [
+          {
+            num: 'บทที่ 1 · ภาษาและมิติอวกาศ', dim: 'L1 สัญชาตญาณ AI',
+            title: 'ทะเลดาวแห่งถ้อยคำ: AI แปลงภาษามนุษย์เป็นพิกัดจักรวาลได้อย่างไร?',
+            metaphor: 'เครื่องหั่นตัวต่อเลโก้ (Tokenizer) + จักรวาลแรงโน้มถ่วงความหมาย (ราชา - ชาย + หญิง = ราชินี)',
+            pbl: 'เลือกหัวข้อที่หลงใหล วาดแผนที่กลุ่มดาวความหมาย และค้นหาเส้นเชื่อมโยงข้ามศาสตร์ที่คาดไม่ถึง',
+            buttons: [
+              { label: '🌊 ชมทะเลดาวสีน้ำ (Demo 1)', demo: 'demo1' },
+              { label: '📐 เล่นสไลด์เวกเตอร์ (Demo 2)', demo: 'demo2' }
+            ]
+          },
+          {
+            num: 'บทที่ 2 · กลไกและการสุ่มคำ', dim: 'L1 สัญชาตญาณ AI',
+            title: 'สปอตไลต์ใต้สมุทร & เครื่องพินบอล: ถอดรหัสห้องเครื่องของ LLM',
+            metaphor: 'สปอตไลต์จับบริบท (Self-Attention) + กรวยพินบอลสไตล์สตีมพังก์ (ความน่าจะเป็น & อาการหลอน Hallucination)',
+            pbl: 'ทดลองคุมพลังสร้างสรรค์: ปรับอุณหภูมิ (Temperature) เพื่อเทียบงานวิจัยที่แม่นยำ 100% กับการแต่งนิยายไซไฟ',
+            buttons: [
+              { label: '📐 ดูสปอตไลต์บริบท (Demo 2)', demo: 'demo2' },
+              { label: '⚙️ เล่นเครื่องพินบอล (Demo 3)', demo: 'demo3' }
+            ]
+          },
+          {
+            num: 'บทที่ 3 · ตัวแทนอัจฉริยะ', dim: 'L1 + L4 การออกแบบระบบ',
+            title: 'จากสมองในโหลแก้วสู่ชุดเกราะไอรอนแมน: AI Agent และวงจรลงมือทำ',
+            metaphor: 'สมองที่คุยได้แต่อยู่ในโหล เทียบกับชุดเกราะที่ติดเรดาร์ (การรับรู้) ห้องสมุดเวทมนตร์ (RAG) แขนกล (Tools) และระบบทบทวนตนเอง',
+            pbl: 'ออกแบบพิมพ์เขียว AI Agent สำหรับแก้ปัญหาในโรงเรียนหรือครอบครัว พร้อมเครื่องมืออย่างน้อย 3 อย่างและวงจรตรวจแก้ผิดพลาด',
+            buttons: [
+              { label: '📐 ดูวงจร Agent (Demo 2)', demo: 'demo2' }
+            ]
+          },
+          {
+            num: 'บทที่ 4 · เจาะลึกใน 72 ชม.', dim: 'L2 เรียนรู้ข้ามศาสตร์',
+            title: 'เหนือกว่าปริญญา 4 ปี: ใช้ AI พิชิตศาสตร์ที่ไม่คุ้นเคยภายใน 72 ชั่วโมง',
+            metaphor: 'โต๊ะทรายยุทธการโฮโลแกรม — เครื่องบดคำศัพท์วิชาการ + แผนผังคำถามแบบโสกราตีส + การหาโจทย์ที่โลกยังแก้ไม่ได้',
+            pbl: 'สุ่มเลือกศาสตร์ล้ำสมัย (ชีววิทยาสังเคราะห์ / BCI / เก็บขยะอวกาศ / โครงกระดูกช่วยเดิน) แล้วสรุปแผนที่ผู้เชี่ยวชาญใน 72 ชม.',
+            buttons: [
+              { label: '⚙️ เปิดเตาหลอม 72 ชม. (Demo 3)', demo: 'demo3' }
+            ]
+          },
+          {
+            num: 'บทที่ 5 · รสนิยมและโจทย์ที่ใช่', dim: 'L3 เกราะป้องกันมนุษย์',
+            title: 'เมื่อคำตอบราคาศูนย์ คำถามที่ดีมีค่ามหาศาล: ค้นหาจุดยืนของคุณ',
+            metaphor: 'AI คือวงออร์เคสตรานับพันชีวิตที่ไม่รู้จักเหน็ดเหนื่อย แต่มนุษย์ที่มีประสบการณ์ชีวิตคือวาทยกรและกัปตันเรือเพียงผู้เดียว',
+            pbl: 'ลงพื้นที่จริงในเชียงใหม่หรือชุมชนของคุณ: สัมภาษณ์ช่างฝีมือ ผู้สูงอายุ หรือคนทำงาน เพื่อหาปัญหาที่ AI ในห้องเซิร์ฟเวอร์ไม่มีวันรู้',
+            buttons: [
+              { label: '🌊 องก์ 5 กุมหางเสือ (Demo 1)', demo: 'demo1' },
+              { label: '⚙️ สปอตไลต์หาจุดเจ็บ (Demo 3)', demo: 'demo3' }
+            ]
+          },
+          {
+            num: 'บทที่ 6 · ต้นแบบนวัตกรเดี่ยว', dim: 'L4 สร้างและนำเสนอ',
+            title: 'Vibe Prototyping: เปลี่ยนไอเดียสร้างสรรค์ให้กลายเป็นความจริงที่กดเล่นได้',
+            metaphor: 'โรงหล่อเล่นแร่แปรธาตุ — ใช้ภาษาธรรมชาติและแอนิเมชันสร้าง Minimum Viable Magic (MVM) ที่สร้างความประทับใจทันที',
+            pbl: 'งานแสดงนวัตกรรม Demo Day: นำเสนอ 5 นาที เชื่อมโยงแผนที่ความรู้ 72 ชม. ปัญหาจากภาคสนาม และต้นแบบ AI ที่ใช้งานได้จริง',
+            buttons: [
+              { label: '⚙️ หล่อใบเสนอโครงการ (Demo 3)', demo: 'demo3' }
+            ]
+          }
+        ],
+        docsHeading: '🗂️ คู่มือหลักสูตรและเอกสารวิจัย (docs/)',
+        docsSub: 'รวมเอกสารกรอบหลักสูตร 3 ภาษา แผนการสอน 6 บทเรียน และงานวิจัยเทคโนโลยีแอนิเมชัน',
+        docs: [
+          {
+            title: '1. หลักสูตรโรงเรียนนานาชาติ 3 ภาษา (EN / 中文 / ไทย)',
+            desc: 'คู่มือสำหรับโรงเรียนนานาชาติในเชียงใหม่ ไทย อาเซียน และจีน (ป.4–6, ม.1–3, ม.4–6 เชื่อมโยง IB / IGCSE / AP)',
+            path: 'docs/trilingual_international_school_syllabus.md'
+          },
+          {
+            title: '2. โครงสร้างหลักสูตร AI ยุคหลังมหาวิทยาลัย',
+            desc: 'เทียบเคียง MIT DAILy, Stanford CRAFT, AI4K12, Minerva และ Alpha School พร้อมโมเดลพีระมิด 4 มิติและ PBL 12 สัปดาห์',
+            path: 'docs/post_university_ai_curriculum.md'
+          },
+          {
+            title: '3. คู่มือสอน 6 บทเรียนต้นแบบและบทแอนิเมชัน',
+            desc: 'แผนการสอนรายนาที สคริปต์ข้อความก่อนภาพแอนิเมชัน ชุด Prompt ตัวอย่าง และเกณฑ์ประเมินที่ไม่เน้นท่องจำ',
+            path: 'docs/six_demo_courses_handbook.md'
+          },
+          {
+            title: '4. รายงานวิจัยเทคโนโลยีแอนิเมชันเพื่อการศึกษา',
+            desc: 'เปรียบเทียบ Motion Canvas, Manim, Remotion, Three.js+GLSL, Slidev และเอนจินฟิสิกส์สำหรับการสอนเยาวชน',
+            path: 'docs/animation_tech_stack_research.md'
+          }
+        ],
+        toastSwitched: 'เปลี่ยนเป็น: '
+      }
+    };
+
+    function syncIframeLanguage(lang) {
+      const frame = document.getElementById('demoFrame');
+      if (frame && frame.contentWindow) {
+        try {
+          frame.contentWindow.postMessage({ type: 'SET_LANG', lang }, '*');
+        } catch (e) {}
+      }
+    }
+
+    function renderAll() {
+      const t = I18N[currentLang];
+      document.documentElement.lang = currentLang === 'zh' ? 'zh-CN' : currentLang;
+      document.title = t.pageTitle;
+
+      document.getElementById('brandText').textContent = t.brand;
+      document.getElementById('navTheater').textContent = t.navTheater;
+      document.getElementById('navLessons').textContent = t.navLessons;
+      document.getElementById('navDocs').textContent = t.navDocs;
+
+      document.querySelectorAll('.lang-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.lang === currentLang);
+      });
+
+      document.getElementById('heroEyebrow').textContent = t.heroEyebrow;
+      document.getElementById('heroTitle').textContent = t.heroTitle;
+      document.getElementById('heroSubtitle').textContent = t.heroSubtitle;
+
+      document.getElementById('gradePills').innerHTML = t.grades.map(g =>
+        `<span class="grade-pill"><b>${g.tag}</b> ${g.text}</span>`
+      ).join('');
+
+      document.getElementById('pillarsGrid').innerHTML = t.pillars.map(p => `
+        <div class="pillar">
+          <div class="pillar-tag" style="color: ${p.color};">${p.tag}</div>
+          <h3>${p.title}</h3>
+          <p>${p.desc}</p>
+        </div>
+      `).join('');
+
+      document.getElementById('theaterHeading').textContent = t.theaterHeading;
+      document.getElementById('theaterSub').textContent = t.theaterSub;
+      document.getElementById('tabDemo1').textContent = t.tabs.demo1;
+      document.getElementById('tabDemo2').textContent = t.tabs.demo2;
+      document.getElementById('tabDemo3').textContent = t.tabs.demo3;
+      document.getElementById('openNewTab').textContent = t.openNewTab;
+
+      updateDemoMeta(false);
+
+      document.getElementById('lessonsHeading').textContent = t.lessonsHeading;
+      document.getElementById('lessonsSub').textContent = t.lessonsSub;
+      document.getElementById('lessonsGrid').innerHTML = t.lessons.map(l => `
+        <article class="lesson-card">
+          <div>
+            <div class="lesson-top">
+              <span class="lesson-num">${l.num}</span>
+              <span class="lesson-dim">${l.dim}</span>
+            </div>
+            <h3>${l.title}</h3>
+          </div>
+          <div class="metaphor-box">
+            <strong>${t.metaphorLabel}</strong> ${l.metaphor}
+          </div>
+          <p class="pbl-text">
+            <strong>${t.pblLabel}</strong> ${l.pbl}
+          </p>
+          <div class="lesson-footer">
+            ${l.buttons.map(b => `<button class="jump-demo-btn" onclick="jumpToDemo('${b.demo}')">${b.label}</button>`).join('')}
+          </div>
+        </article>
+      `).join('');
+
+      document.getElementById('docsHeading').textContent = t.docsHeading;
+      document.getElementById('docsSub').textContent = t.docsSub;
+      document.getElementById('docsGrid').innerHTML = t.docs.map(d => `
+        <a class="doc-card" href="./${d.path}" target="_blank">
+          <h4>${d.title}</h4>
+          <p>${d.desc}</p>
+          <div class="doc-path">${d.path}</div>
+        </a>
+      `).join('');
+    }
+
+    function updateDemoMeta(reloadFrame = true) {
+      const t = I18N[currentLang];
+      const cfg = t.demos[currentDemo];
+      if (!cfg) return;
+      document.querySelectorAll('.demo-tab').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.demo === currentDemo);
+      });
+      const urlWithLang = `${cfg.url}?lang=${currentLang}`;
+      if (reloadFrame) {
+        document.getElementById('demoFrame').src = urlWithLang;
+      }
+      document.getElementById('openNewTab').href = urlWithLang;
+      document.getElementById('demoTitle').textContent = cfg.title;
+      document.getElementById('demoDesc').textContent = cfg.desc;
+      document.getElementById('demoTags').textContent = cfg.tags;
+    }
+
+    function setLang(lang) {
+      if (!VALID_LANGS.includes(lang)) return;
+      currentLang = lang;
+      try {
+        localStorage.setItem('ai_course_lang', lang);
+      } catch (e) {}
+      renderAll();
+      syncIframeLanguage(lang);
+      document.getElementById('openNewTab').href = `${I18N[currentLang].demos[currentDemo].url}?lang=${currentLang}`;
+    }
+
+    function switchDemo(key) {
+      currentDemo = key;
+      updateDemoMeta(true);
+    }
+
+    function jumpToDemo(key) {
+      switchDemo(key);
+      document.getElementById('theater').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      const t = I18N[currentLang];
+      showToast(t.toastSwitched + t.demos[key].title);
+    }
+
+    function showToast(msg) {
+      const el = document.getElementById('toast');
+      el.textContent = msg;
+      el.classList.add('show');
+      clearTimeout(window.__toastTimer);
+      window.__toastTimer = setTimeout(() => el.classList.remove('show'), 2600);
+    }
+
+    document.getElementById('demoFrame').addEventListener('load', () => {
+      syncIframeLanguage(currentLang);
+    });
+
+    currentLang = detectInitialLang();
+    renderAll();
+    updateDemoMeta(true);
+  </script>
+</body>
+</html>

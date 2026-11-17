@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Demo 3: Interactive Physics Sandbox | Steampunk Blueprint Lab</title>
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <!-- Top brass nameplate control bar -->
+    <header class="topbar no-print">
+      <div class="brand-group">
+        <div class="brand-gear" aria-hidden="true">⚙</div>
+        <div class="brand-titles">
+          <h1 data-i18n="topbar.brandTitle">Interactive Physics Sandbox · Steampunk Blueprint Lab</h1>
+          <p data-i18n="topbar.brandSub">Turn LLM probability sampling &amp; cross-disciplinary AI mastery into machines you can see and touch</p>
+        </div>
+      </div>
+
+      <!-- Dual-mode mechanical switch -->
+      <nav class="mode-switcher" aria-label="Switch Experiment Mode" data-i18n-aria="topbar.modeSwitcherAria">
+        <button type="button" class="mode-btn active" id="switch-mode-a">
+          <span class="mode-tag" data-i18n="topbar.modeATag">Mode A</span>
+          <span data-i18n="topbar.modeAName">Probability Galton Pinball</span>
+        </button>
+        <button type="button" class="mode-btn" id="switch-mode-b">
+          <span class="mode-tag" data-i18n="topbar.modeBTag">Mode B</span>
+          <span data-i18n="topbar.modeBName">Cognitive Alchemy Forge</span>
+        </button>
+      </nav>
+
+      <!-- Trilingual switcher -->
+      <div class="lang-switcher no-print" role="group" aria-label="Language Switcher">
+        <button type="button" class="lang-btn active" data-lang="en">EN</button>
+        <button type="button" class="lang-btn" data-lang="zh">中文</button>
+        <button type="button" class="lang-btn" data-lang="th">ไทย</button>
+      </div>
+
+      <div class="topbar-actions">
+        <button type="button" class="btn btn-cyan" id="btn-tips" data-i18n="topbar.tipsBtn">💡 Class Tips</button>
+        <button type="button" class="btn" id="btn-global-reset" data-i18n="topbar.resetBtn">↺ Reset Lab</button>
+      </div>
+    </header>
+
+    <!-- ==================== Mode A: Probability Galton Pinball ==================== -->
+    <main class="mode-view active" id="mode-a-view">
+      <!-- Left physics sandbox canvas -->
+      <section class="panel">
+        <div class="panel-header">
+          <div class="panel-title">
+            <span data-i18n="modeA.canvasPanelTitle">🎯 Probability Marble Physics Engine</span>
+            <span class="panel-badge" id="galton-stats-label">Dropped 0 | Entropy 0.00 bits</span>
+          </div>
+          <span style="font-size:11.5px;color:#9bb0c7;" data-i18n="modeA.canvasHint">Click pegs above to drop 1 ｜ Click bottom bin to chain token</span>
+        </div>
+        <div class="canvas-stage">
+          <canvas id="galton-canvas"></canvas>
+        </div>
+      </section>
+
+      <!-- Right parameter console & live telemetry -->
+      <aside class="stack-col">
+        <!-- Scenario selection & autoregressive context -->
+        <section class="panel">
+          <div class="panel-header">
+            <div class="panel-title" data-i18n="modeA.panel1Title">📜 1. Teaching Scenarios &amp; 3-Round Autoregressive Chain</div>
+          </div>
+          <div class="panel-body" style="display:flex;flex-direction:column;gap:10px;">
+            <div class="scenario-pills" id="mode-a-scenarios"></div>
+            <div class="context-scroll" id="mode-a-context-scroll"></div>
+          </div>
+        </section>
+
+        <!-- Physics parameter sliders & drop triggers -->
+        <section class="panel">
+          <div class="panel-header">
+            <div class="panel-title" data-i18n="modeA.panel2Title">🌡 2. Thermodynamic Temperature &amp; Top-K Mechanical Gate</div>
+          </div>
+          <div class="panel-body" style="display:flex;flex-direction:column;gap:10px;">
+            <div class="control-box">
+              <div class="control-row">
+                <label class="control-label" for="temp-slider" data-i18n="modeA.tempLabel">Temperature (Thermal Airflow Turbulence)</label>
+                <span class="control-value" id="temp-value">0.85</span>
+              </div>
+              <input type="range" class="brass-slider" id="temp-slider" min="0.05" max="2.50" step="0.05" value="0.85" />
+              <div class="slider-scale">
+                <span data-i18n="modeA.tempScaleLow">0.05 Frost Rigid</span>
+                <span data-i18n="modeA.tempScaleMid">0.85 Balanced</span>
+                <span data-i18n="modeA.tempScaleHigh">2.50 Furnace Wild</span>
+              </div>
+            </div>
+
+            <div class="control-box">
+              <div class="control-row">
+                <label class="control-label" for="topk-slider" data-i18n="modeA.topkLabel">Top-K Mechanical Gate (Open Slots)</label>
+                <span class="control-value" id="topk-value">Top-5</span>
+              </div>
+              <input type="range" class="brass-slider topk-track" id="topk-slider" min="1" max="8" step="1" value="5" />
+              <div class="slider-scale">
+                <span data-i18n="modeA.topkScaleLow">K=1 Greedy Dictator</span>
+                <span data-i18n="modeA.topkScaleMid">K=4 Steady</span>
+                <span data-i18n="modeA.topkScaleHigh">K=8 All Slots Open</span>
+              </div>
+            </div>
+
+            <div class="action-grid">
+              <button type="button" class="btn" id="btn-drop-1" data-i18n="modeA.btnDrop1">⚪ Drop 1</button>
+              <button type="button" class="btn" id="btn-drop-10" data-i18n="modeA.btnDrop10">🔵 Burst 10</button>
+              <button type="button" class="btn btn-cyan" id="btn-drop-50" data-i18n="modeA.btnDrop50">⚡ Burst 50</button>
+            </div>
+            <div style="display:grid;grid-template-columns:1.5fr 1fr;gap:7px;">
+              <button type="button" class="btn btn-brass" id="btn-sample-next">🎯 Sample 1 &amp; Chain</button>
+              <button type="button" class="btn" id="btn-clear-bins" data-i18n="modeA.btnClearBins">🧹 Clear Bins</button>
+            </div>
+
+            <!-- AI Hallucination warning lamp -->
+            <div class="hallucination-lamp" id="hallucination-lamp">
+              <div class="lamp-bulb" aria-hidden="true"></div>
+              <div class="lamp-text">
+                <strong id="hallucination-title">✅ Factual Steady State: High-Confidence Lock</strong>
+                <span id="hallucination-desc">Observe how temperature, gate width, and token choices jointly trigger AI hallucinations.</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Softmax live distribution table -->
+        <section class="panel">
+          <div class="panel-header">
+            <div class="panel-title" data-i18n="modeA.panel3Title">📊 3. Live Softmax Distribution (Click Right to Chain)</div>
+            <span style="font-size:11px;color:#9bb0c7;" data-i18n="modeA.panel3Legend">Token / Logit / Theory% / Action</span>
+          </div>
+          <div class="panel-body" style="padding:10px;">
+            <div class="prob-table-wrap" id="prob-table-wrap"></div>
+          </div>
+        </section>
+      </aside>
+    </main>
+
+    <!-- ==================== Mode B: Cognitive Alchemy Forge ==================== -->
+    <main class="mode-view" id="mode-b-view">
+      <!-- Left mechanical alchemy assembly line canvas -->
+      <section class="panel" id="mode-b-canvas-panel">
+        <div class="panel-header">
+          <div class="panel-title">
+            <span data-i18n="modeB.canvasPanelTitle">⚗ Cognitive Alchemy Assembly Line</span>
+            <span class="panel-badge" data-i18n="modeB.canvasPanelBadge">4 Live Stations</span>
+          </div>
+          <span style="font-size:11.5px;color:#9bb0c7;" data-i18n="modeB.canvasPanelHint">Click any station rig on canvas to switch</span>
+        </div>
+        <div class="canvas-stage">
+          <canvas id="alchemy-canvas"></canvas>
+        </div>
+      </section>
+
+      <!-- Right input hopper & 4-station deck -->
+      <aside class="stack-col">
+        <section class="panel no-print">
+          <div class="panel-header">
+            <div class="panel-title" data-i18n="modeB.inputPanelTitle">🧪 Hopper: Frontier Domain × Personal Lens</div>
+          </div>
+          <div class="panel-body" style="display:flex;flex-direction:column;gap:10px;">
+            <div>
+              <div style="font-size:12px;color:#9bb0c7;margin-bottom:5px;" data-i18n="modeB.stepALabel">Step A: Pick an unfamiliar frontier domain (or type any new field):</div>
+              <div class="chip-grid" id="mode-b-domains"></div>
+              <div class="custom-domain-bar">
+                <input type="text" class="text-input" id="custom-domain-input" placeholder="Enter custom domain, e.g., Nuclear Fusion, Deep-Sea Mining..." data-i18n-placeholder="modeB.customPlaceholder" maxlength="64" />
+                <button type="button" class="btn btn-brass btn-sm" id="btn-crush-custom" data-i18n="modeB.btnCrushCustom">Feed to Crusher</button>
+              </div>
+            </div>
+
+            <div>
+              <div style="font-size:12px;color:#9bb0c7;margin-bottom:5px;" data-i18n="modeB.stepBLabel">Step B: Choose your personal advantage lens:</div>
+              <div class="chip-grid" id="mode-b-perspectives"></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 4-station navigation & content cards -->
+        <section class="panel">
+          <div class="panel-header no-print">
+            <div class="panel-title" data-i18n="modeB.stationPanelTitle">🏭 Alchemy Station Deck</div>
+          </div>
+          <div class="panel-body" style="display:flex;flex-direction:column;gap:10px;">
+            <div class="station-stepper no-print">
+              <button type="button" class="station-tab active" data-station="1">
+                <span class="station-num" data-i18n="modeB.tab1Num">Station 01</span>
+                <span class="station-name" data-i18n="modeB.tab1Name">First Principles</span>
+              </button>
+              <button type="button" class="station-tab" data-station="2">
+                <span class="station-num" data-i18n="modeB.tab2Num">Station 02</span>
+                <span class="station-name" data-i18n="modeB.tab2Name">72h Inquiry</span>
+              </button>
+              <button type="button" class="station-tab" data-station="3">
+                <span class="station-num" data-i18n="modeB.tab3Num">Station 03</span>
+                <span class="station-name" data-i18n="modeB.tab3Name">Pain Spotlight</span>
+              </button>
+              <button type="button" class="station-tab" data-station="4">
+                <span class="station-num" data-i18n="modeB.tab4Num">Station 04</span>
+                <span class="station-name" data-i18n="modeB.tab4Name">Founder Forge</span>
+              </button>
+            </div>
+            <div id="mode-b-station-content"></div>
+          </div>
+        </section>
+      </aside>
+    </main>
+  </div>
+
+  <!-- Classroom teaching tips modal -->
+  <div class="modal-backdrop no-print" id="tips-modal" role="dialog" aria-modal="true" aria-labelledby="tips-title">
+    <div class="modal-dialog">
+      <div class="panel-header">
+        <div class="panel-title" id="tips-title" data-i18n="tips.title">🎓 1-Minute Classroom Teaching Guide (Instructor Script)</div>
+        <button type="button" class="btn btn-sm" id="btn-close-tips" data-i18n="tips.closeBtn">✕ Close</button>
+      </div>
+      <div class="modal-body">
+        <div class="tip-block">
+          <h4 data-i18n="tips.modeATitle">Mode A (Probability Galton Pinball): How to Demo AI "Personality" &amp; "Hallucinations"?</h4>
+          <ul id="tips-mode-a-list">
+            <li><b>1. Demo Determinism (Frost Mode):</b> Select "Scientific Fact Reasoning", slide Temperature to <code>0.15</code> and Top-K to <code>2</code>, then fire 50 marbles—students watch every marble strike "100°C" like a laser beam.</li>
+            <li><b>2. Demo Nonsense (Furnace Mode):</b> Switch to "Historical Fact Q&amp;A", crank Temperature to <code>2.0</code> and open Top-K to <code>8</code>—superheated marbles scatter into "Constantinople / Mark Antony / Cybertron" and turn the hallucination lamp red!</li>
+            <li><b>3. Demo Autoregressive Snowball:</b> Intentionally click an off-track token in Round 1 and watch Rounds 2 &amp; 3 keep elaborating seriously from that flawed premise.</li>
+          </ul>
+        </div>
+        <div class="tip-block">
+          <h4 data-i18n="tips.modeBTitle">Mode B (Cognitive Alchemy Forge): How to Guide Students into Rapid Cross-Disciplinary "Solo-Founder" Innovation?</h4>
+          <ul id="tips-mode-b-list">
+            <li><b>1. Demystify:</b> Have students type any intimidating frontier domain above (e.g., "Brain-Computer Interface" or "Quantum Error Correction") and watch Station 1's brass gears crush jargon into 3 plain-English principles.</li>
+            <li><b>2. Find Your Irreplaceable Edge:</b> Switch personal lenses (Visual Designer / High School Teacher / Financial Auditor / Game Designer) to show that <b>in the AI era, memorizing buzzwords has zero value—your lived perspective spots pain cracks nobody else sees</b>.</li>
+            <li><b>3. 72-Hour Action:</b> Advance to Station 4 to forge a "Solo-Founder Project Card", then copy or print it as a concrete post-class launch assignment!</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast no-print" id="toast-banner"></div>
+
+  <!-- Load independent modules in strict order -->
+  <script src="./i18n.js"></script>
+  <script src="./data_en.js"></script>
+  <script src="./data_th.js"></script>
+  <script src="./data.js"></script>
+  <script src="./mode_a_galton.js"></script>
+  <script src="./mode_b_alchemy.js"></script>
+  <script>
+    (function () {
+      "use strict";
+
+      let currentMode = "a";
+      let toastTimer = null;
+
+      function t(key) {
+        if (window.DEMO3_LANG && typeof window.DEMO3_LANG.t === "function") {
+          return window.DEMO3_LANG.t.apply(window.DEMO3_LANG, arguments);
+        }
+        return key;
+      }
+
+      function showToast(msg) {
+        const el = document.getElementById("toast-banner");
+        if (!el) return;
+        el.textContent = msg;
+        el.classList.add("show");
+        if (toastTimer) clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => {
+          el.classList.remove("show");
+        }, 2600);
+      }
+
+      function applyStaticI18n() {
+        const langApi = window.DEMO3_LANG;
+        if (!langApi) return;
+
+        const curLang = langApi.get();
+        document.documentElement.lang = curLang === "zh" ? "zh-CN" : curLang;
+        document.title = t("meta.pageTitle");
+
+        document.querySelectorAll("[data-i18n]").forEach((el) => {
+          const key = el.getAttribute("data-i18n");
+          if (!key) return;
+          const val = t(key);
+          if (typeof val === "string") {
+            el.textContent = val;
+          }
+        });
+
+        document.querySelectorAll("[data-i18n-placeholder]").forEach((el) => {
+          const key = el.getAttribute("data-i18n-placeholder");
+          if (!key) return;
+          const val = t(key);
+          if (typeof val === "string") {
+            el.setAttribute("placeholder", val);
+          }
+        });
+
+        document.querySelectorAll("[data-i18n-aria]").forEach((el) => {
+          const key = el.getAttribute("data-i18n-aria");
+          if (!key) return;
+          const val = t(key);
+          if (typeof val === "string") {
+            el.setAttribute("aria-label", val);
+          }
+        });
+
+        const renderTipList = (listId, itemsKey) => {
+          const ul = document.getElementById(listId);
+          if (!ul) return;
+          const items = t(itemsKey);
+          if (!Array.isArray(items)) return;
+          ul.innerHTML = "";
+          items.forEach((htmlItem) => {
+            const li = document.createElement("li");
+            li.innerHTML = htmlItem;
+            ul.appendChild(li);
+          });
+        };
+
+        renderTipList("tips-mode-a-list", "tips.modeAItems");
+        renderTipList("tips-mode-b-list", "tips.modeBItems");
+
+        document.querySelectorAll(".lang-btn[data-lang]").forEach((btn) => {
+          const isActive = btn.dataset.lang === curLang;
+          btn.classList.toggle("active", isActive);
+          btn.setAttribute("aria-pressed", isActive ? "true" : "false");
+        });
+      }
+
+      function switchMode(mode) {
+        currentMode = mode;
+        const viewA = document.getElementById("mode-a-view");
+        const viewB = document.getElementById("mode-b-view");
+        const btnA = document.getElementById("switch-mode-a");
+        const btnB = document.getElementById("switch-mode-b");
+
+        const isA = mode === "a";
+        viewA.classList.toggle("active", isA);
+        viewB.classList.toggle("active", !isA);
+        btnA.classList.toggle("active", isA);
+        btnB.classList.toggle("active", !isA);
+
+        // Recalculate Canvas pixel dimensions after toggling visibility
+        requestAnimationFrame(() => {
+          if (isA && window.ModeAGalton) {
+            window.ModeAGalton.resizeCanvas();
+          } else if (!isA && window.ModeBAlchemy) {
+            window.ModeBAlchemy.resizeCanvas();
+          }
+        });
+      }
+
+      applyStaticI18n();
+
+      if (window.DEMO3_LANG && typeof window.DEMO3_LANG.onChange === "function") {
+        window.DEMO3_LANG.onChange(() => {
+          applyStaticI18n();
+          window.ModeAGalton?.onLangChange?.();
+          window.ModeBAlchemy?.onLangChange?.();
+        });
+      }
+
+      document.addEventListener("DOMContentLoaded", () => {
+        applyStaticI18n();
+
+        if (window.ModeAGalton) {
+          window.ModeAGalton.init({ onToast: showToast });
+        }
+        if (window.ModeBAlchemy) {
+          window.ModeBAlchemy.init({ onToast: showToast });
+        }
+
+        document.querySelectorAll(".lang-btn[data-lang]").forEach((btn) => {
+          btn.addEventListener("click", () => {
+            if (window.DEMO3_LANG) {
+              window.DEMO3_LANG.set(btn.dataset.lang);
+            }
+          });
+        });
+
+        document.getElementById("switch-mode-a").addEventListener("click", () => switchMode("a"));
+        document.getElementById("switch-mode-b").addEventListener("click", () => switchMode("b"));
+
+        document.getElementById("btn-global-reset").addEventListener("click", () => {
+          if (currentMode === "a" && window.ModeAGalton) {
+            window.ModeAGalton.reset();
+            showToast(t("topbar.toastResetA"));
+          } else if (currentMode === "b" && window.ModeBAlchemy) {
+            window.ModeBAlchemy.reset();
+            showToast(t("topbar.toastResetB"));
+          }
+        });
+
+        const modal = document.getElementById("tips-modal");
+        document.getElementById("btn-tips").addEventListener("click", () => modal.classList.add("open"));
+        document.getElementById("btn-close-tips").addEventListener("click", () => modal.classList.remove("open"));
+        modal.addEventListener("click", (e) => {
+          if (e.target === modal) modal.classList.remove("open");
+        });
+      });
+    })();
+  </script>
+</body>
+</html>

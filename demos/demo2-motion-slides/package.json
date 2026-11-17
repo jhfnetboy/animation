@@ -1,0 +1,22 @@
+{
+  "name": "demo2-motion-slides",
+  "version": "1.0.0",
+  "private": true,
+  "description": "AI科普微课程序化时间轴动画与互动讲义工程（Motion Canvas + 零门槛浏览器微课课件）",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@motion-canvas/2d": "^3.17.2",
+    "@motion-canvas/core": "^3.17.2",
+    "@motion-canvas/ui": "^3.17.2"
+  },
+  "devDependencies": {
+    "@motion-canvas/vite-plugin": "^3.17.2",
+    "typescript": "^5.6.3",
+    "vite": "^5.4.11"
+  }
+}
