@@ -1,4 +1,4 @@
-// ---- main: build the 5-act film, post pipeline, overlay metaphors, sound & teaching HUD
+// ---- main: build the 5-act Lanna River of Mind film, post pipeline, overlay metaphors, sound & teaching HUD
 const P = new URLSearchParams(location.search);
 let isLow = P.get('q') === 'low';
 let W = isLow ? 1280 : 1920, H = isLow ? 720 : 1080;
@@ -308,7 +308,7 @@ addEventListener('keydown', (e) => {
 // Apply initial language before initial render so static UI and capsules match
 setLang(currentLang, false);
 
-// Default landing preview shows Act 4 dramatic breach (10.7s) unless ?t= or ?frame= or ?act= is given
+// Default landing preview shows Act 4 Sacred White Elephant dramatic breach (10.7s) unless ?t= or ?frame= or ?act= is given
 let first = Math.round(10.7 * FPS);
 if (P.get('frame')) first = +P.get('frame');
 else if (P.get('t')) first = Math.round(+P.get('t') * FPS);

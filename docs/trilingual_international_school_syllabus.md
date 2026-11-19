@@ -147,7 +147,7 @@ All classroom media follows the **Script-First / Text-First, Animation-Second** 
 
 | Studio & Path | Tech Stack | Built-In Modules & Classroom Usage |
 | :--- | :--- | :--- |
-| **Studio 1: Hand-Painted Art Theater**<br>[`demos/demo1-kujira-art/`](../demos/demo1-kujira-art/index.html) | `Three.js` + `GLSL3` Kuwahara Watercolor Shaders + `Web Audio` real-time synth | **5-Act 16s Film (24 fps)** with act pills, scrub bar & caption card:<br>• **Act 1 (`0–3s`) Token Rain** (`L1`) · **Act 2 (`3–6s`) Semantic Starfield** (`L1`)<br>• **Act 3 (`6–9s`) Attention Searchlights** (`L2`) · **Act 4 (`9–13s`) Emergence Whale** (`L2`)<br>• **Act 5 (`13–16s`) Steering the Future** (`L5`). *Optional rebuild*: `node build.mjs`. |
+| **Studio 1: Hand-Painted Art Theater**<br>[`demos/demo1-kujira-art/`](../demos/demo1-kujira-art/index.html) | `Three.js` + `GLSL3` Kuwahara Watercolor Shaders + Lanna `Web Audio` real-time synth | **5-Act 16s Chiang Mai Film (24 fps)** with act pills, scrub bar & caption card:<br>• **Act 1 (`0–3s`) Krathong Word Sparks** (`L1`) · **Act 2 (`3–6s`) Yi Peng Star Clusters** (`L1`)<br>• **Act 3 (`6–9s`) Golden Lotus Searchlight** from a Thai Longtail Boat (`L2`)<br>• **Act 4 (`9–13s`) Sacred White Elephant (Chang Phueak)** emergence (`L2`)<br>• **Act 5 (`13–16s`) Sailing to Doi Suthep Golden Chedi** (`L5`). *Optional rebuild*: `node build.mjs`. |
 | **Studio 2: Slidev-Style Deck + Motion Canvas Engine**<br>[`demos/demo2-motion-slides/`](../demos/demo2-motion-slides/index.html) | `Motion Canvas` (`@motion-canvas/core`, `2d`, `ui`, `vite-plugin`) + Slidev-Style Interactive Lesson Deck (`pnpm`) | **3 Procedural Micro-Lessons** (`src/project.ts` & `src/scenes/`):<br>• `lesson1_embedding.tsx`: Tokenizer & Vector Balance (`L1`)<br>• `lesson2_attention.tsx`: Self-Attention Context Searchlights (`L2`)<br>• `lesson3_agent.tsx`: Iron Man Suit & ReAct Step-Debugger (`L3`). |
 | **Studio 3: Steampunk Physics & Alchemy Sandbox**<br>[`demos/demo3-mechanical-sandbox/`](../demos/demo3-mechanical-sandbox/index.html) | Native `HTML5 Canvas 2D` Rigid-Body Collision + Deterministic State Engine | **Dual-Mode Hands-On Workbench**:<br>• **Mode A (Galton Probability Pinball)**: 4 scenarios (*Classical Poetry, Scientific Fact, Code Completion, Historical Fact*) × 3 autoregressive rounds; drag `Temperature` (`0.05–2.50`) & `Top-K` (`1–8`); watch Shannon Entropy & Hallucination Lamp.<br>• **Mode B (Cognitive Alchemy Furnace)**: 4 Hardcore Domains (*Synthetic Bio, BCI, Space Debris, AI Silver-Hair Exoskeleton*) × 4 Personas (*Designer, Teacher, Finance Auditor, Game Designer*) = 16 cross-pollination venture cards + Jargon Translator + Socratic 3-Step Drills. |
 
@@ -261,7 +261,7 @@ All classroom media follows the **Script-First / Text-First, Animation-Second** 
 
 ## 2.7 三大动画实验台应用指南与“4+1”评估量规
 
-1. **实验台一 `demos/demo1-kujira-art/`（Three.js + GLSL 手绘艺术流）**：16 秒 5 幕（24fps）水彩手绘海面剧场与 Web Audio 实时配乐，覆盖词之雨滴、语义星海、注意力探照灯、涌现之鲸与掌舵未来；适合课堂开场破冰与价值观升华。
+1. **实验台一 `demos/demo1-kujira-art/`（Three.js + GLSL 手绘艺术流）**：16 秒 5 幕（24fps）清迈兰纳水彩剧场与木琴/铜铃实时配乐，演绎**水灯词韵（Krathong）、天灯星群（Yi Peng）、泰式长尾船金莲慧光、神圣白象（Chang Phueak）破水醒觉与扬帆驶向素贴山金佛塔**；适合课堂开场破冰与价值观升华。
 2. **实验台二 `demos/demo2-motion-slides/`（Motion Canvas + Slidev 风格互动讲义流）**：内置 3 节程序化时间轴微课（`lesson1_embedding.tsx`、`lesson2_attention.tsx`、`lesson3_agent.tsx`），支持单步调试、幻灯片翻页与公式对照，适合第 1–3 课原理精讲。
 3. **实验台三 `demos/demo3-mechanical-sandbox/`（Canvas 2D 蒸汽朋克物理机械沙盒）**：模式 A（概率弹珠高尔顿板）支持 4 大剧本（古诗/科学/代码/历史）× 3 轮接龙及 `Temperature`（0.05–2.50）与 `Top-K`（1–8）实时调参并监测信息熵与幻觉警报灯；模式 B（认知炼金炉）内置 4 大硬核领域（合成生物学/脑机接口/太空碎片/AI 银发外骨骼）× 4 个人视角的 16 组交叉立项矩阵。
 4. **“4+1”去应试化评估与防异化护栏**：围绕 **D1 机制迁移与追问深度、D2 问题真实性与田野证据、D3 系统编排与 MVM 魔法度、D4 防幻觉核查与伦理自觉、+1 真实世界回响（≥5 位非亲友真实用户验证）** 进行 1–4 级评分；导师由“讲授者”转型为 `Guide + Challenger`，坚守“反认知外包红线”“屏幕与物理交互平衡”及“体面失败（Honorable Failure）”机制。
@@ -353,7 +353,7 @@ All classroom media follows the **Script-First / Text-First, Animation-Second** 
 
 ## 3.7 คู่มือห้องปฏิบัติการแอนิเมชัน 3 ระบบและเกณฑ์ประเมิน "4+1" Rubric
 
-1. **ห้องทดลองที่ 1 `demos/demo1-kujira-art/` (`Three.js` + `GLSL` สีน้ำวาดมือ + `Web Audio`)**: ภาพยนตร์ 5 องก์ความยาว 16 วินาที (24 fps) ถ่ายทอดตั้งแต่หยดฝน Token, ทะเลดาวความหมาย, ไฟฉายความสนใจ, วาฬแห่งปัญญา จนถึงเยาวชนผู้ถือพังงาเรือแห่งอนาคต ใช้เปิดนำเข้าสู่บทเรียนและสร้างแรงบันดาลใจทางศิลปะ
+1. **ห้องทดลองที่ 1 `demos/demo1-kujira-art/` (`Three.js` + `GLSL` สีน้ำวาดมือ + ดนตรี `Ranat Ek` ล้านนา)**: ภาพยนตร์ 5 องก์ความยาว 16 วินาที (24 fps) ถ่ายทอดตั้งแต่**กระทงแห่งถ้อยคำ, กลุ่มดาวโคมยี่เป็ง, แสงบัวทองจากเรือหางยาว, ช้างเผือกแห่งปัญญาอุบัติ จนถึงเยาวชนผู้กุมหางเสือมุ่งสู่พระธาตุดอยสุเทพ** ใช้เปิดนำเข้าสู่บทเรียนและสร้างแรงบันดาลใจทางศิลปะและวัฒนธรรมล้านนา
 2. **ห้องทดลองที่ 2 `demos/demo2-motion-slides/` (`Motion Canvas` + สไลด์โต้ตอบสไตล์ Slidev)**: ประกอบด้วยบทเรียนไทม์ไลน์ 3 ชุด (`lesson1_embedding.tsx`, `lesson2_attention.tsx`, `lesson3_agent.tsx`) พร้อมปุ่มหยุดดูทีละเฟรม เหมาะสำหรับบทที่ 1–3
 3. **ห้องทดลองที่ 3 `demos/demo3-mechanical-sandbox/` (`Canvas 2D` กลไกฟิสิกส์สตีมพังก์)**:
    - **โหมด A (พินบอลความน่าจะเป็น)**: 4 ชุดบททดสอบ (บทกวี, วิทยาศาสตร์, โค้ดโปรแกรม, ประวัติศาสตร์) ต่อเนื่อง 3 รอบ ปรับแถบเลื่อน `Temperature` (`0.05–2.50`) และ `Top-K` (`1–8`) พร้อมมาตรวัดเอนโทรปีและไฟเตือนอาการหลอน

@@ -1,14 +1,13 @@
-// ---- AI metaphors: Act 1 Token Raindrops, Act 2 Semantic Constellations, Act 3 Attention Searchlights & Energy Web, Act 5 Lighthouse Beam
+// ---- AI metaphors: Act 1 Lotus Krathong Sparks, Act 2-3 Yi Peng Khom Loi Constellations, Attention Beams & Act 5 Lighthouse Beam
 
-// Deterministic Act 1 raindrop schedule (also shared with 70-audio.js so sound chimes align with water hits!)
+// Deterministic Act 1 Krathong drop schedule (shared with 50-fx.js & 70-audio.js)
 const RAIN_COUNT = 28;
 const RAIN_PALETTE = [
-  '#ff8a4c', // coral orange
-  '#45d0f5', // sky cyan
-  '#ffd15c', // amber gold
-  '#6ee7b7', // mint teal
-  '#f472b6', // blossom pink
-  '#93c5fd', // periwinkle blue
+  '#ff7eb6', // lotus pink (荷花粉)
+  '#ffa938', // marigold orange (金盏菊橙)
+  '#5eead4', // pandan leaf green (香兰叶绿)
+  '#60c5ff', // sacred river blue (圣水天蓝)
+  '#ffd452', // amber gold (琥珀金)
 ];
 
 const RAIN_DROPS = (() => {
@@ -19,7 +18,7 @@ const RAIN_DROPS = (() => {
     const x = rng.range(-19, 9);
     const z = rng.range(-74, -44);
     const speed = rng.range(18, 25);
-    const scale = rng.range(0.52, 0.92);
+    const scale = rng.range(0.56, 0.96);
     const color = new THREE.Color(RAIN_PALETTE[i % RAIN_PALETTE.length]);
     const shapeType = i % 3;
     arr.push({
@@ -37,9 +36,76 @@ const RAIN_DROPS = (() => {
   return arr;
 })();
 
+// Faceted polyhedral Lotus Krathong geometry: serrated banana-leaf base, 2 tiers of lotus petals & central candle core
+function krathongGeometry() {
+  const pos = [];
+  const nrm = [];
+  const pushTri = (a, b, c) => {
+    const ux = b[0] - a[0], uy = b[1] - a[1], uz = b[2] - a[2];
+    const vx = c[0] - a[0], vy = c[1] - a[1], vz = c[2] - a[2];
+    let nx = uy * vz - uz * vy, ny = uz * vx - ux * vz, nz = ux * vy - uy * vx;
+    const l = Math.hypot(nx, ny, nz) || 1;
+    nx /= l; ny /= l; nz /= l;
+    pos.push(a[0], a[1], a[2], b[0], b[1], b[2], c[0], c[1], c[2]);
+    nrm.push(nx, ny, nz, nx, ny, nz, nx, ny, nz);
+  };
+
+  // 1. Serrated banana-leaf disc base (16 alternating outer vertices)
+  const N_BASE = 16;
+  const bot = [0, -0.18, 0];
+  const top = [0, 0.04, 0];
+  const rim = [];
+  for (let i = 0; i < N_BASE; i++) {
+    const a = (i / N_BASE) * Math.PI * 2;
+    const r = i % 2 === 0 ? 0.62 : 0.48;
+    const y = i % 2 === 0 ? 0.01 : -0.04;
+    rim.push([Math.cos(a) * r, y, Math.sin(a) * r]);
+  }
+  for (let i = 0; i < N_BASE; i++) {
+    const p1 = rim[i], p2 = rim[(i + 1) % N_BASE];
+    pushTri(bot, p1, p2);
+    pushTri(top, p2, p1);
+  }
+
+  // 2. Lotus petal tiers (outer 8 blooming petals + inner 6 cupped petals)
+  const addPetalRing = (count, rIn, rMid, rOut, yBase, yMid, yTip, wAng, phase) => {
+    for (let i = 0; i < count; i++) {
+      const a = (i / count) * Math.PI * 2 + phase;
+      const p0 = [Math.cos(a) * rIn, yBase, Math.sin(a) * rIn];
+      const pl = [Math.cos(a - wAng) * rMid, yMid, Math.sin(a - wAng) * rMid];
+      const pr = [Math.cos(a + wAng) * rMid, yMid, Math.sin(a + wAng) * rMid];
+      const pt = [Math.cos(a) * rOut, yTip, Math.sin(a) * rOut];
+      pushTri(p0, pl, pt);
+      pushTri(p0, pt, pr);
+    }
+  };
+  addPetalRing(8, 0.22, 0.44, 0.56, 0.03, 0.22, 0.30, 0.26, 0.0);
+  addPetalRing(6, 0.14, 0.27, 0.31, 0.07, 0.32, 0.44, 0.32, Math.PI / 6);
+
+  // 3. Central hexagonal crystal candle flame / lotus heart
+  const cMid = [];
+  const N_CORE = 6;
+  for (let i = 0; i < N_CORE; i++) {
+    const a = (i / N_CORE) * Math.PI * 2;
+    cMid.push([Math.cos(a) * 0.11, 0.31, Math.sin(a) * 0.11]);
+  }
+  const cBot = [0, 0.16, 0];
+  const cTop = [0, 0.56, 0];
+  for (let i = 0; i < N_CORE; i++) {
+    const m1 = cMid[i], m2 = cMid[(i + 1) % N_CORE];
+    pushTri(cBot, m1, m2);
+    pushTri(cTop, m2, m1);
+  }
+
+  const g = new THREE.BufferGeometry();
+  g.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
+  g.setAttribute('normal', new THREE.Float32BufferAttribute(nrm, 3));
+  return g;
+}
+
 function buildTokensAndBeams(scene, overlay, post) {
-  // ---- 1. Act 1 Main-scene inked cel token blocks (Octahedron / Box / Prism packed via InstancedMesh)
-  const blockGeo = new THREE.OctahedronGeometry(0.65, 0);
+  // ---- 1. Act 1 Main-scene inked cel Lotus Krathongs (instanced polyhedral floating water lanterns)
+  const blockGeo = krathongGeometry();
   const blockCol = new Float32Array(RAIN_COUNT * 3);
   const blockBoost = new Float32Array(RAIN_COUNT);
   RAIN_DROPS.forEach((d, i) => {
@@ -55,13 +121,13 @@ function buildTokensAndBeams(scene, overlay, post) {
   blockMesh.frustumCulled = false;
   scene.add(blockMesh);
 
-  // ---- 2. Act 2-4 Overlay Semantic Stardust & Underwater Token Fish (72 nodes in 4 semantic clusters)
+  // ---- 2. Act 2-4 Overlay Yi Peng Sky Lanterns (Khom Loi) & Semantic Constellations (72 nodes in 4 clusters)
   const STAR_COUNT = 72;
   const CLUSTERS = [
-    { center: new THREE.Vector3(-9.5, 3.6, -56.0), radius: 7.2, color: new THREE.Color('#ffd166'), selected: true, weight: 1.0 },   // C0: warm gold (above/near water)
-    { center: new THREE.Vector3(-21.0, -3.2, -65.0), radius: 7.8, color: new THREE.Color('#4be8e0'), selected: true, weight: 0.9 },  // C1: underwater cyan constellation
-    { center: new THREE.Vector3(2.5, 2.4, -56.0), radius: 6.2, color: new THREE.Color('#ff8e6e'), selected: true, weight: 0.72 },   // C2: coral amber
-    { center: new THREE.Vector3(-28.0, 8.2, -88.0), radius: 7.0, color: new THREE.Color('#8ab8ff'), selected: false, weight: 0.15 }, // C3: distant unfocused cluster
+    { center: new THREE.Vector3(-9.5, 4.4, -56.0), radius: 7.4, color: new THREE.Color('#ffcb57'), selected: true, weight: 1.0 },   // C0: warm amber gold (main lantern cluster)
+    { center: new THREE.Vector3(-20.5, -1.6, -65.0), radius: 7.8, color: new THREE.Color('#4de6c2'), selected: true, weight: 0.9 },  // C1: emerald teal (water-reflection & low lanterns)
+    { center: new THREE.Vector3(2.6, 3.2, -56.0), radius: 6.4, color: new THREE.Color('#ff7eb8'), selected: true, weight: 0.72 },    // C2: rose lotus pink lantern cluster
+    { center: new THREE.Vector3(-28.0, 9.0, -88.0), radius: 7.0, color: new THREE.Color('#68b8ff'), selected: false, weight: 0.15 }, // C3: distant sacred blue unfocused cluster
   ];
 
   const starRng = new Rng(207);
@@ -70,30 +136,30 @@ function buildTokensAndBeams(scene, overlay, post) {
     const cid = Math.floor(i / 18);
     const cl = CLUSTERS[cid];
     const idxInCl = i % 18;
-    // Scatter positions across the sea and low sky
+    // Lower initial scatter positions so lanterns rise gracefully from river surface into sky
     const scatterPos = new THREE.Vector3(
       starRng.range(-34, 12),
-      starRng.range(-6.5, 11.5),
+      starRng.range(-5.0, 6.5),
       starRng.range(-90, -40)
     );
-    // Clean geometric constellation layout (inner hexagon + outer star ring)
     const ring = idxInCl < 6 ? 0.45 : 1.0;
     const ang = (idxInCl < 6 ? idxInCl / 6 : (idxInCl - 6) / 12) * Math.PI * 2 + cid * 0.4;
-    const elev = Math.sin(ang * 2 + cid) * 1.8 + (idxInCl === 0 ? 1.5 : 0);
+    const elev = Math.sin(ang * 2 + cid) * 1.9 + (idxInCl === 0 ? 1.6 : 0);
     const clusterPos = new THREE.Vector3(
       cl.center.x + Math.cos(ang) * cl.radius * ring,
       cl.center.y + elev * ring,
       cl.center.z + Math.sin(ang) * cl.radius * 0.7 * ring
     );
+    const shape = i % 5 === 1 ? 1 : (i % 5 === 3 ? 2 : 0); // 60% Khom Loi lantern, 20% lotus starburst, 20% round lantern
     stars.push({
       cid,
       idxInCl,
       scatterPos,
       clusterPos,
-      baseColor: cl.color.clone().lerp(new THREE.Color('#ffffff'), starRng.range(0, 0.22)),
-      size: starRng.range(0.40, 0.72),
+      baseColor: cl.color.clone().lerp(new THREE.Color('#fff2d6'), starRng.range(0, 0.22)),
+      size: starRng.range(0.50, 0.85),
       phase: starRng.range(0, Math.PI * 2),
-      shape: i % 3,
+      shape,
       seed: starRng.next(),
       curPos: new THREE.Vector3(),
     });
@@ -107,7 +173,7 @@ function buildTokensAndBeams(scene, overlay, post) {
     starColors[i * 3 + 1] = s.baseColor.g;
     starColors[i * 3 + 2] = s.baseColor.b;
     starMeta[i * 3] = s.shape;
-    starMeta[i * 3 + 1] = 0.3;
+    starMeta[i * 3 + 1] = 0.35;
     starMeta[i * 3 + 2] = s.seed;
   });
   starGeo.setAttribute('aColor', new THREE.InstancedBufferAttribute(starColors, 3));
@@ -130,7 +196,7 @@ function buildTokensAndBeams(scene, overlay, post) {
   starMesh.renderOrder = 10;
   overlay.add(starMesh);
 
-  // ---- 3. Dynamic Ribbon Geometry builder for Constellation Links, Searchlights & Lighthouse Beam
+  // ---- 3. Dynamic Ribbon Geometry builder for Constellation Links, Golden Lotus Attention Beams & Lighthouse Beam
   function createRibbonSystem(maxSegs, colA, colB, mode) {
     const pos = new Float32Array(maxSegs * 4 * 3);
     const beam = new Float32Array(maxSegs * 4 * 4);
@@ -183,7 +249,6 @@ function buildTokensAndBeams(scene, overlay, post) {
           const vBase = i * 4;
           const pOff = vBase * 3;
           const bOff = vBase * 4;
-          // v0: a - w0, v1: a + w0, v2: b - w1, v3: b + w1
           pos[pOff + 0] = a.x - _perp.x * w0; pos[pOff + 1] = a.y - _perp.y * w0; pos[pOff + 2] = a.z - _perp.z * w0;
           pos[pOff + 3] = a.x + _perp.x * w0; pos[pOff + 4] = a.y + _perp.y * w0; pos[pOff + 5] = a.z + _perp.z * w0;
           pos[pOff + 6] = b.x - _perp.x * w1; pos[pOff + 7] = b.y - _perp.y * w1; pos[pOff + 8] = b.z - _perp.z * w1;
@@ -200,14 +265,13 @@ function buildTokensAndBeams(scene, overlay, post) {
     };
   }
 
-  // Constellation links + cross-cluster attention energy web (mode 1)
-  const linkRibbon = createRibbonSystem(140, '#49e4f5', '#ffd166', 1.0);
-  // Boat attention searchlights (mode 0)
-  const beamRibbon = createRibbonSystem(8, '#ffe082', '#4ae3ff', 0.0);
+  // Constellation links + cross-cluster warm golden attention energy web (mode 1)
+  const linkRibbon = createRibbonSystem(140, '#ff9f59', '#ffe078', 1.0);
+  // Warm golden lotus attention beams from boat bow (mode 0)
+  const beamRibbon = createRibbonSystem(8, '#fff0a6', '#ff9b42', 0.0);
   // Lighthouse rotating beam in Act 5 (mode 0)
   const lighthouseBeamRibbon = createRibbonSystem(2, '#fff0b3', '#ffae52', 0.0);
 
-  // Constellation edges (deterministic ring + inner spokes per cluster)
   const intraEdges = [];
   for (let cid = 0; cid < 4; cid++) {
     const base = cid * 18;
@@ -234,52 +298,78 @@ function buildTokensAndBeams(scene, overlay, post) {
       const t = st.t;
       const td = onTwos(t);
 
-      // Update shared texture handle in case Post resized
       starMat.uniforms.tData.value = post.dataTexture;
       linkRibbon.mat.uniforms.tData.value = post.dataTexture;
       beamRibbon.mat.uniforms.tData.value = post.dataTexture;
       lighthouseBeamRibbon.mat.uniforms.tData.value = post.dataTexture;
 
-      // ---- A. Act 1 Token Raindrops & Active Ripples
+      // ---- A. Act 1 Falling & Floating Lotus Krathongs + Watercolor Ripples
       const activeRipples = [];
-      const rainVis = t < 3.6;
+      const floatLife = 1.65;
+      const rainVis = t < 4.5;
       blockMesh.visible = rainVis;
       if (rainVis) {
         const boostAttr = blockGeo.attributes.aBoost;
         for (let i = 0; i < RAIN_COUNT; i++) {
           const d = RAIN_DROPS[i];
           const dt = d.tHit - t;
-          if (dt > 0 && dt < 1.8) {
-            const y = dt * d.speed + 0.35;
-            const sw = Math.sin(td * 3.0 + d.seed * 6.28) * 0.25;
+          const age = t - d.tHit;
+
+          if (dt > 0 && dt < 1.85) {
+            // Descending gently and leveling out before touching the river
+            const y = dt * d.speed + 0.16;
+            const sw = Math.sin(td * 3.0 + d.seed * 6.28) * 0.24;
+            const tiltFade = smooth(invLerp(0.0, 0.55, dt));
             Pv.set(d.x + sw, y, d.z);
-            Eul.set(td * d.spin[0], td * d.spin[1], td * d.spin[2]);
+            Eul.set(td * d.spin[0] * tiltFade, td * d.spin[1], td * d.spin[2] * tiltFade);
             Q.setFromEuler(Eul);
-            const sx = d.shapeType === 1 ? d.scale * 1.45 : d.scale;
-            const sy = d.shapeType === 2 ? d.scale * 1.55 : d.scale;
-            Sv.set(sx, sy, d.scale);
+            const s = d.scale * (0.86 + 0.14 * (1 - tiltFade));
+            Sv.set(s, s, s);
             M.compose(Pv, Q, Sv);
             blockMesh.setMatrixAt(i, M);
-            boostAttr.setX(i, smooth(invLerp(1.6, 0.0, dt)) * 0.65);
+            boostAttr.setX(i, smooth(invLerp(1.6, 0.0, dt)) * 0.72);
+          } else if (age >= 0 && age < floatLife) {
+            // Floating gently on the Mae Ping River swells, flickering & fading gracefully into Act 2
+            const fx = d.x + Math.sin(td * 0.9 + d.seed * 6.28) * 0.22 + age * 0.32;
+            const fz = d.z + Math.cos(td * 0.8 + d.seed * 4.5) * 0.16;
+            const bob = Math.exp(-age * 6.5) * Math.sin(age * 16.0) * 0.10;
+            const fy = swellAt(fx, fz, td, null) + 0.10 + bob;
+            const fade = 1 - smooth(invLerp(0.95, floatLife, age));
+            const flicker = 0.82 + 0.28 * Math.sin(t * 13.0 + d.seed * 25.0);
+            const s = d.scale * fade;
+            if (s > 0.02) {
+              Pv.set(fx, fy, fz);
+              Eul.set(
+                Math.sin(td * 2.1 + d.seed * 6.28) * 0.09,
+                td * 0.55 + d.seed * 6.28,
+                Math.cos(td * 1.9 + d.seed * 4.1) * 0.09
+              );
+              Q.setFromEuler(Eul);
+              Sv.set(s, s, s);
+              M.compose(Pv, Q, Sv);
+              blockMesh.setMatrixAt(i, M);
+              boostAttr.setX(i, (0.65 + 0.45 * flicker) * fade);
+            } else {
+              blockMesh.setMatrixAt(i, ZERO);
+            }
           } else {
             blockMesh.setMatrixAt(i, ZERO);
           }
-          // Water ripple after hit
-          const age = t - d.tHit;
-          if (age >= 0 && age < 1.55) {
-            const rad = 0.5 + age * 4.8;
-            const alpha = (1 - smooth(invLerp(0.45, 1.55, age))) * 0.95;
+
+          // Water ripple expanding around landed Krathong
+          if (age >= 0 && age < floatLife) {
+            const rad = 0.45 + age * 4.6;
+            const alpha = (1 - smooth(invLerp(0.45, floatLife, age))) * 0.95;
             activeRipples.push({ x: d.x, z: d.z, radius: rad, alpha, age });
           }
         }
         blockMesh.instanceMatrix.needsUpdate = true;
         boostAttr.needsUpdate = true;
-        // Keep newest 10 active ripples
         activeRipples.sort((a, b) => a.age - b.age);
         if (activeRipples.length > 10) activeRipples.length = 10;
       }
 
-      // ---- B. Act 2-4 Semantic Stardust & Constellations
+      // ---- B. Act 2-4 Yi Peng Khom Loi Sky Lanterns & Semantic Constellations
       const starIn = smooth(invLerp(2.75, 3.35, t));
       const starOut = 1 - smooth(invLerp(10.6, 12.2, t));
       const starOp = starIn * starOut;
@@ -287,6 +377,7 @@ function buildTokensAndBeams(scene, overlay, post) {
       starMat.uniforms.uOpacity.value = starOp;
 
       if (starOp > 0.01) {
+        const rise = smooth(invLerp(2.75, 5.45, t));
         const pull = smooth(invLerp(CUES.clusterPull, 5.45, t));
         const attn = smooth(invLerp(CUES.beamLock - 0.2, CUES.beamLock + 0.5, t));
         const collapse = smooth(invLerp(8.7, 9.6, t));
@@ -297,17 +388,15 @@ function buildTokensAndBeams(scene, overlay, post) {
         for (let i = 0; i < STAR_COUNT; i++) {
           const s = stars[i];
           const cl = CLUSTERS[s.cid];
-          // Swimming motion in scatter phase, gentle orbiting in constellation phase
-          const swimX = Math.sin(t * 1.4 + s.phase) * (1 - pull) * 2.2 + Math.cos(t * 0.9 + s.phase) * 0.45;
-          const swimY = Math.cos(t * 1.6 + s.phase * 1.3) * (1 - pull) * 1.2 + Math.sin(t * 1.1 + s.phase) * 0.3;
-          const swimZ = Math.sin(t * 1.2 - s.phase) * (1 - pull) * 2.0;
+          const driftX = Math.sin(t * 1.3 + s.phase) * (1 - pull) * 2.0 + Math.cos(t * 0.8 + s.phase) * 0.45;
+          const liftY = (1 - pull) * (rise * 2.2 - 1.0) + Math.sin(t * 1.2 + s.phase * 1.3) * 0.40;
+          const driftZ = Math.sin(t * 1.1 - s.phase) * (1 - pull) * 1.8;
 
           Pv.lerpVectors(s.scatterPos, s.clusterPos, pull);
-          Pv.x += swimX; Pv.y += swimY; Pv.z += swimZ;
+          Pv.x += driftX; Pv.y += liftY; Pv.z += driftZ;
 
           if (collapse > 0.001) {
             if (cl.selected) {
-              // Spiral inward toward whale emergence center, then burst into golden embers
               const ang = collapse * Math.PI * 1.6 + s.phase;
               const swirlR = (1 - collapse) * 3.5;
               const target = _emergPos.clone().add(new THREE.Vector3(Math.cos(ang) * swirlR, Math.sin(collapse * Math.PI) * 6.0, Math.sin(ang) * swirlR));
@@ -318,14 +407,13 @@ function buildTokensAndBeams(scene, overlay, post) {
               }
               Pv.lerp(target, Math.min(1, collapse * 1.05));
             } else {
-              Pv.y -= collapse * 6.0;
+              Pv.y -= collapse * 5.0;
             }
           }
           s.curPos.copy(Pv);
 
-          // Attention selection brightening vs unfocused dimming
-          const selBoost = cl.selected ? attn * (0.45 + 0.2 * Math.sin(t * 6.0 + s.phase)) : -attn * 0.65;
-          const sz = s.size * (0.65 + 0.35 * pull) * (cl.selected ? 1 + 0.25 * attn : 1 - 0.45 * attn) * (1 - embers * 0.65);
+          const selBoost = cl.selected ? attn * (0.48 + 0.2 * Math.sin(t * 6.0 + s.phase)) : -attn * 0.65;
+          const sz = s.size * (0.68 + 0.32 * pull) * (cl.selected ? 1 + 0.24 * attn : 1 - 0.45 * attn) * (1 - embers * 0.62);
           if (sz <= 0.02) {
             starMesh.setMatrixAt(i, ZERO);
           } else {
@@ -335,21 +423,20 @@ function buildTokensAndBeams(scene, overlay, post) {
             starMesh.setMatrixAt(i, M);
           }
 
-          // Color shift toward blazing gold when attended in Act 3
           const c = s.baseColor.clone();
           if (cl.selected && attn > 0.01) {
-            c.lerp(new THREE.Color('#ffcf5c'), attn * 0.65);
+            c.lerp(new THREE.Color('#ffd364'), attn * 0.65);
           } else if (!cl.selected && attn > 0.01) {
-            c.multiplyScalar(1 - attn * 0.75);
+            c.multiplyScalar(1 - attn * 0.72);
           }
           colAttr.setXYZ(i, c.r, c.g, c.b);
-          metaAttr.setY(i, clamp(0.20 + pull * 0.30 + selBoost, 0.0, 1.0));
+          metaAttr.setY(i, clamp(0.24 + pull * 0.32 + selBoost, 0.0, 1.0));
         }
         starMesh.instanceMatrix.needsUpdate = true;
         colAttr.needsUpdate = true;
         metaAttr.needsUpdate = true;
 
-        // ---- C. Constellation links & Attention Energy Web
+        // ---- C. Constellation links & Golden Attention Energy Web
         _segs.length = 0;
         const linkAppear = smooth(invLerp(3.9, 5.2, t)) * (1 - smooth(invLerp(9.6, 10.5, t)));
         if (linkAppear > 0.01) {
@@ -365,7 +452,6 @@ function buildTokensAndBeams(scene, overlay, post) {
               phase: (ia * 0.17) % 1,
             });
           }
-          // Cross-cluster golden attention energy network in Act 3
           if (attn > 0.02) {
             const hubPairs = [
               [0, 18], [2, 22], [4, 24],
@@ -383,7 +469,6 @@ function buildTokensAndBeams(scene, overlay, post) {
                 phase: k * 0.23,
               });
             }
-            // Flowing convergence threads down into WHALE_AT center
             const conv = smooth(invLerp(7.4, 9.1, t));
             if (conv > 0.01) {
               for (const idxCenter of [0, 18, 36, 4, 22, 40]) {
@@ -409,14 +494,13 @@ function buildTokensAndBeams(scene, overlay, post) {
         linkRibbon.write([], cam.position);
       }
 
-      // ---- D. Act 3 Searchlight Beams from Boat Lamp to Selected Clusters
+      // ---- D. Act 3 Warm Golden Attention Beams from Bow Lotus Lantern to Khom Loi Constellations & River Vortex
       _beamSegs.length = 0;
       const beamIn = smooth(invLerp(CUES.beamStart, CUES.beamStart + 0.55, t));
       const beamOut = 1 - smooth(invLerp(8.9, 9.65, t));
       const beamOp = beamIn * beamOut;
       if (beamOp > 0.01 && boatLampWorldPos) {
         _lampPos.copy(boatLampWorldPos);
-        // First 0.6s sweep gently before locking onto C0, C1, C2 and deep emergence point
         const lock = smooth(invLerp(CUES.beamStart, CUES.beamLock + 0.25, t));
         const sweepX = Math.sin(t * 5.0) * (1 - lock) * 10.0;
         const targets = [

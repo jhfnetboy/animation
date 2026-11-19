@@ -3,14 +3,16 @@ const X0 = WHALE_AT.x, Z0 = WHALE_AT.y;
 const CRASH_AT = { t: CUES.crash, x: X0 - 10, z: Z0 + 2 };
 const BOAT_BASE = new THREE.Vector2(20, -34);
 
-// Humpback whale breach & dive (Act 4: 8.8s - 13.4s)
+// Sacred White Elephant (Chang Phueak) breach & dive (Act 4: 8.8s - 13.4s)
+// Tuned for majestic tall silhouette (body + raised curled trunk + flaring ears + twin tusks + limbs)
 const W_KEYS = {
-  y: [[8.8, -46], [9.6, -6], [10.1, 22], [10.8, 37], [11.4, 30], [12.0, 9], [12.7, -11], [13.4, -34]],
-  x: [[8.8, X0 + 16], [9.6, X0 + 14], [10.1, X0 + 8], [10.8, X0 - 4], [11.4, X0 - 14], [12.0, X0 - 24], [12.7, X0 - 33], [13.4, X0 - 42]],
-  pitch: [[8.8, 74], [9.6, 74], [10.1, 68], [10.8, 46], [11.4, 6], [12.0, -26], [12.7, -32], [13.4, -34]],
-  roll: [[9.6, 0], [10.1, -0.2], [10.8, -0.5], [11.4, -0.72], [12.0, -0.95], [12.7, -1.2], [13.4, -1.35]],
-  bend: [[9.6, 0.1], [10.1, 0.15], [10.8, 0.3], [11.4, 0.4], [12.0, 0.22], [12.7, 0.15], [13.4, 0.1]],
-  flap: [[9.6, 0.2], [10.3, 0.55], [10.8, 0.78], [11.5, 0.55], [12.2, 0.3], [13.4, 0.2]],
+  y: [[8.8, -42], [9.6, -5], [10.1, 18.5], [10.7, 30.0], [10.95, 31.5], [11.4, 26.0], [12.0, 9.0], [12.7, -11.0], [13.4, -32.0]],
+  x: [[8.8, X0 + 16], [9.6, X0 + 13], [10.1, X0 + 6], [10.8, X0 - 4], [11.4, X0 - 13], [12.0, X0 - 22], [12.7, X0 - 30], [13.4, X0 - 38]],
+  pitch: [[8.8, 66], [9.6, 62], [10.1, 52], [10.8, 34], [11.4, 8], [12.0, -22], [12.7, -28], [13.4, -32]],
+  // Gentle heroic three-quarter tilt showcasing flaring ears, twin tusks, and raised trunk
+  roll: [[9.6, 0.04], [10.1, -0.16], [10.8, -0.28], [11.4, -0.32], [12.0, -0.22], [12.7, -0.12], [13.4, -0.04]],
+  bend: [[9.6, 0.08], [10.1, 0.14], [10.8, 0.24], [11.4, 0.26], [12.0, 0.16], [12.7, 0.10], [13.4, 0.06]],
+  flap: [[9.6, 0.25], [10.3, 0.72], [10.8, 0.90], [11.5, 0.65], [12.2, 0.35], [13.4, 0.20]],
 };
 
 function poseAt(t) {
@@ -31,7 +33,7 @@ function boatStateAt(t) {
   const sail = smooth(invLerp(12.8, 16.0, t));
   const heading = lerp(deg(144), deg(114), smooth(invLerp(12.8, 14.8, t)));
   const dist = sail * 25.0;
-  // Integrate smooth heading direction toward distant lighthouse
+  // Integrate smooth heading direction toward Doi Suthep golden chedi (LIGHTHOUSE_AT)
   const avgDir = lerp(deg(144), deg(116), sail * 0.5);
   const pos = new THREE.Vector2(
     BOAT_BASE.x + Math.cos(avgDir) * dist,
@@ -69,24 +71,24 @@ function camAt(t) {
   }
   if (act.id === 'emerge') {
     const k = invLerp(9.0, 13.0, t);
-    const breachShake = Math.exp(-Math.max(0, t - CUES.breach) * 2.4) * (t >= CUES.breach ? 0.35 : 0);
-    const crashShake = Math.exp(-Math.max(0, t - CUES.crash) * 2.5) * (t >= CUES.crash ? 0.65 : 0);
+    const breachShake = Math.exp(-Math.max(0, t - CUES.breach) * 2.4) * (t >= CUES.breach ? 0.32 : 0);
+    const crashShake = Math.exp(-Math.max(0, t - CUES.crash) * 2.5) * (t >= CUES.crash ? 0.62 : 0);
     const shake = breachShake + crashShake;
     const look = spline([
-      [0.0, [-4, 4, -68]],
-      [0.18, [-4, 14, -70]],
-      [0.45, [-6, 23, -70]],
-      [0.68, [-10, 22, -70]],
-      [0.85, [-14, 13, -68]],
-      [1.0, [-12, 10, -72]],
+      [0.0, [-5, 4.5, -68]],
+      [0.18, [-6, 12.5, -70]],
+      [0.43, [-9, 18.5, -70]],
+      [0.68, [-13, 18.0, -70]],
+      [0.85, [-16, 11.5, -68]],
+      [1.0, [-14, 9.0, -72]],
     ], k);
     return {
-      pos: [lerp(13, 18, smooth(k)) + noise1(t * 11, 1) * shake, 2.6 + noise1(t * 11, 2) * shake * 0.7, lerp(-11, -15, smooth(k))],
+      pos: [lerp(16, 21, smooth(k)) + noise1(t * 11, 1) * shake, 3.2 + noise1(t * 11, 2) * shake * 0.7, lerp(-4, -9, smooth(k))],
       look,
-      fov: lerp(44, 48, smooth(invLerp(0.4, 1.0, k))),
+      fov: lerp(46.0, 49.5, smooth(invLerp(0.2, 0.95, k))),
     };
   }
-  // Act 5: Steering the Future — right-quarter stern follow shot showing sail, helmsman silhouette, wake, escort shadow & lighthouse
+  // Act 5: Sailing to Doi Suthep — right-quarter stern follow shot showing Lanna silk sail, helmsman, wake & golden chedi
   const k = invLerp(13.0, 16.0, t);
   const b = boatStateAt(t);
   return {
