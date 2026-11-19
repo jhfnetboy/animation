@@ -66,17 +66,19 @@ python3 -m http.server 8000
 ├── README.md                                          # Trilingual Project Overview (EN / ZH / TH)
 ├── docs/                                              # All curriculum, research & lesson documents
 │   ├── trilingual_international_school_syllabus.md    # Official EN / ZH / TH G4–G12 International School Syllabus
+│   ├── cmu_coach_and_teacher_curriculum_system.md     # CMU Coach Train-the-Trainer & 4-Stage Teacher Curriculum (ZH/EN/TH)
 │   ├── post_university_ai_curriculum.md               # Top-level Curriculum Architecture & 4-Layer Pyramid (ZH)
 │   ├── six_demo_courses_handbook.md                   # Complete 6-Lesson Plans, Scripts & Storyboards (ZH)
 │   └── animation_tech_stack_research.md               # Open-Source Animation Tech Stack Research Report (ZH)
-├── demos/                                             # Three Runnable Visualization & Sandbox Studios
-│   ├── demo1-kujira-art/                              # Studio 1: Three.js + GLSL3 Hand-Painted 5-Act Film + Web Audio
+├── demos/                                             # Runnable Visualization & Sandbox Studios
+│   ├── demo1-kujira-art/                              # Studio 1A (Main): Chiang Mai Lanna Culture (Krathong, Yi Peng, Longtail Boat, White Elephant & Doi Suthep)
 │   │   ├── index.html                                 # Self-contained built studio bundle
 │   │   ├── build.mjs                                  # Single-file bundler (Three.js + GLSL + src -> index.html)
 │   │   ├── template.html                              # Player shell & teaching HUD template
-│   │   ├── glsl/                                      # Watercolor/Kuwahara/whale/sea/sky/beam GLSL shaders
-│   │   ├── src/                                       # 00-util.js .. 80-main.js (5-act timeline & audio)
+│   │   ├── glsl/                                      # Watercolor/Kuwahara/elephant/sea/sky/beam GLSL shaders
+│   │   ├── src/                                       # 00-util.js .. 80-main.js (5-act timeline & Lanna Ranat Ek audio)
 │   │   └── vendor/                                    # Local Three.js module & THREE-LICENSE
+│   ├── demo1-whale-ocean/                             # Studio 1B (Archive): Original Ocean Whale version of Demo 1
 │   ├── demo2-motion-slides/                           # Studio 2: Motion Canvas Timeline + Slidev-Style Lesson Deck
 │   │   ├── index.html                                 # Standalone browser interactive micro-course player
 │   │   ├── package.json & pnpm-lock.yaml              # pnpm workspace dependencies & scripts
@@ -112,6 +114,7 @@ python3 -m http.server 8000
   - **重新打包 `demo1-kujira-art`**：进入 `demos/demo1-kujira-art` 后执行 `node build.mjs`。
 - **核心文档索引（均位于 `docs/`）**：
   - [`docs/trilingual_international_school_syllabus.md`](./docs/trilingual_international_school_syllabus.md) — **英/中/泰三语国际学校官方课程大纲（G4–G12）**
+  - [`docs/cmu_coach_and_teacher_curriculum_system.md`](./docs/cmu_coach_and_teacher_curriculum_system.md) — **CMU 实习生 Coach 培训与四阶 Teacher 教案总手册（Touching→Driving→Making→Enhancing）**
   - [`docs/post_university_ai_curriculum.md`](./docs/post_university_ai_curriculum.md) — 后大学时代青少年 AI 创新课程顶层设计方案
   - [`docs/six_demo_courses_handbook.md`](./docs/six_demo_courses_handbook.md) — 六节标杆示范课完整教案与先文字后动画分镜手册
   - [`docs/animation_tech_stack_research.md`](./docs/animation_tech_stack_research.md) — AI 科普动画开源技术栈与三条实现路线调研报告
@@ -137,6 +140,7 @@ python3 -m http.server 8000
   - สำหรับ `demos/demo1-kujira-art` สามารถรวมไฟล์เดียวใหม่ด้วย `node build.mjs`
 - **ดัชนีเอกสารหลักทั้งหมด (`docs/`)**:
   - [`docs/trilingual_international_school_syllabus.md`](./docs/trilingual_international_school_syllabus.md) — **หลักสูตรอย่างเป็นทางการ 3 ภาษา (EN / ZH / TH) สำหรับโรงเรียนนานาชาติ G4–G12**
+  - [`docs/cmu_coach_and_teacher_curriculum_system.md`](./docs/cmu_coach_and_teacher_curriculum_system.md) — **คู่มือฝึกอบรม CMU Coach และแผนการสอน 4 ระดับสำหรับครู (Touching→Driving→Making→Enhancing)**
   - [`docs/post_university_ai_curriculum.md`](./docs/post_university_ai_curriculum.md) — เอกสารออกแบบโครงสร้างหลักสูตรระดับองค์รวม (ภาษาจีน)
   - [`docs/six_demo_courses_handbook.md`](./docs/six_demo_courses_handbook.md) — คู่มือแผนการสอนและสตอรีบอร์ด 6 บทเรียนสาธิต (ภาษาจีน)
   - [`docs/animation_tech_stack_research.md`](./docs/animation_tech_stack_research.md) — รายงานวิจัยเทคโนโลยีแอนิเมชันโอเพนซอร์ส (ภาษาจีน)

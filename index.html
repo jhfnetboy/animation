@@ -586,7 +586,10 @@
         <div class="theater-tabs">
           <div class="tab-group">
             <button class="demo-tab active" data-demo="demo1" onclick="switchDemo('demo1')" id="tabDemo1">
-              🐘 Demo 1 · Lanna Watercolor River (Three.js + GLSL)
+              🐘 Demo 1A · Lanna White Elephant (Chiang Mai)
+            </button>
+            <button class="demo-tab" data-demo="demo1b" onclick="switchDemo('demo1b')" id="tabDemo1b">
+              🐋 Demo 1B · Ocean Whale (Original)
             </button>
             <button class="demo-tab" data-demo="demo2" onclick="switchDemo('demo2')" id="tabDemo2">
               📐 Demo 2 · Timeline Slides (Motion Canvas)
@@ -669,7 +672,8 @@
         theaterHeading: '🎬 3 Interactive Animation & Simulation Labs',
         theaterSub: 'One curriculum · Three distinct visual & interactive teaching engines (synced with your selected language)',
         tabs: {
-          demo1: '🐘 Demo 1 · Lanna Watercolor River (Three.js + GLSL)',
+          demo1: '🐘 Demo 1A · Lanna White Elephant (Chiang Mai)',
+          demo1b: '🐋 Demo 1B · Ocean Whale (Original)',
           demo2: '📐 Demo 2 · Timeline Slides (Motion Canvas)',
           demo3: '⚙️ Demo 3 · Physics Sandbox & 72h Forge'
         },
@@ -680,6 +684,12 @@
             title: 'Lanna River of Mind: From Krathong Sparks to the Sacred White Elephant',
             desc: 'Chiang Mai cultural reimagining of kujira-js: Krathong tokens, Yi Peng sky-lantern stars, Thai Longtail Boat, Sacred White Elephant & Doi Suthep Chedi + Ranat Ek audio',
             tags: 'Stack: Three.js + GLSL + Lanna Web Audio'
+          },
+          demo1b: {
+            url: './demos/demo1-whale-ocean/index.html',
+            title: 'The Sea of Mind: From Word Stardust to the Whale of Emergence (Archive)',
+            desc: 'Original oceanic version inspired by kujira-js: watercolor sea, humpback whale emergence & exploration vessel',
+            tags: 'Stack: Three.js + GLSL + Web Audio'
           },
           demo2: {
             url: './demos/demo2-motion-slides/index.html',
@@ -779,6 +789,11 @@
             title: '4. Open-Source Animation Tech Stack Research',
             desc: 'Comparative evaluation of Motion Canvas, Manim, Remotion, Three.js + GLSL shaders, Slidev, and physics engines.',
             path: 'docs/animation_tech_stack_research.md'
+          },
+          {
+            title: '5. CMU Coach Training & 4-Stage Teacher Curriculum System (Draft)',
+            desc: 'Train-the-Trainer manual for Chiang Mai Univ. interns & Thai school teachers: Car/Gear analogies, Touching→Driving→Making(Adjusting/Building)→Enhancing, PBL 3.0 & Stanford/CMU/MIT references.',
+            path: 'docs/cmu_coach_and_teacher_curriculum_system.md'
           }
         ],
         toastSwitched: 'Switched to: '
@@ -806,7 +821,8 @@
         theaterHeading: '🎬 三大技术栈示范动画实验台',
         theaterSub: '同一套国际学校教案 · 三种截然不同的可视化教学引擎（支持顶栏一键切换 EN / 中文 / ไทย 同步联动）',
         tabs: {
-          demo1: '🐘 Demo 1 · 兰纳水彩艺术流 (Three.js + GLSL)',
+          demo1: '🐘 Demo 1A · 兰纳白象版 (清迈)',
+          demo1b: '🐋 Demo 1B · 深海巨鲸版 (原版归档)',
           demo2: '📐 Demo 2 · 程序化时间轴 + 讲义 (Motion Canvas)',
           demo3: '⚙️ Demo 3 · 物理机械沙盒 + 72h 破壁炉'
         },
@@ -817,6 +833,12 @@
             title: '《兰纳心智之河：从水灯天灯到觉醒白象》',
             desc: '沿用 kujira-js 纯代码放样架构融入清迈文化：莲花水灯、万人天灯星群、泰式彩带长尾船、破水白象与素贴山金塔 + 兰纳木琴配乐',
             tags: '技术栈：Three.js + GLSL + 兰纳 Web Audio'
+          },
+          demo1b: {
+            url: './demos/demo1-whale-ocean/index.html',
+            title: '《心智之海：从词语星尘到涌现之鲸》（原版归档）',
+            desc: '原始海洋鲸鱼版：水彩海面、词之雨滴、注意力探照灯、跃海座头鲸与远方灯塔',
+            tags: '技术栈：Three.js + GLSL + Web Audio'
           },
           demo2: {
             url: './demos/demo2-motion-slides/index.html',
@@ -916,6 +938,11 @@
             title: '4. 动画开源技术栈与科普隐喻调研报告',
             desc: '深度对比 Motion Canvas、Manim、Remotion、Three.js+GLSL、Slidev 与物理沙盒三大路线。',
             path: 'docs/animation_tech_stack_research.md'
+          },
+          {
+            title: '5. CMU 实习生 Coach 培训与四阶 Teacher 教案总手册（初稿）',
+            desc: '三级赋能体系：自生长齿轮与汽车四阶(Touching→Driving→Making[Adjusting/Building]→Enhancing)、7大观察干预法则及斯坦福/CMU/MIT/PBL3.0溯源。',
+            path: 'docs/cmu_coach_and_teacher_curriculum_system.md'
           }
         ],
         toastSwitched: '已切换至：'
@@ -943,7 +970,8 @@
         theaterHeading: '🎬 3 ห้องทดลองแอนิเมชันและสื่อการสอนแบบโต้ตอบ',
         theaterSub: 'หนึ่งหลักสูตร · สามเทคโนโลยีการสอนด้วยภาพที่แตกต่างกัน (สลับภาษา EN / 中文 / ไทย ได้ทันที)',
         tabs: {
-          demo1: '🐘 Demo 1 · สายน้ำสีน้ำล้านนา (Three.js + GLSL)',
+          demo1: '🐘 Demo 1A · ช้างเผือกล้านนา (เชียงใหม่)',
+          demo1b: '🐋 Demo 1B · วาฬแห่งทะเลลึก (ต้นฉบับ)',
           demo2: '📐 Demo 2 · สไลด์ไทม์ไลน์ (Motion Canvas)',
           demo3: '⚙️ Demo 3 · แซนด์บ็อกซ์ฟิสิกส์ & เตาหลอม 72 ชม.'
         },
@@ -954,6 +982,12 @@
             title: 'สายน้ำแห่งปัญญาล้านนา: จากกระทงและโคมยี่เป็งสู่ช้างเผือกแห่งปัญญา',
             desc: 'ต่อยอดสถาปัตยกรรม kujira-js สู่วัฒนธรรมเชียงใหม่: กระทงคำ โคมยี่เป็ง เรือหางยาว ช้างเผือกอุบัติ และพระธาตุดอยสุเทพ พร้อมดนตรีระนาดเอกล้านนา',
             tags: 'เทคโนโลยี: Three.js + GLSL + Lanna Web Audio'
+          },
+          demo1b: {
+            url: './demos/demo1-whale-ocean/index.html',
+            title: 'ทะเลแห่งจิตใจ: จากละอองคำสู่วาฬแห่งปัญญา (ฉบับต้นฉบับ)',
+            desc: 'เวอร์ชันมหาสมุทรดั้งเดิม: ทะเลสีน้ำ หยาดฝนโทเคน วาฬหลังค่อมอุบัติ และเรือสำรวจมุ่งสู่ประภาคาร',
+            tags: 'เทคโนโลยี: Three.js + GLSL + Web Audio'
           },
           demo2: {
             url: './demos/demo2-motion-slides/index.html',
@@ -1053,6 +1087,11 @@
             title: '4. รายงานวิจัยเทคโนโลยีแอนิเมชันเพื่อการศึกษา',
             desc: 'เปรียบเทียบ Motion Canvas, Manim, Remotion, Three.js+GLSL, Slidev และเอนจินฟิสิกส์สำหรับการสอนเยาวชน',
             path: 'docs/animation_tech_stack_research.md'
+          },
+          {
+            title: '5. คู่มือฝึกอบรม CMU Coach และแผนการสอน 4 ระดับสำหรับครู',
+            desc: 'ระบบถ่ายทอด 3 ขั้น (CMU Intern → ครูโรงเรียนนานาชาติ): อุปมารถยนต์ 4 ระดับ (Touching→Driving→Making→Enhancing) และอ้างอิง Stanford/CMU/MIT/PBL 3.0',
+            path: 'docs/cmu_coach_and_teacher_curriculum_system.md'
           }
         ],
         toastSwitched: 'เปลี่ยนเป็น: '
@@ -1101,6 +1140,7 @@
       document.getElementById('theaterHeading').textContent = t.theaterHeading;
       document.getElementById('theaterSub').textContent = t.theaterSub;
       document.getElementById('tabDemo1').textContent = t.tabs.demo1;
+      document.getElementById('tabDemo1b').textContent = t.tabs.demo1b;
       document.getElementById('tabDemo2').textContent = t.tabs.demo2;
       document.getElementById('tabDemo3').textContent = t.tabs.demo3;
       document.getElementById('openNewTab').textContent = t.openNewTab;
