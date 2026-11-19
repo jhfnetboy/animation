@@ -67,6 +67,7 @@ python3 -m http.server 8000
 ├── docs/                                              # All curriculum, research & lesson documents
 │   ├── trilingual_international_school_syllabus.md    # Official EN / ZH / TH G4–G12 International School Syllabus
 │   ├── cmu_coach_and_teacher_curriculum_system.md     # CMU Coach Train-the-Trainer & 4-Stage Teacher Curriculum (ZH/EN/TH)
+│   ├── peptide_3d_science_course_guide.md             # Peptide & Body 3D R3F Course Guide + Peer-Reviewed Citations
 │   ├── post_university_ai_curriculum.md               # Top-level Curriculum Architecture & 4-Layer Pyramid (ZH)
 │   ├── six_demo_courses_handbook.md                   # Complete 6-Lesson Plans, Scripts & Storyboards (ZH)
 │   └── animation_tech_stack_research.md               # Open-Source Animation Tech Stack Research Report (ZH)
@@ -84,12 +85,18 @@ python3 -m http.server 8000
 │   │   ├── package.json & pnpm-lock.yaml              # pnpm workspace dependencies & scripts
 │   │   ├── vite.config.ts & tsconfig.json             # Vite + Motion Canvas build config
 │   │   └── src/                                       # project.ts + scenes/lesson1_embedding, lesson2_attention, lesson3_agent
-│   └── demo3-mechanical-sandbox/                      # Studio 3: Canvas 2D Steampunk Pinball + 72h Alchemy Furnace
-│       ├── index.html                                 # Dual-mode interactive sandbox UI
-│       ├── styles.css                                 # Steampunk blueprint styling
-│       ├── data.js                                    # Mode A (4 scenarios × 3 rounds) & Mode B (4×4 venture matrix)
-│       ├── mode_a_galton.js                           # Physics pinball engine, Temperature/Top-K & Entropy/Hallucination
-│       └── mode_b_alchemy.js                          # 72h domain breakthrough & cross-perspective alchemy workbench
+│   ├── demo3-mechanical-sandbox/                      # Studio 3: Canvas 2D Steampunk Pinball + 72h Alchemy Furnace
+│   │   ├── index.html                                 # Dual-mode interactive sandbox UI
+│   │   ├── styles.css                                 # Steampunk blueprint styling
+│   │   ├── data.js                                    # Mode A (4 scenarios × 3 rounds) & Mode B (4×4 venture matrix)
+│   │   ├── mode_a_galton.js                           # Physics pinball engine, Temperature/Top-K & Entropy/Hallucination
+│   │   └── mode_b_alchemy.js                          # 72h domain breakthrough & cross-perspective alchemy workbench
+│   └── demo4-r3f-peptide-lab/                         # Studio 4: React Three Fiber + Gemini [3D_OBJECT] Peptide 3D Course
+│       ├── index.html                                 # Redirect entry to built R3F production bundle
+│       ├── app.html                                   # Vite SPA HTML entry
+│       ├── package.json                               # R3F + Three.js + @google/genai + Vite dependencies
+│       ├── dist/                                      # Prebuilt static bundle for direct GitHub Pages serving
+│       └── src/                                       # PBR molecular/organ 3D scenes, protocol parser & course data
 └── reports/                                           # Reserved output directory for verification reports
 ```
 
@@ -115,6 +122,7 @@ python3 -m http.server 8000
 - **核心文档索引（均位于 `docs/`）**：
   - [`docs/trilingual_international_school_syllabus.md`](./docs/trilingual_international_school_syllabus.md) — **英/中/泰三语国际学校官方课程大纲（G4–G12）**
   - [`docs/cmu_coach_and_teacher_curriculum_system.md`](./docs/cmu_coach_and_teacher_curriculum_system.md) — **CMU 实习生 Coach 培训与四阶 Teacher 教案总手册（Touching→Driving→Making→Enhancing）**
+  - [`docs/peptide_3d_science_course_guide.md`](./docs/peptide_3d_science_course_guide.md) — **基于 React Three Fiber + Gemini 的肽与人体机制 3D 科普指南与权威文献溯源**
   - [`docs/post_university_ai_curriculum.md`](./docs/post_university_ai_curriculum.md) — 后大学时代青少年 AI 创新课程顶层设计方案
   - [`docs/six_demo_courses_handbook.md`](./docs/six_demo_courses_handbook.md) — 六节标杆示范课完整教案与先文字后动画分镜手册
   - [`docs/animation_tech_stack_research.md`](./docs/animation_tech_stack_research.md) — AI 科普动画开源技术栈与三条实现路线调研报告
@@ -141,6 +149,7 @@ python3 -m http.server 8000
 - **ดัชนีเอกสารหลักทั้งหมด (`docs/`)**:
   - [`docs/trilingual_international_school_syllabus.md`](./docs/trilingual_international_school_syllabus.md) — **หลักสูตรอย่างเป็นทางการ 3 ภาษา (EN / ZH / TH) สำหรับโรงเรียนนานาชาติ G4–G12**
   - [`docs/cmu_coach_and_teacher_curriculum_system.md`](./docs/cmu_coach_and_teacher_curriculum_system.md) — **คู่มือฝึกอบรม CMU Coach และแผนการสอน 4 ระดับสำหรับครู (Touching→Driving→Making→Enhancing)**
+  - [`docs/peptide_3d_science_course_guide.md`](./docs/peptide_3d_science_course_guide.md) — **คู่มือบทเรียน 3 มิติเพปไทด์และร่างกายมนุษย์ (R3F + งานวิจัยอ้างอิง)**
   - [`docs/post_university_ai_curriculum.md`](./docs/post_university_ai_curriculum.md) — เอกสารออกแบบโครงสร้างหลักสูตรระดับองค์รวม (ภาษาจีน)
   - [`docs/six_demo_courses_handbook.md`](./docs/six_demo_courses_handbook.md) — คู่มือแผนการสอนและสตอรีบอร์ด 6 บทเรียนสาธิต (ภาษาจีน)
   - [`docs/animation_tech_stack_research.md`](./docs/animation_tech_stack_research.md) — รายงานวิจัยเทคโนโลยีแอนิเมชันโอเพนซอร์ส (ภาษาจีน)

@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Post-University AI Innovation Lab · K-12 International Curriculum & Interactive Animations</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧬</text></svg>" />
   <style>
     :root {
       --bg: #070b14;
@@ -597,6 +598,9 @@
             <button class="demo-tab" data-demo="demo3" onclick="switchDemo('demo3')" id="tabDemo3">
               ⚙️ Demo 3 · Physics Sandbox & 72h Forge
             </button>
+            <button class="demo-tab" data-demo="demo4" onclick="switchDemo('demo4')" id="tabDemo4">
+              🧬 Demo 4 · 3D Peptide & Body Lab (R3F + Gemini)
+            </button>
           </div>
           <div class="demo-actions">
             <a id="openNewTab" class="action-link" href="./demos/demo1-kujira-art/index.html?lang=en" target="_blank">↗ Open Fullscreen</a>
@@ -675,7 +679,8 @@
           demo1: '🐘 Demo 1A · Lanna White Elephant (Chiang Mai)',
           demo1b: '🐋 Demo 1B · Ocean Whale (Original)',
           demo2: '📐 Demo 2 · Timeline Slides (Motion Canvas)',
-          demo3: '⚙️ Demo 3 · Physics Sandbox & 72h Forge'
+          demo3: '⚙️ Demo 3 · Physics Sandbox & 72h Forge',
+          demo4: '🧬 Demo 4 · 3D Peptide & Body Lab (R3F + Gemini)'
         },
         openNewTab: '↗ Open Fullscreen',
         demos: {
@@ -702,6 +707,12 @@
             title: 'Steampunk Probability Pinball & 72h Domain Mastery Forge',
             desc: 'Hands-on physics simulation for Temperature / Top-K sampling + 4-stage rapid domain deconstruction lab',
             tags: 'Stack: Canvas 2D Rigid Physics + Gears'
+          },
+          demo4: {
+            url: './demos/demo4-r3f-peptide-lab/index.html',
+            title: 'Peptide & Human Body 3D Lab: 1-Min Tour + 3-Min Interactive Course',
+            desc: 'Built with React Three Fiber + Gemini [3D_OBJECT] protocol: dehydration synthesis, α-helix & 40-AA FDA rule, DPP-4 vs C18-albumin, GPCR PDB 5VAI & organ activation',
+            tags: 'Stack: React 19 + React Three Fiber + @google/genai'
           }
         },
         lessonsHeading: '📚 6 Benchmark Demo Lessons (90-Min Workshop Loop)',
@@ -794,6 +805,11 @@
             title: '5. CMU Coach Training & 4-Stage Teacher Curriculum System (Draft)',
             desc: 'Train-the-Trainer manual for Chiang Mai Univ. interns & Thai school teachers: Car/Gear analogies, Touching→Driving→Making(Adjusting/Building)→Enhancing, PBL 3.0 & Stanford/CMU/MIT references.',
             path: 'docs/cmu_coach_and_teacher_curriculum_system.md'
+          },
+          {
+            title: '6. Peptide & Human Body 3D Course Guide (R3F + Peer-Reviewed Sources)',
+            desc: 'Architecture breakdown of Gemini [3D_OBJECT] + R3F, 5 landmark papers (Pauling 1951, Merrifield 1963, PDB 4ZGM/5VAI, FDA 40-AA Rule), 1m/3m scripts.',
+            path: 'docs/peptide_3d_science_course_guide.md'
           }
         ],
         toastSwitched: 'Switched to: '
@@ -824,7 +840,8 @@
           demo1: '🐘 Demo 1A · 兰纳白象版 (清迈)',
           demo1b: '🐋 Demo 1B · 深海巨鲸版 (原版归档)',
           demo2: '📐 Demo 2 · 程序化时间轴 + 讲义 (Motion Canvas)',
-          demo3: '⚙️ Demo 3 · 物理机械沙盒 + 72h 破壁炉'
+          demo3: '⚙️ Demo 3 · 物理机械沙盒 + 72h 破壁炉',
+          demo4: '🧬 Demo 4 · 3D 肽与人体科学课 (R3F + Gemini)'
         },
         openNewTab: '↗ 新窗口全屏演示',
         demos: {
@@ -851,6 +868,12 @@
             title: '《蒸汽朋克概率弹珠机 + 72小时领域破壁反应炉》',
             desc: '双模式动手实验台：拖滑块观察 Temperature/Top-K 物理碰撞，或一键启动陌生硬核领域破壁流水线',
             tags: '技术栈：Canvas 2D 刚体物理 + 机械传动'
+          },
+          demo4: {
+            url: './demos/demo4-r3f-peptide-lab/index.html',
+            title: '《肽、多肽与人体作用机制 3D 仿真科普课程（1分钟短片 + 3分钟互动）》',
+            desc: 'React Three Fiber + Gemini [3D_OBJECT] 协议打造：CPK 脱水缩合、α-螺旋与 FDA 40 氨基酸边界、DPP-4 防盾与 C18 锚定白蛋白、GPCR 5VAI 激活与靶器官响应',
+            tags: '技术栈：React 19 + React Three Fiber + @google/genai'
           }
         },
         lessonsHeading: '📚 6 节标杆示范课程路线图（90 分钟黄金闭环）',
@@ -943,6 +966,11 @@
             title: '5. CMU 实习生 Coach 培训与四阶 Teacher 教案总手册（初稿）',
             desc: '三级赋能体系：自生长齿轮与汽车四阶(Touching→Driving→Making[Adjusting/Building]→Enhancing)、7大观察干预法则及斯坦福/CMU/MIT/PBL3.0溯源。',
             path: 'docs/cmu_coach_and_teacher_curriculum_system.md'
+          },
+          {
+            title: '6. 肽与人体机制 3D 科普课程教案与文献溯源（R3F + Gemini）',
+            desc: '拆解 Gemini [3D_OBJECT] + R3F 科学应用架构，溯源 Pauling 1951、Merrifield 1963、PDB 4ZGM/5VAI、FDA 40 AA 法定边界及泰监管合规。',
+            path: 'docs/peptide_3d_science_course_guide.md'
           }
         ],
         toastSwitched: '已切换至：'
@@ -973,7 +1001,8 @@
           demo1: '🐘 Demo 1A · ช้างเผือกล้านนา (เชียงใหม่)',
           demo1b: '🐋 Demo 1B · วาฬแห่งทะเลลึก (ต้นฉบับ)',
           demo2: '📐 Demo 2 · สไลด์ไทม์ไลน์ (Motion Canvas)',
-          demo3: '⚙️ Demo 3 · แซนด์บ็อกซ์ฟิสิกส์ & เตาหลอม 72 ชม.'
+          demo3: '⚙️ Demo 3 · แซนด์บ็อกซ์ฟิสิกส์ & เตาหลอม 72 ชม.',
+          demo4: '🧬 Demo 4 · บทเรียน 3 มิติเพปไทด์และร่างกาย (R3F)'
         },
         openNewTab: '↗ เปิดเต็มหน้าจอ',
         demos: {
@@ -1000,6 +1029,12 @@
             title: 'เครื่องพินบอลความน่าจะเป็น & เตาหลอมศาสตร์ใหม่ 72 ชั่วโมง',
             desc: 'ทดลองปรับค่า Temperature / Top-K ด้วยฟิสิกส์ลูกแก้วจริง พร้อมสายพานวิเคราะห์โจทย์ข้ามศาสตร์',
             tags: 'เทคโนโลยี: Canvas 2D ฟิสิกส์การชน + ฟันเฟืองกล'
+          },
+          demo4: {
+            url: './demos/demo4-r3f-peptide-lab/index.html',
+            title: 'บทเรียน 3 มิติ: เพปไทด์ พอลิเพปไทด์ และกลไกการทำงานในร่างกาย (1 นาที & 3 นาที)',
+            desc: 'สร้างด้วย React Three Fiber + Gemini [3D_OBJECT]: พันธะเพปไทด์ เกลียวอัลฟา เกณฑ์ 40 AA ของ FDA การป้องกันเอนไซม์ DPP-4 และตัวรับ GPCR (PDB 5VAI)',
+            tags: 'เทคโนโลยี: React 19 + React Three Fiber + @google/genai'
           }
         },
         lessonsHeading: '📚 6 บทเรียนต้นแบบ (เวิร์กชอป 90 นาที)',
@@ -1092,6 +1127,11 @@
             title: '5. คู่มือฝึกอบรม CMU Coach และแผนการสอน 4 ระดับสำหรับครู',
             desc: 'ระบบถ่ายทอด 3 ขั้น (CMU Intern → ครูโรงเรียนนานาชาติ): อุปมารถยนต์ 4 ระดับ (Touching→Driving→Making→Enhancing) และอ้างอิง Stanford/CMU/MIT/PBL 3.0',
             path: 'docs/cmu_coach_and_teacher_curriculum_system.md'
+          },
+          {
+            title: '6. คู่มือบทเรียน 3 มิติเพปไทด์และร่างกายมนุษย์ (R3F + งานวิจัยอ้างอิง)',
+            desc: 'สถาปัตยกรรม Gemini [3D_OBJECT] + R3F พร้อมงานวิจัยอ้างอิง (Pauling 1951, Merrifield 1963, PDB 4ZGM/5VAI, เกณฑ์ 40 AA และ อย. ไทย)',
+            path: 'docs/peptide_3d_science_course_guide.md'
           }
         ],
         toastSwitched: 'เปลี่ยนเป็น: '
@@ -1143,6 +1183,7 @@
       document.getElementById('tabDemo1b').textContent = t.tabs.demo1b;
       document.getElementById('tabDemo2').textContent = t.tabs.demo2;
       document.getElementById('tabDemo3').textContent = t.tabs.demo3;
+      document.getElementById('tabDemo4').textContent = t.tabs.demo4;
       document.getElementById('openNewTab').textContent = t.openNewTab;
 
       updateDemoMeta(false);
